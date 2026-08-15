@@ -7,27 +7,58 @@ import {
 
 import ProductForm from "./ProductForm";
 
+
 function ProductModal({
                           open,
                           onOpenChange,
                           product,
                           onSuccess,
                       }) {
+
     return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-4xl">
+
+        <Dialog
+            open={open}
+            onOpenChange={onOpenChange}
+        >
+
+            <DialogContent className="
+                w-[calc(100%-1rem)]
+                max-w-4xl
+                max-h-[92vh]
+                overflow-y-auto
+                rounded-2xl
+                p-5
+                sm:p-6
+            ">
+
                 <DialogHeader>
-                    <DialogTitle>
-                        {product ? "Edit Product" : "Add Product"}
+
+                    <DialogTitle className="
+                        text-xl
+                        sm:text-2xl
+                        font-bold
+                        text-slate-900
+                    ">
+                        {product
+                            ? "Edit Product"
+                            : "Add Product"
+                        }
                     </DialogTitle>
+
                 </DialogHeader>
+
 
                 <ProductForm
                     product={product}
                     onSuccess={onSuccess}
-                    onClose={() => onOpenChange(false)}
+                    onClose={() =>
+                        onOpenChange(false)
+                    }
                 />
+
             </DialogContent>
+
         </Dialog>
     );
 }

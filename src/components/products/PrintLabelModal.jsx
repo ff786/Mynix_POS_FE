@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
     Dialog,
@@ -7,8 +7,16 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog";
 
+import {
+    Printer,
+    Minus,
+    Plus,
+    Package,
+} from "lucide-react";
+
 import ProductLabel from "./ProductLabel";
 import LabelPrintRenderer from "./LabelPrintRenderer";
+
 
 function PrintLabelModal({
                              open,
@@ -16,8 +24,9 @@ function PrintLabelModal({
                              products,
                          }) {
 
-    const [quantities, setQuantities] =
-        useState({});
+    const [quantities, setQuantities] = useState({});
+    const [printRequested, setPrintRequested] = useState(false);
+
 
     const productList =
         Array.isArray(products)
@@ -26,11 +35,37 @@ function PrintLabelModal({
                 ? [products]
                 : [];
 
+
+    /*
+     * Reset quantities whenever a new
+     * print session starts.
+     */
+    useEffect(() => {
+
+        if (!open) {
+            return;
+        }
+
+        const initialQuantities = {};
+
+        productList.forEach(product => {
+
+            initialQuantities[product.id] = 1;
+
+        });
+
+        setQuantities(initialQuantities);
+        setPrintRequested(false);
+
+    }, [open, products]);
+
+
     function getQuantity(product) {
 
         return quantities[product.id] || 1;
 
     }
+
 
     function setQuantity(productId, value) {
 
@@ -50,12 +85,60 @@ function PrintLabelModal({
 
     }
 
+
+    function decreaseQuantity(product) {
+
+        const current =
+            getQuantity(product);
+
+        setQuantity(
+            product.id,
+            current - 1
+        );
+
+    }
+
+
+    function increaseQuantity(product) {
+
+        const current =
+            getQuantity(product);
+
+        setQuantity(
+            product.id,
+            current + 1
+        );
+
+    }
+
+
     const totalLabels =
         productList.reduce(
             (total, product) =>
                 total + getQuantity(product),
             0
         );
+
+
+    function handlePrint() {
+
+        if (!productList.length) {
+            return;
+        }
+
+        setPrintRequested(true);
+
+    }
+
+
+    function handlePrinted() {
+
+        setPrintRequested(false);
+
+        onOpenChange(false);
+
+    }
+
 
     return (
 
@@ -64,152 +147,441 @@ function PrintLabelModal({
             onOpenChange={onOpenChange}
         >
 
-            <DialogContent className="sm:max-w-3xl">
+            <DialogContent className="
+                w-[calc(100%-1rem)]
+                max-w-4xl
+                max-h-[92vh]
+                overflow-y-auto
+                rounded-2xl
+                p-5
+                sm:p-6
+            ">
 
                 <DialogHeader>
 
-                    <DialogTitle>
+                    <DialogTitle className="
+                        flex
+                        items-center
+                        gap-2
+                        text-xl
+                        sm:text-2xl
+                    ">
+
+                        <div className="
+                            w-9 h-9
+                            rounded-xl
+                            bg-emerald-50
+                            flex
+                            items-center
+                            justify-center
+                        ">
+                            <Printer
+                                size={18}
+                                className="text-emerald-600"
+                            />
+                        </div>
+
                         Print Product Labels
+
                     </DialogTitle>
 
                 </DialogHeader>
 
-                <div className="space-y-5">
 
-                    <div className="border rounded-xl overflow-hidden">
+                {productList.length === 0 ? (
 
-                        {productList.map(product => (
-
-                            <div
-                                key={product.id}
-                                className="flex items-center justify-between p-4 border-b last:border-b-0"
-                            >
-
-                                <div>
-
-                                    <p className="font-semibold">
-                                        {product.name}
-                                    </p>
-
-                                    <p className="text-sm text-slate-500 font-mono">
-                                        {product.barcode}
-                                    </p>
-
-                                </div>
-
-                                <div className="flex items-center gap-3">
-
-                                    <label className="text-sm text-slate-500">
-                                        Labels
-                                    </label>
-
-                                    <input
-                                        type="number"
-                                        min="1"
-                                        max="100"
-                                        value={getQuantity(product)}
-                                        onChange={(e) =>
-                                            setQuantity(
-                                                product.id,
-                                                e.target.value
-                                            )
-                                        }
-                                        className="w-24 border rounded-lg px-3 py-2 text-center"
-                                    />
-
-                                </div>
-
-                            </div>
-
-                        ))}
-
+                    <div className="
+                        py-12
+                        text-center
+                        text-slate-500
+                    ">
+                        No products selected.
                     </div>
 
-                    <div className="bg-slate-50 border rounded-xl p-5">
+                ) : (
 
-                        <p className="font-medium mb-4">
-                            Preview
-                        </p>
+                    <div className="space-y-5">
 
-                        <div className="flex flex-wrap gap-4 justify-center max-h-[350px] overflow-auto">
 
-                            {productList.map(product => (
+                        {/* Products */}
+                        <div className="
+                            border
+                            border-slate-200
+                            rounded-2xl
+                            overflow-hidden
+                        ">
 
-                                <ProductLabel
+                            {productList.map((product, index) => (
+
+                                <div
                                     key={product.id}
-                                    product={product}
-                                />
+                                    className={`
+                                        p-4
+                                        flex
+                                        flex-col
+                                        sm:flex-row
+                                        sm:items-center
+                                        sm:justify-between
+                                        gap-4
+                                        ${
+                                        index !==
+                                        productList.length - 1
+                                            ? "border-b border-slate-100"
+                                            : ""
+                                    }
+                                    `}
+                                >
+
+                                    <div className="
+                                        flex
+                                        items-center
+                                        gap-3
+                                        min-w-0
+                                    ">
+
+                                        {product.imageUrl ? (
+
+                                            <img
+                                                src={product.imageUrl}
+                                                alt={product.name}
+                                                className="
+                                                    w-12 h-12
+                                                    rounded-xl
+                                                    object-cover
+                                                    border
+                                                    border-slate-200
+                                                    shrink-0
+                                                "
+                                            />
+
+                                        ) : (
+
+                                            <div className="
+                                                w-12 h-12
+                                                rounded-xl
+                                                bg-slate-100
+                                                flex
+                                                items-center
+                                                justify-center
+                                                shrink-0
+                                            ">
+                                                <Package
+                                                    size={19}
+                                                    className="text-slate-400"
+                                                />
+                                            </div>
+
+                                        )}
+
+                                        <div className="min-w-0">
+
+                                            <p className="
+                                                font-semibold
+                                                text-slate-900
+                                                truncate
+                                            ">
+                                                {product.name}
+                                            </p>
+
+                                            <p className="
+                                                text-xs
+                                                text-slate-500
+                                                font-mono
+                                                mt-1
+                                            ">
+                                                {product.barcode}
+                                            </p>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    {/* Quantity */}
+                                    <div className="
+                                        flex
+                                        items-center
+                                        justify-between
+                                        sm:justify-end
+                                        gap-3
+                                    ">
+
+                                        <span className="
+                                            text-sm
+                                            text-slate-500
+                                        ">
+                                            Labels
+                                        </span>
+
+                                        <div className="
+                                            flex
+                                            items-center
+                                            border
+                                            border-slate-200
+                                            rounded-xl
+                                            overflow-hidden
+                                        ">
+
+                                            <button
+                                                type="button"
+                                                onClick={() =>
+                                                    decreaseQuantity(
+                                                        product
+                                                    )
+                                                }
+                                                disabled={
+                                                    getQuantity(product) <= 1
+                                                }
+                                                className="
+                                                    w-9 h-9
+                                                    flex
+                                                    items-center
+                                                    justify-center
+                                                    hover:bg-slate-50
+                                                    disabled:opacity-30
+                                                "
+                                            >
+                                                <Minus size={15} />
+                                            </button>
+
+                                            <input
+                                                type="number"
+                                                min="1"
+                                                max="100"
+                                                value={getQuantity(product)}
+                                                onChange={(e) =>
+                                                    setQuantity(
+                                                        product.id,
+                                                        e.target.value
+                                                    )
+                                                }
+                                                className="
+                                                    w-12
+                                                    h-9
+                                                    border-x
+                                                    border-slate-200
+                                                    text-center
+                                                    text-sm
+                                                    font-semibold
+                                                    outline-none
+                                                "
+                                            />
+
+                                            <button
+                                                type="button"
+                                                onClick={() =>
+                                                    increaseQuantity(
+                                                        product
+                                                    )
+                                                }
+                                                disabled={
+                                                    getQuantity(product) >= 100
+                                                }
+                                                className="
+                                                    w-9 h-9
+                                                    flex
+                                                    items-center
+                                                    justify-center
+                                                    hover:bg-slate-50
+                                                    disabled:opacity-30
+                                                "
+                                            >
+                                                <Plus size={15} />
+                                            </button>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
 
                             ))}
 
                         </div>
 
-                    </div>
 
-                    <div className="flex justify-between items-center">
+                        {/* Preview */}
+                        <div className="
+                            rounded-2xl
+                            border
+                            border-slate-200
+                            bg-slate-50
+                            p-4
+                            sm:p-5
+                        ">
 
-                        <p className="text-sm text-slate-500">
+                            <div className="
+                                flex
+                                items-center
+                                justify-between
+                                mb-4
+                            ">
 
-                            {productList.length} product
-                            {productList.length !== 1
-                                ? "s"
-                                : ""}
+                                <div>
 
-                            {" • "}
+                                    <p className="
+                                        font-semibold
+                                        text-slate-800
+                                    ">
+                                        Label Preview
+                                    </p>
 
-                            {totalLabels} label
-                            {totalLabels !== 1
-                                ? "s"
-                                : ""}
+                                    <p className="
+                                        text-xs
+                                        text-slate-400
+                                        mt-0.5
+                                    ">
+                                        Actual printed labels use a compact
+                                        label layout.
+                                    </p>
 
-                        </p>
+                                </div>
 
-                        <div className="flex gap-3">
+                                <span className="
+                                    text-xs
+                                    font-semibold
+                                    bg-white
+                                    border
+                                    border-slate-200
+                                    rounded-full
+                                    px-3
+                                    py-1
+                                    text-slate-600
+                                ">
+                                    {totalLabels} label
+                                    {totalLabels !== 1
+                                        ? "s"
+                                        : ""}
+                                </span>
 
-                            <button
-                                type="button"
-                                onClick={() =>
-                                    onOpenChange(false)
-                                }
-                                className="px-5 py-2.5 border rounded-lg"
-                            >
-                                Cancel
-                            </button>
+                            </div>
 
-                            <button
-                                type="button"
-                                onClick={() =>
-                                    document
-                                        .getElementById(
-                                            "start-label-print"
-                                        )
-                                        ?.click()
-                                }
-                                className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-medium"
-                            >
-                                Print {totalLabels} Label
+
+                            <div className="
+                                flex
+                                flex-wrap
+                                gap-4
+                                justify-center
+                                max-h-[360px]
+                                overflow-auto
+                                p-2
+                            ">
+
+                                {productList.map(product => (
+
+                                    <ProductLabel
+                                        key={product.id}
+                                        product={product}
+                                    />
+
+                                ))}
+
+                            </div>
+
+                        </div>
+
+
+                        {/* Footer */}
+                        <div className="
+                            flex
+                            flex-col-reverse
+                            sm:flex-row
+                            sm:items-center
+                            sm:justify-between
+                            gap-3
+                        ">
+
+                            <p className="
+                                text-sm
+                                text-slate-500
+                                text-center
+                                sm:text-left
+                            ">
+                                {productList.length} product
+                                {productList.length !== 1
+                                    ? "s"
+                                    : ""}
+                                {" • "}
+                                {totalLabels} label
                                 {totalLabels !== 1
                                     ? "s"
                                     : ""}
-                            </button>
+                            </p>
+
+
+                            <div className="
+                                flex
+                                gap-2
+                            ">
+
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        onOpenChange(false)
+                                    }
+                                    className="
+                                        flex-1
+                                        sm:flex-none
+                                        px-5
+                                        py-2.5
+                                        rounded-xl
+                                        border
+                                        border-slate-200
+                                        text-sm
+                                        font-medium
+                                        text-slate-600
+                                        hover:bg-slate-50
+                                    "
+                                >
+                                    Cancel
+                                </button>
+
+                                <button
+                                    type="button"
+                                    onClick={handlePrint}
+                                    disabled={printRequested}
+                                    className="
+                                        flex-1
+                                        sm:flex-none
+                                        px-5
+                                        py-2.5
+                                        rounded-xl
+                                        bg-emerald-600
+                                        hover:bg-emerald-700
+                                        text-white
+                                        text-sm
+                                        font-semibold
+                                        flex
+                                        items-center
+                                        justify-center
+                                        gap-2
+                                        disabled:opacity-50
+                                    "
+                                >
+
+                                    <Printer size={16} />
+
+                                    {printRequested
+                                        ? "Preparing..."
+                                        : `Print ${totalLabels} Label${totalLabels !== 1 ? "s" : ""}`
+                                    }
+
+                                </button>
+
+                            </div>
 
                         </div>
 
                     </div>
 
-                </div>
+                )}
 
-                <button
-                    id="start-label-print"
-                    className="hidden"
-                />
 
                 <LabelPrintRenderer
                     products={productList}
                     quantities={quantities}
-                    onPrinted={() =>
-                        onOpenChange(false)
-                    }
+                    printRequested={printRequested}
+                    onPrinted={handlePrinted}
                 />
 
             </DialogContent>
