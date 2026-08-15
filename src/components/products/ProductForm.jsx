@@ -222,6 +222,7 @@ function ProductForm({ product, onSuccess, onClose }) {
 
                     <input
                         name="imageUrl"
+                        type={"file"}
                         value={form.imageUrl}
                         onChange={handleChange}
                         className="w-full border rounded-lg p-3"

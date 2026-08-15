@@ -290,21 +290,12 @@ function Products() {
     return (
 
         <div className="space-y-5">
-
-
-            {/*
-                TOOLBAR
-             */}
-
             <ProductToolbar
                 search={search}
                 setSearch={setSearch}
                 onAdd={() => {
-
                     setSelectedProduct(null);
-
                     setModalOpen(true);
-
                 }}
             />
 
@@ -419,7 +410,6 @@ function Products() {
                 }}
                 products={productsToPrint}
             />
-
 
             {/*DELETE CONFIRMATION*/}
             <DeleteDialog
