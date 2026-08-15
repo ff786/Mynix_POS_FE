@@ -119,9 +119,9 @@ function Sidebar({
                     {/* Section label */}
                     <div className={`
                         px-3 mb-3 overflow-hidden whitespace-nowrap transition-all duration-300
-                        ${collapsed ? "h-0 opacity-0 mb-0" : "h-4 opacity-100"}
+                        ${collapsed ? "h-0 opacity-0 mb-0" : "h-6 opacity-100"}
                     `}>
-                        <span className="text-[10px] uppercase tracking-[0.18em] font-bold text-slate-400">
+                        <span className="text-[10px] leading-4 uppercase tracking-[0.18em] font-bold text-slate-400">
                             Workspace
                         </span>
                     </div>
