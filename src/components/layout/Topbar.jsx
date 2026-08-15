@@ -15,7 +15,13 @@ function Topbar({ onMenuClick }) {
     const currentPage = pageTitles[location.pathname] || 'Dashboard'
 
     return (
-        <header className="h-16 shrink-0 bg-white border-b border-gray-200 flex items-center justify-between gap-4 px-4 md:px-8">
+        <header
+            className="shrink-0 bg-white border-b border-gray-200 flex items-center justify-between gap-4 px-4 md:px-8"
+            style={{
+                height: 'calc(4rem + env(safe-area-inset-top))',
+                paddingTop: 'env(safe-area-inset-top)',
+            }}
+        >
             {/* Left side */}
             <div className="flex items-center gap-3 min-w-0">
                 {/* Hamburger — mobile only */}

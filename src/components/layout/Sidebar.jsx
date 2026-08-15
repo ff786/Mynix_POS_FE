@@ -41,6 +41,7 @@ function Sidebar({ isOpen, onClose }) {
                     ${isOpen ? "translate-x-0" : "-translate-x-full"}
                     md:static md:z-auto md:translate-x-0 md:shrink-0 md:transition-none
                 `}
+                style={{ paddingTop: 'env(safe-area-inset-top)' }}
             >
                 {/* Logo */}
                 <div className="px-6 py-6 border-b flex items-center justify-between">
