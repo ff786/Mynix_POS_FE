@@ -1,5 +1,7 @@
 function ReceiptItem({ item }) {
 
+    const name = item.name ?? item.productName;
+
     const unitPrice = Number(
         item.sellingPrice ?? item.unitPrice ?? 0
     );
@@ -9,20 +11,25 @@ function ReceiptItem({ item }) {
     );
 
     return (
-        <div className="flex justify-between py-3 border-b text-sm">
+        <div className="flex justify-between py-2 border-b text-sm">
+
             <div>
                 <p className="font-medium text-slate-900">
-                    {item.name}
+                    {name}
                 </p>
+
                 <p className="text-slate-500">
                     {item.quantity} × Rs.{" "}
                     {unitPrice.toLocaleString()}
                 </p>
             </div>
+
             <div className="font-medium">
                 Rs. {lineTotal.toLocaleString()}
             </div>
+
         </div>
     );
 }
+
 export default ReceiptItem;
