@@ -89,15 +89,7 @@ function CategoryRow({
                         onClick={() =>
                             onEdit(category)
                         }
-                        className="
-                            px-4
-                            py-2
-                            rounded-lg
-                            bg-blue-600
-                            text-white
-                            hover:bg-blue-700
-                            transition
-                        "
+                        className="px-3.5 py-2 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-medium text-sm transition-colors"
                     >
                         Edit
                     </button>
@@ -107,15 +99,7 @@ function CategoryRow({
                         onClick={() =>
                             onDelete(category)
                         }
-                        className="
-                            px-4
-                            py-2
-                            rounded-lg
-                            bg-red-600
-                            text-white
-                            hover:bg-red-700
-                            transition
-                        "
+                        className="px-3.5 py-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 font-medium text-sm transition-colors"
                     >
                         Delete
                     </button>

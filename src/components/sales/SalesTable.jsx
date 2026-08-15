@@ -88,7 +88,7 @@ function SalesTable({ sales, onView }) {
 
                                 <button
                                     onClick={() => onView(sale)}
-                                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition"
+                                    className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg  bg-emerald-50 text-emerald-700 hover:bg-emerald-100 text-black transition"
                                 >
                                     <Eye size={16} />
                                     View
