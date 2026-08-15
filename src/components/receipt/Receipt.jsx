@@ -1,4 +1,5 @@
 import ReceiptItem from "./ReceiptItem";
+import * as items from "framer-motion/m";
 
 function Receipt({ sale }) {
 
@@ -37,9 +38,9 @@ function Receipt({ sale }) {
             <hr />
             <div>
                 {sale.items?.length > 0 ? (
-                    sale.items.map(item => (
+                    sale.items.map((item, index) => (
                         <ReceiptItem
-                            key={item.barcode}
+                            key={item.barcode ?? index}
                             item={item}
                         />
                     ))
