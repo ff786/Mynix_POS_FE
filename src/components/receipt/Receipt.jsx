@@ -1,87 +1,169 @@
 import ReceiptItem from "./ReceiptItem";
-import * as items from "framer-motion/m";
 
-function Receipt({ sale }) {
-
-    if (!sale) return null;
+function Receipt({sale,}) {
+    if (!sale) {
+        return null;
+    }
 
     return (
-
-        <div className="space-y-5">
+        <div className="w-full bg-white text-slate-900 space-y-5 print:space-y-4">
+            {/* Header */}
             <div className="text-center">
-                <h2 className="text-2xl font-bold">
+                <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
                     MYNIX POS
                 </h2>
-                <p className="text-sm text-slate-500">
+
+                <p className="text-xs sm:text-sm text-slate-500 mt-1">
                     Business Management System
                 </p>
             </div>
-            <hr />
-            <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                    <span>Invoice</span>
-                    <span>{sale.invoiceNumber}</span>
-                </div>
-                <div className="flex justify-between">
-                    <span>Date</span>
-                    <span>{new Date(sale.createdAt).toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between">
-                    <span>Cashier</span>
-                    <span>Admin</span>
-                </div>
-                <div className="flex justify-between">
-                    <span>Payment</span>
-                    <span>{sale.paymentMethod}</span>
-                </div>
+
+            <div className="border-t border-dashed border-slate-300" />
+
+            {/* Transaction details */}
+            <div className="space-y-2.5 text-sm">
+                <ReceiptInfo
+                    label="Invoice"
+                    value={sale.invoiceNumber}
+                    mono
+                />
+
+                <ReceiptInfo
+                    label="Date"
+                    value={
+                        sale.createdAt
+                            ? new Date(sale.createdAt).toLocaleString()
+                            : "—"
+                    }
+                />
+
+                <ReceiptInfo
+                    label="Cashier"
+                    value={
+                        sale.cashierName ||
+                        sale.cashierUsername ||
+                        "Admin"
+                    }
+                />
+
+                <ReceiptInfo
+                    label="Payment"
+                    value={sale.paymentMethod}
+                />
             </div>
-            <hr />
+
+            <div className="border-t border-dashed border-slate-300" />
+
+            {/* Items */}
             <div>
                 {sale.items?.length > 0 ? (
-                    sale.items.map((item, index) => (
-                        <ReceiptItem
-                            key={item.barcode ?? index}
-                            item={item}
-                        />
-                    ))
+                    <div>
+                        {sale.items.map((item, index) => (
+                            <ReceiptItem
+                                key={item.barcode ?? index}
+                                item={item}
+                            />
+                        ))}
+                    </div>
                 ) : (
                     <p className="text-sm text-slate-500 text-center py-4">
                         Item details are not available for this historical sale.
                     </p>
                 )}
             </div>
-            <hr />
-            <div className="space-y-2">
-                <div className="flex justify-between">
-                    <span>Subtotal</span>
-                    <span>
-                        Rs. {Number(sale.subtotal).toLocaleString()}
+
+            <div className="border-t border-dashed border-slate-300" />
+
+            {/* Totals */}
+            <div className="space-y-2.5">
+                <ReceiptTotal
+                    label="Subtotal"
+                    value={sale.subtotal}
+                />
+
+                <ReceiptTotal
+                    label="Discount"
+                    value={sale.discount}
+                />
+
+                <ReceiptTotal
+                    label="Delivery Fee"
+                    value={sale.deliveryFee || 0}
+                />
+
+                <div className="flex justify-between items-center pt-3 mt-2 border-t border-slate-200">
+                    <span className="text-lg font-bold">
+                        TOTAL
                     </span>
-                </div>
-                <div className="flex justify-between">
-                    <span>Discount</span>
-                    <span>
-                        Rs. {Number(sale.discount).toLocaleString()}
-                    </span>
-                </div>
-                <div className="flex justify-between">
-                    <span>Delivery Fee</span>
-                    <span>
-                        Rs. {Number(sale.deliveryFee || 0).toLocaleString()}
-                    </span>
-                </div>
-                <div className="flex justify-between text-xl font-bold pt-3">
-                    <span>TOTAL</span>
-                    <span>
-                        Rs. {Number(sale.grandTotal).toLocaleString()}
+
+                    <span className="text-xl sm:text-2xl font-bold text-emerald-600">
+                        Rs.{" "}
+                        {Number(sale.grandTotal || 0).toLocaleString(
+                            undefined,
+                            {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                            }
+                        )}
                     </span>
                 </div>
             </div>
-            <hr />
-            <div className="text-center text-slate-500">
-                <p>Thank you for shopping!</p>
-                <p>Visit Again ❤️</p>
+
+            <div className="border-t border-dashed border-slate-300" />
+
+            {/* Footer */}
+            <div className="text-center text-xs sm:text-sm text-slate-500 space-y-1 pb-1">
+                <p>
+                    Thank you for shopping!
+                </p>
+
+                <p>
+                    Visit Again ❤️
+                </p>
             </div>
+        </div>
+    );
+}
+
+/* ================================ */
+/* INFO ROW                         */
+/* ================================ */
+
+function ReceiptInfo({label, value, mono = false,}) {
+    return (
+        <div className="flex justify-between gap-4">
+            <span className="text-slate-500">
+                {label}
+            </span>
+
+            <span className={`text-right font-medium break-all ${mono ? "font-mono" : ""}`}>
+                {value || "—"}
+            </span>
+        </div>
+    );
+}
+
+/* ================================ */
+/* TOTAL ROW                        */
+/* ================================ */
+
+function ReceiptTotal({label, value,}) {
+    return (
+        <div className="flex justify-between gap-4 text-sm">
+            <span className="text-slate-500">
+                {label}
+            </span>
+
+            <span className="font-medium">
+                Rs.{" "}
+                {Number(value || 0).toLocaleString(
+                    undefined,
+                    {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                    }
+                )}
+            </span>
         </div>
     );
 }
