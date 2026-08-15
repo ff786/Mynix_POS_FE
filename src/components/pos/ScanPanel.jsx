@@ -60,10 +60,10 @@ function ScanPanel({ cart, setCart }) {
         }, 0);
     }
     return (
-        <div className="bg-white rounded-xl shadow border p-6">
-            <div className="flex items-center gap-3 mb-5">
+        <div className="bg-white rounded-xl shadow border p-4 sm:p-6">
+            <div className="flex items-center gap-3 mb-4 sm:mb-5">
                 <ScanBarcode className="text-emerald-600"/>
-                <h2 className="text-xl font-semibold">
+                <h2 className="text-lg sm:text-xl font-semibold">
                     Scan Barcode
                 </h2>
             </div>
@@ -74,7 +74,7 @@ function ScanPanel({ cart, setCart }) {
                 onChange={(e) => setBarcode(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder="Waiting for scanner..."
-                className="w-full border rounded-lg p-4 text-lg"
+                className="w-full border rounded-lg p-3.5 sm:p-4 text-base sm:text-lg"
             />
         </div>
     );

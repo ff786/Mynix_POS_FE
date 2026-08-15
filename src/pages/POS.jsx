@@ -102,8 +102,8 @@ function POS() {
 
 
     return (
-        <div className="grid grid-cols-3 gap-6 h-full">
-            <div className="col-span-2 flex flex-col gap-6">
+        <div className="flex flex-col lg:grid lg:grid-cols-3 gap-4 md:gap-6 lg:h-full">
+            <div className="lg:col-span-2 flex flex-col gap-4 md:gap-6 lg:h-full lg:overflow-hidden">
                 <ScanPanel
                     cart={cart}
                     setCart={setCart}
@@ -115,7 +115,7 @@ function POS() {
                     onRemove={removeItem}
                 />
             </div>
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-4 md:gap-6">
                 <CartSummary
                     cart={cart}
                     discount={discount}

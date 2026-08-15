@@ -29,7 +29,7 @@ function PaymentPanel({
     const disabled = cart.length === 0 || loading;
 
     return (
-        <div className="bg-white rounded-xl shadow-sm border p-6">
+        <div className="bg-white rounded-xl shadow-sm border p-4 sm:p-6">
 
             <div className="mb-6">
                 <h3 className="font-semibold text-lg">
@@ -70,9 +70,9 @@ function PaymentPanel({
                             `}
                         >
 
-                            <Icon size={20} />
+                            <Icon size={20} className="shrink-0" />
 
-                            <span className="font-medium">
+                            <span className="font-medium text-left">
                                 {method.label}
                             </span>
 
