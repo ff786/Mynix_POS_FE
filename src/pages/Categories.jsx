@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { Layers3, Plus, Search, X } from "lucide-react";
+import { toast } from "sonner";
 
 import CategoryToolbar from "@/components/categories/CategoryToolbar";
 import CategoryTable from "@/components/categories/CategoryTable";
 import CategoryModal from "@/components/categories/CategoryModal";
-
 import DeleteCategoryDialog from "@/components/categories/DeleteCategoryDialog";
 
 import {
@@ -11,31 +12,19 @@ import {
     deleteCategory,
 } from "@/services/categoryApi";
 
-import { toast } from "sonner";
-
 
 function Categories() {
 
-    const [categories, setCategories] =
-        useState([]);
+    const [categories, setCategories] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-    const [loading, setLoading] =
-        useState(true);
+    const [search, setSearch] = useState("");
 
-    const [search, setSearch] =
-        useState("");
+    const [modalOpen, setModalOpen] = useState(false);
+    const [selectedCategory, setSelectedCategory] = useState(null);
 
-    const [modalOpen, setModalOpen] =
-        useState(false);
-
-    const [selectedCategory, setSelectedCategory] =
-        useState(null);
-
-    const [deleteOpen, setDeleteOpen] =
-        useState(false);
-
-    const [categoryToDelete, setCategoryToDelete] =
-        useState(null);
+    const [deleteOpen, setDeleteOpen] = useState(false);
+    const [categoryToDelete, setCategoryToDelete] = useState(null);
 
 
     useEffect(() => {
@@ -47,8 +36,9 @@ function Categories() {
 
         try {
 
-            const data =
-                await getCategories();
+            setLoading(true);
+
+            const data = await getCategories();
 
             setCategories(data);
 
@@ -68,29 +58,45 @@ function Categories() {
     }
 
 
-    const filteredCategories =
-        categories.filter(category =>
-            category.name
-                ?.toLowerCase()
-                .includes(
-                    search.toLowerCase()
-                )
-        );
+    const filteredCategories = useMemo(() => {
 
+        const query = search
+            .trim()
+            .toLowerCase();
 
-    function handleEdit(category) {
+        if (!query) {
+            return categories;
+        }
 
-        setSelectedCategory(category);
+        return categories.filter(category => {
 
-        setModalOpen(true);
+            const name =
+                category.name?.toLowerCase() || "";
 
-    }
+            const description =
+                category.description?.toLowerCase() || "";
+
+            return (
+                name.includes(query) ||
+                description.includes(query)
+            );
+
+        });
+
+    }, [categories, search]);
 
 
     function handleAdd() {
 
         setSelectedCategory(null);
+        setModalOpen(true);
 
+    }
+
+
+    function handleEdit(category) {
+
+        setSelectedCategory(category);
         setModalOpen(true);
 
     }
@@ -99,7 +105,6 @@ function Categories() {
     function handleDelete(category) {
 
         setCategoryToDelete(category);
-
         setDeleteOpen(true);
 
     }
@@ -122,7 +127,6 @@ function Categories() {
             );
 
             setDeleteOpen(false);
-
             setCategoryToDelete(null);
 
             await loadCategories();
@@ -141,12 +145,39 @@ function Categories() {
     }
 
 
+    function clearSearch() {
+        setSearch("");
+    }
+
+
     if (loading) {
 
         return (
-            <div className="p-6">
-                Loading categories...
+
+            <div className="w-full max-w-[1600px] mx-auto space-y-6">
+
+                {/* Header skeleton */}
+                <div className="
+                    h-32
+                    rounded-2xl
+                    border
+                    border-slate-200
+                    bg-white
+                    animate-pulse
+                " />
+
+                {/* Table skeleton */}
+                <div className="
+                    h-[420px]
+                    rounded-2xl
+                    border
+                    border-slate-200
+                    bg-white
+                    animate-pulse
+                " />
+
             </div>
+
         );
 
     }
@@ -154,8 +185,14 @@ function Categories() {
 
     return (
 
-        <div className="space-y-5">
+        <div className="
+            w-full
+            max-w-[1600px]
+            mx-auto
+            space-y-5
+        ">
 
+            {/* Toolbar */}
             <CategoryToolbar
                 search={search}
                 setSearch={setSearch}
@@ -163,6 +200,87 @@ function Categories() {
             />
 
 
+            {/* Results bar */}
+            <div className="
+                flex
+                items-center
+                justify-between
+                gap-3
+                px-1
+            ">
+
+                <div className="
+                    flex
+                    items-center
+                    gap-2
+                    text-sm
+                    text-slate-500
+                ">
+
+                    <div className="
+                        w-8
+                        h-8
+                        rounded-lg
+                        bg-emerald-50
+                        flex
+                        items-center
+                        justify-center
+                    ">
+
+                        <Layers3
+                            size={16}
+                            className="text-emerald-600"
+                        />
+
+                    </div>
+
+                    <span>
+
+                        <span className="
+                            font-semibold
+                            text-slate-700
+                        ">
+                            {filteredCategories.length}
+                        </span>{" "}
+                        {filteredCategories.length === 1
+                            ? "category"
+                            : "categories"}
+
+                    </span>
+
+                </div>
+
+
+                {search && (
+
+                    <button
+                        type="button"
+                        onClick={clearSearch}
+                        className="
+                            inline-flex
+                            items-center
+                            gap-1.5
+                            text-xs
+                            sm:text-sm
+                            font-medium
+                            text-slate-500
+                            hover:text-slate-900
+                            transition
+                        "
+                    >
+
+                        Clear search
+
+                        <X size={14} />
+
+                    </button>
+
+                )}
+
+            </div>
+
+
+            {/* Category content */}
             <CategoryTable
                 categories={filteredCategories}
                 onEdit={handleEdit}
@@ -170,6 +288,7 @@ function Categories() {
             />
 
 
+            {/* Add/Edit modal */}
             <CategoryModal
                 open={modalOpen}
                 onOpenChange={setModalOpen}
@@ -178,10 +297,11 @@ function Categories() {
             />
 
 
+            {/* Delete modal */}
             <DeleteCategoryDialog
                 open={deleteOpen}
                 onOpenChange={setDeleteOpen}
-                product={categoryToDelete}
+                category={categoryToDelete}
                 onConfirm={confirmDelete}
             />
 

@@ -1,90 +1,208 @@
 import CategoryRow from "./CategoryRow";
 
+
 function CategoryTable({
                            categories,
                            onEdit,
                            onDelete,
                        }) {
 
+    if (categories.length === 0) {
+
+        return (
+
+            <div className="
+                bg-white
+                rounded-2xl
+                border
+                border-slate-200
+                shadow-sm
+                px-6
+                py-16
+                sm:py-20
+                text-center
+            ">
+
+                <div className="
+                    mx-auto
+                    w-16
+                    h-16
+                    rounded-2xl
+                    bg-slate-100
+                    flex
+                    items-center
+                    justify-center
+                    text-2xl
+                    mb-5
+                ">
+                    📂
+                </div>
+
+
+                <h3 className="
+                    text-base
+                    sm:text-lg
+                    font-semibold
+                    text-slate-800
+                ">
+                    No categories found
+                </h3>
+
+
+                <p className="
+                    text-sm
+                    text-slate-400
+                    mt-1.5
+                    max-w-sm
+                    mx-auto
+                ">
+                    Try changing your search or create
+                    a new category to get started.
+                </p>
+
+            </div>
+
+        );
+
+    }
+
+
     return (
 
-        <div className="
-            bg-white
-            rounded-xl
-            shadow-sm
-            border
-            overflow-hidden
-        ">
+        <div>
 
-            <table className="w-full">
+            {/* ========================= */}
+            {/* DESKTOP TABLE              */}
+            {/* ========================= */}
 
-                <thead className="bg-slate-100">
+            <div className="
+                hidden
+                md:block
+                bg-white
+                rounded-2xl
+                border
+                border-slate-200
+                shadow-sm
+                overflow-hidden
+            ">
 
-                <tr>
+                <div className="overflow-x-auto">
 
-                    <th className="text-left px-5 py-4">
-                        Category
-                    </th>
+                    <table className="w-full">
 
-                    <th className="text-left px-5 py-4">
-                        Status
-                    </th>
+                        <thead>
 
-                    <th className="text-left px-5 py-4">
-                        Products
-                    </th>
+                        <tr className="
+                            border-b
+                            border-slate-200
+                            bg-slate-50/80
+                        ">
 
-                    <th className="text-left px-5 py-4">
-                        Actions
-                    </th>
+                            <th className="
+                                text-left
+                                px-6
+                                py-4
+                                text-xs
+                                font-semibold
+                                uppercase
+                                tracking-wider
+                                text-slate-500
+                            ">
+                                Category
+                            </th>
 
-                </tr>
+                            <th className="
+                                text-left
+                                px-6
+                                py-4
+                                text-xs
+                                font-semibold
+                                uppercase
+                                tracking-wider
+                                text-slate-500
+                            ">
+                                Status
+                            </th>
 
-                </thead>
+                            <th className="
+                                text-left
+                                px-6
+                                py-4
+                                text-xs
+                                font-semibold
+                                uppercase
+                                tracking-wider
+                                text-slate-500
+                            ">
+                                Products
+                            </th>
+
+                            <th className="
+                                text-right
+                                px-6
+                                py-4
+                                text-xs
+                                font-semibold
+                                uppercase
+                                tracking-wider
+                                text-slate-500
+                            ">
+                                Actions
+                            </th>
+
+                        </tr>
+
+                        </thead>
 
 
-                <tbody>
+                        <tbody>
 
-                {categories.length === 0 ? (
+                        {categories.map(category => (
 
-                    <tr>
+                            <CategoryRow
+                                key={category.id}
+                                category={category}
+                                onEdit={onEdit}
+                                onDelete={onDelete}
+                            />
 
-                        <td
-                            colSpan="4"
-                            className="
-                                text-center
-                                py-16
-                                text-slate-400
-                            "
-                        >
-                            No categories found.
-                        </td>
+                        ))}
 
-                    </tr>
+                        </tbody>
 
-                ) : (
+                    </table>
 
-                    categories.map(category => (
+                </div>
 
-                        <CategoryRow
-                            key={category.id}
-                            category={category}
-                            onEdit={onEdit}
-                            onDelete={onDelete}
-                        />
+            </div>
 
-                    ))
 
-                )}
+            {/* ========================= */}
+            {/* MOBILE CARDS               */}
+            {/* ========================= */}
 
-                </tbody>
+            <div className="
+                md:hidden
+                space-y-3
+            ">
 
-            </table>
+                {categories.map(category => (
+
+                    <CategoryRow
+                        key={category.id}
+                        category={category}
+                        onEdit={onEdit}
+                        onDelete={onDelete}
+                        mobile
+                    />
+
+                ))}
+
+            </div>
 
         </div>
 
     );
-
 }
 
 export default CategoryTable;
