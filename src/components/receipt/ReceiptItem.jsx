@@ -1,8 +1,12 @@
 function ReceiptItem({ item }) {
 
-    const lineTotal =
-        Number(item.quantity) *
-        Number(item.sellingPrice);
+    const unitPrice = Number(
+        item.sellingPrice ?? item.unitPrice ?? 0
+    );
+
+    const lineTotal = Number(
+        item.lineTotal ?? item.quantity * unitPrice
+    );
 
     return (
         <div className="flex justify-between py-3 border-b text-sm">
@@ -12,7 +16,7 @@ function ReceiptItem({ item }) {
                 </p>
                 <p className="text-slate-500">
                     {item.quantity} × Rs.{" "}
-                    {Number(item.sellingPrice).toLocaleString()}
+                    {unitPrice.toLocaleString()}
                 </p>
             </div>
             <div className="font-medium">
