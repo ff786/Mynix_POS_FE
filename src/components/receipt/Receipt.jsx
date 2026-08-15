@@ -63,6 +63,12 @@ function Receipt({ sale }) {
                         Rs. {Number(sale.discount).toLocaleString()}
                     </span>
                 </div>
+                <div className="flex justify-between">
+                    <span>Delivery Fee</span>
+                    <span>
+                        Rs. {Number(sale.deliveryFee || 0).toLocaleString()}
+                    </span>
+                </div>
                 <div className="flex justify-between text-xl font-bold pt-3">
                     <span>TOTAL</span>
                     <span>

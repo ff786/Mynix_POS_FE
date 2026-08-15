@@ -49,28 +49,16 @@ function Sales() {
     }
 
     async function handleViewSale(sale) {
-
         try {
-
             const data = await getSale(
                 sale.invoiceNumber
             );
-
-            /*
-             * Current backend SaleResponse does not
-             * contain items, so we preserve the sale
-             * information we already have.
-             */
+            console.log(data);
             setSelectedSale(data);
-
             setReceiptOpen(true);
-
         } catch (error) {
-
             console.error(error);
-
         }
-
     }
 
     const filteredSales = sales.filter((sale) =>

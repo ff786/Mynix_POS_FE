@@ -55,6 +55,8 @@ function POS() {
 
     const [paymentMethod, setPaymentMethod] = useState("CASH");
     const [processing, setProcessing] = useState(false);
+    const [discount, setDiscount] = useState(0);
+    const [deliveryFee, setDeliveryFee] = useState(0);
 
     const [receipt, setReceipt] = useState(null);
     const [receiptOpen, setReceiptOpen] = useState(false);
@@ -68,6 +70,8 @@ function POS() {
             setProcessing(true);
             const payload = {
                 paymentMethod,
+                discount: Number(discount),
+                deliveryFee: Number(deliveryFee),
                 items: cart.map(item => ({
                     barcode: item.barcode,
                     quantity: item.quantity,
@@ -84,6 +88,8 @@ function POS() {
             toast.success("Sale Completed");
             setCart([]);
             setPaymentMethod("CASH");
+            setDiscount(0);
+            setDeliveryFee(0);
         } catch (error) {
             toast.error(
                 error.response?.data?.message ??
@@ -110,7 +116,13 @@ function POS() {
                 />
             </div>
             <div className="flex flex-col gap-6">
-                <CartSummary cart={cart}  />
+                <CartSummary
+                    cart={cart}
+                    discount={discount}
+                    setDiscount={setDiscount}
+                    deliveryFee={deliveryFee}
+                    setDeliveryFee={setDeliveryFee}
+                />
                 <PaymentPanel
                     cart={cart}
                     paymentMethod={paymentMethod}
