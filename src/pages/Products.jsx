@@ -34,10 +34,14 @@ function Products() {
         }
     }
 
-    const filteredProducts = products.filter(product =>
-        product.name.toLowerCase().includes(search.toLowerCase()) ||
-        product.barcode.toLowerCase().includes(search.toLowerCase())
-    );
+    const filteredProducts = products.filter(product => {
+        const query = search.toLowerCase();
+        return (
+            product.name?.toLowerCase().includes(query) ||
+            product.barcode?.toLowerCase().includes(query)
+        );
+
+    });
 
     if (loading) {
         return <div>Loading products...</div>;

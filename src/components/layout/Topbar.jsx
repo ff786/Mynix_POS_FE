@@ -12,14 +12,7 @@ const pageTitles = {
 
 function Topbar() {
     const location = useLocation()
-    const navigate = useNavigate()
     const currentPage = pageTitles[location.pathname] || 'Dashboard'
-
-    const handleLogout = () => {
-        // TODO: wire up to real auth logic (clear token/session)
-        localStorage.removeItem('token')
-        navigate('/login')
-    }
 
     return (
         <header className="h-16 shrink-0 bg-white border-b border-gray-200 flex items-center justify-between px-8">
@@ -34,25 +27,25 @@ function Topbar() {
                 <button
                     type="button"
                     aria-label="Notifications"
-                    className="text-slate-500 hover:text-slate-900 transition-colors"
+                    className="relative text-slate-500 hover:text-slate-900 transition"
                 >
                     <Bell size={20} />
+                    <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full" />
                 </button>
-
-                <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-xs font-semibold text-slate-600">
+                <div className="h-6 w-px bg-slate-200" />
+                <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-full bg-emerald-100 flex items-center justify-center text-sm font-semibold text-emerald-700">
                         A
                     </div>
-                    <span className="text-sm font-medium text-slate-700">Admin</span>
+                    <div>
+                        <p className="text-sm font-medium text-slate-800">
+                            Admin
+                        </p>
+                        <p className="text-xs text-slate-400">
+                            Cashier
+                        </p>
+                    </div>
                 </div>
-
-                <button
-                    type="button"
-                    onClick={handleLogout}
-                    className="text-sm font-medium text-slate-500 hover:text-red-600 transition-colors"
-                >
-                    Logout
-                </button>
             </div>
         </header>
     )

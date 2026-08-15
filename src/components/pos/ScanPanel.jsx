@@ -1,7 +1,64 @@
+import {useState, useRef} from "react";
 import { ScanBarcode } from "lucide-react";
+import {toast} from "sonner";
+import {scanBarcode} from "@/services/posApi.js";
 
-function ScanPanel() {
+function ScanPanel({ cart, setCart }) {
 
+    const [barcode, setBarcode] = useState("");
+
+    const inputRef = useRef(null);
+
+    async function handleKeyDown(e) {
+
+        if (e.key !== "Enter") return;
+        if (!barcode.trim()) return;
+        try {
+            const product = await scanBarcode(barcode);
+            setCart(previous => {
+                const existing = previous.find(
+                    item => item.barcode === product.barcode
+                );
+                if (existing) {
+                    if (existing.quantity >= product.stockQuantity) {
+                        toast.error(
+                            `Only ${product.stockQuantity} available in stock.`
+                        );
+                        return previous;
+                    }
+                    toast.success(`${product.name} quantity increased`);
+                    return previous.map(item =>
+                        item.barcode === product.barcode
+                            ? {
+                                ...item,
+                                quantity: item.quantity + 1,
+                            }
+                            : item
+                    );
+                }
+                if (product.stockQuantity <= 0) {
+                    toast.error(
+                        `${product.name} is out of stock.`
+                    );
+                    return previous;
+                }
+                toast.success(`${product.name} added`);
+                return [
+                    ...previous,
+                    {
+                        ...product,
+                        quantity: 1,
+                    },
+                ];
+            });
+        } catch {
+            toast.error("Product not found.");
+        }
+        setBarcode("");
+        setTimeout(() => {
+            inputRef.current?.focus();
+        }, 0);
+    }
     return (
         <div className="bg-white rounded-xl shadow border p-6">
             <div className="flex items-center gap-3 mb-5">
@@ -11,7 +68,11 @@ function ScanPanel() {
                 </h2>
             </div>
             <input
+                ref={inputRef}
                 autoFocus
+                value={barcode}
+                onChange={(e) => setBarcode(e.target.value)}
+                onKeyDown={handleKeyDown}
                 placeholder="Waiting for scanner..."
                 className="w-full border rounded-lg p-4 text-lg"
             />
