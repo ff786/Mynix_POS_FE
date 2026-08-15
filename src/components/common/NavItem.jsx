@@ -1,12 +1,6 @@
 import { NavLink } from "react-router-dom";
 
-function NavItem({
-                     to,
-                     icon: Icon,
-                     label,
-                     variant = "link",
-                     onClick
-                 }) {
+function NavItem({to, icon: Icon, label, variant = "link", onClick}) {
 
     const baseClasses =
         "flex items-center gap-3 w-full px-4 py-2.5 rounded-lg text-sm font-medium transition-colors";

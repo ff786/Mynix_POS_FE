@@ -1,26 +1,94 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import {
+    Routes,
+    Route,
+    Navigate,
+} from "react-router-dom";
 
 import MainLayout from "./layouts/MainLayout";
 
+import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Products from "./pages/Products";
 import Categories from "./pages/Categories";
 import POS from "./pages/POS";
 import Sales from "./pages/Sales";
+import Staff from "./pages/Staff";
 
-function App() {
+import ProtectedRoute from "./components/auth/ProtectedRoute";
+
+export default function App() {
+
     return (
+
         <Routes>
-            <Route element={<MainLayout />}>
-                <Route path="/" element={<Navigate to="/dashboard" replace />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/products" element={<Products />} />
-                <Route path="/categories" element={<Categories />} />
-                <Route path="/pos" element={<POS />} />
-                <Route path="/sales" element={<Sales />} />
+            <Route
+                path="/login"
+                element={<Login />}
+            />
+            <Route
+                element={
+                    <ProtectedRoute
+                        roles={["ADMIN", "CASHIER"]}
+                    >
+                        <MainLayout />
+                    </ProtectedRoute>
+                }
+            >
+                <Route
+                    path="/"
+                    element={
+                        <Navigate
+                            to="/dashboard"
+                            replace
+                        />
+                    }
+                />
+                <Route
+                    path="/dashboard"
+                    element={<Dashboard />}
+                />
+                <Route
+                    path="/pos"
+                    element={<POS />}
+                />
+                <Route
+                    path="/sales"
+                    element={<Sales />}
+                />
+                <Route
+                    path="/products"
+                    element={
+                        <ProtectedRoute roles={["ADMIN"]}>
+                            <Products />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/categories"
+                    element={
+                        <ProtectedRoute roles={["ADMIN"]}>
+                            <Categories />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/staff"
+                    element={
+                        <ProtectedRoute roles={["ADMIN"]}>
+                            <Staff />
+                        </ProtectedRoute>
+                    }
+                />
             </Route>
+            <Route
+                path="*"
+                element={
+                    <Navigate
+                        to="/dashboard"
+                        replace
+                    />
+                }
+            />
         </Routes>
     );
 }
-
-export default App;

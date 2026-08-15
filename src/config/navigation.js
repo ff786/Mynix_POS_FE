@@ -4,32 +4,49 @@ import {
     Package,
     FolderTree,
     Receipt,
+    Users,
 } from "lucide-react";
 
 export const navigation = [
+
     {
-        label: "Dashboard",
         path: "/dashboard",
         icon: LayoutDashboard,
+        label: "Dashboard",
+        roles: ["ADMIN", "CASHIER"],
     },
+
     {
-        label: "New Sale",
         path: "/pos",
         icon: ShoppingCart,
+        label: "New Sale",
+        roles: ["ADMIN", "CASHIER"],
     },
+
     {
-        label: "Products",
         path: "/products",
         icon: Package,
+        label: "Products",
+        roles: ["ADMIN"],
     },
+
     {
-        label: "Categories",
         path: "/categories",
         icon: FolderTree,
+        label: "Categories",
+        roles: ["ADMIN"],
     },
     {
-        label: "Sales",
+        path: "/staff",
+        icon: Users,
+        label: "Staff",
+        roles: ["ADMIN"],
+    },
+    {
         path: "/sales",
         icon: Receipt,
+        label: "Sales",
+        roles: ["ADMIN", "CASHIER"],
     },
+
 ];

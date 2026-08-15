@@ -1,4 +1,4 @@
-function ProductRow({ product, onEdit, onDelete }) {
+function ProductRow({ product, onEdit, onDelete, onPrintLabel, selected, onSelect }) {
 
     const isLowStock =
         Number(product.stockQuantity) <= Number(product.minimumStock);
@@ -9,6 +9,16 @@ function ProductRow({ product, onEdit, onDelete }) {
     return (
 
         <tr className="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+            {/*Selections*/}
+            <td className="px-4 py-3">
+                <input
+                    type="checkbox"
+                    checked={selected}
+                    onChange={() => onSelect(product)}
+                    className="w-4 h-4 accent-emerald-600"
+                />
+            </td>
+
             {/* Image */}
             <td className="px-4 py-4">
                 {product.imageUrl ? (
@@ -99,6 +109,12 @@ function ProductRow({ product, onEdit, onDelete }) {
                         className="px-3.5 py-2 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-medium text-sm transition-colors"
                     >
                         Edit
+                    </button>
+                    <button
+                        onClick={() => onPrintLabel(product)}
+                        className="px-3.5 py-2 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-medium text-sm transition-colors"
+                    >
+                        Print Label
                     </button>
                     <button
                         type="button"

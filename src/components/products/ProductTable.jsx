@@ -1,12 +1,28 @@
 import ProductRow from "./ProductRow";
 
-function ProductTable({ products, onEdit, onDelete }) {
+function ProductTable({ products, onEdit, onDelete, onPrintLabel, selectedProducts, onSelect, onSelectAll }) {
 
     return (
         <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
             <table className="w-full">
                 <thead className="bg-slate-100">
                 <tr>
+                    <th className="p-4 text-left">
+                        <input
+                            type="checkbox"
+                            checked={
+                                products.length > 0 &&
+                                products.every(product =>
+                                    selectedProducts.some(
+                                        selected =>
+                                            selected.id === product.id
+                                    )
+                                )
+                            }
+                            onChange={onSelectAll}
+                            className="w-4 h-4 accent-emerald-600"
+                        />
+                    </th>
                     <th className="text-left p-4">Image</th>
                     <th className="text-left p-4">Product</th>
                     <th className="text-left p-4">Barcode</th>
@@ -41,6 +57,12 @@ function ProductTable({ products, onEdit, onDelete }) {
                             product={product}
                             onEdit={onEdit}
                             onDelete={onDelete}
+                            onPrintLabel={onPrintLabel}
+                            selected={selectedProducts.some(
+                                selected =>
+                                    selected.id === product.id
+                            )}
+                            onSelect={onSelect}
                         />
                     ))
                 )}
