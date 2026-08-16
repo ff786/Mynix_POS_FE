@@ -1,4 +1,4 @@
-import { Banknote, CreditCard, ArrowRightLeft, ScrollText } from "lucide-react";
+import { Banknote, CreditCard, ArrowRightLeft, ScrollText, HandCoins } from "lucide-react";
 
 const paymentMethods = [
     {
@@ -15,6 +15,11 @@ const paymentMethods = [
         value: "BANK_DEPOSIT",
         label: "Bank Deposit",
         icon: ArrowRightLeft,
+    },
+    {
+        value: "CREDIT",
+        label: "Credit",
+        icon: HandCoins,
     },
     {
         value: "CHEQUE",
