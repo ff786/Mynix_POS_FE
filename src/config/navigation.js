@@ -48,5 +48,11 @@ export const navigation = [
         label: "Sales",
         roles: ["ADMIN", "CASHIER"],
     },
+    {
+        path: "/customers",
+        icon: Users,
+        label: "Customers",
+        roles: ["ADMIN", "CASHIER"],
+    },
 
 ];

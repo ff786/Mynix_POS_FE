@@ -22,3 +22,12 @@ export async function createCustomer(payload) {
     const response = await api.post("/customers", payload);
     return response.data;
 }
+
+export async function updateCustomer(id, payload) {
+    const response = await api.put(`/customers/${id}`, payload);
+    return response.data;
+}
+
+export async function deactivateCustomer(id) {
+    await api.delete(`/customers/${id}`);
+}

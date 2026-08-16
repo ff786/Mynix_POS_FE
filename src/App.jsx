@@ -13,6 +13,7 @@ import Categories from "./pages/Categories";
 import POS from "./pages/POS";
 import Sales from "./pages/Sales";
 import Staff from "./pages/Staff";
+import Customers from "./pages/Customers";
 
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 
@@ -76,6 +77,14 @@ export default function App() {
                     element={
                         <ProtectedRoute roles={["ADMIN"]}>
                             <Staff />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/customers"
+                    element={
+                        <ProtectedRoute>
+                            <Customers />
                         </ProtectedRoute>
                     }
                 />
