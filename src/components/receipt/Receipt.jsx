@@ -1,13 +1,18 @@
 import ReceiptItem from "./ReceiptItem";
 
-function Receipt({sale,}) {
-    if (!sale) {
-        return null;
-    }
+function Receipt({ sale }) {
+    if (!sale) return null;
+
+    const customerOutstanding = Number(
+        sale.customerOutstanding || 0
+    );
 
     return (
-        <div className="w-full bg-white text-slate-900 space-y-5 print:space-y-4">
-            {/* Header */}
+        <div
+            id="receipt-content"
+            className="w-full bg-white text-slate-900 space-y-5 print:space-y-3"
+        >
+            {/* Business header */}
             <div className="text-center">
                 <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
                     MYNIX POS
@@ -20,7 +25,7 @@ function Receipt({sale,}) {
 
             <div className="border-t border-dashed border-slate-300" />
 
-            {/* Transaction details */}
+            {/* Invoice information */}
             <div className="space-y-2.5 text-sm">
                 <ReceiptInfo
                     label="Invoice"
@@ -48,9 +53,45 @@ function Receipt({sale,}) {
 
                 <ReceiptInfo
                     label="Payment"
-                    value={sale.paymentMethod}
+                    value={formatPaymentMethod(sale.paymentMethod)}
                 />
             </div>
+
+            {/* Customer */}
+            {sale.customerId && (
+                <>
+                    <div className="border-t border-dashed border-slate-300" />
+
+                    <div className="space-y-2.5 text-sm">
+                        <div className="font-semibold text-slate-900 mb-2">
+                            Customer
+                        </div>
+
+                        <ReceiptInfo
+                            label="Name"
+                            value={sale.customerName}
+                        />
+
+                        <ReceiptInfo
+                            label="Contact"
+                            value={sale.customerContactNumber}
+                        />
+
+                        {sale.paymentMethod === "CREDIT" && (
+                            <ReceiptInfo
+                                label="Outstanding"
+                                value={`Rs. ${customerOutstanding.toLocaleString(
+                                    undefined,
+                                    {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2,
+                                    }
+                                )}`}
+                            />
+                        )}
+                    </div>
+                </>
+            )}
 
             <div className="border-t border-dashed border-slate-300" />
 
@@ -60,7 +101,10 @@ function Receipt({sale,}) {
                     <div>
                         {sale.items.map((item, index) => (
                             <ReceiptItem
-                                key={item.barcode ?? index}
+                                key={
+                                    item.barcode ??
+                                    `${item.productName}-${index}`
+                                }
                                 item={item}
                             />
                         ))}
@@ -88,7 +132,7 @@ function Receipt({sale,}) {
 
                 <ReceiptTotal
                     label="Delivery Fee"
-                    value={sale.deliveryFee || 0}
+                    value={sale.deliveryFee}
                 />
 
                 <div className="flex justify-between items-center pt-3 mt-2 border-t border-slate-200">
@@ -109,45 +153,68 @@ function Receipt({sale,}) {
                 </div>
             </div>
 
-            <div className="border-t border-dashed border-slate-300" />
+            {/* Credit notice */}
+            {sale.paymentMethod === "CREDIT" && (
+                <div className="rounded-xl bg-amber-50 border border-amber-200 p-3 text-center">
+                    <p className="text-xs font-semibold text-amber-800">
+                        CREDIT SALE
+                    </p>
+
+                    <p className="text-xs text-amber-700 mt-1">
+                        Outstanding balance: Rs.{" "}
+                        {customerOutstanding.toLocaleString(
+                            undefined,
+                            {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                            }
+                        )}
+                    </p>
+                </div>
+            )}
 
             {/* Footer */}
-            <div className="text-center text-xs sm:text-sm text-slate-500 space-y-1 pb-1">
+            <div className="border-t border-dashed border-slate-300 pt-4 text-center text-xs sm:text-sm text-slate-500 space-y-1">
                 <p>
-                    Thank you for shopping!
+                    Thank you for shopping with MYNIX POS!
                 </p>
 
                 <p>
-                    Visit Again ❤️
+                    Please keep this receipt for your records.
                 </p>
             </div>
         </div>
     );
 }
 
-/* ================================ */
-/* INFO ROW                         */
-/* ================================ */
-
-function ReceiptInfo({label, value, mono = false,}) {
+/* Info row */
+function ReceiptInfo({
+                         label,
+                         value,
+                         mono = false,
+                     }) {
     return (
         <div className="flex justify-between gap-4">
             <span className="text-slate-500">
                 {label}
             </span>
 
-            <span className={`text-right font-medium break-all ${mono ? "font-mono" : ""}`}>
+            <span
+                className={`text-right font-medium break-all ${
+                    mono ? "font-mono" : ""
+                }`}
+            >
                 {value || "—"}
             </span>
         </div>
     );
 }
 
-/* ================================ */
-/* TOTAL ROW                        */
-/* ================================ */
-
-function ReceiptTotal({label, value,}) {
+/* Total row */
+function ReceiptTotal({
+                          label,
+                          value,
+                      }) {
     return (
         <div className="flex justify-between gap-4 text-sm">
             <span className="text-slate-500">
@@ -166,6 +233,19 @@ function ReceiptTotal({label, value,}) {
             </span>
         </div>
     );
+}
+
+/* Payment label */
+function formatPaymentMethod(method) {
+    const labels = {
+        CASH: "Cash",
+        CARD: "Card",
+        BANK_DEPOSIT: "Bank Deposit",
+        CREDIT: "Credit",
+        CHEQUE: "Cheque",
+    };
+
+    return labels[method] || method || "—";
 }
 
 export default Receipt;

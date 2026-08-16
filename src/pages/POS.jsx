@@ -105,16 +105,24 @@ function POS() {
 
             const saleReceipt = {
                 ...response,
-                customerId: customer?.id ?? null,
-                customerName: customer?.name ?? null,
+                customerId:
+                    response.customerId ??
+                    customer?.id ??
+                    null,
+                customerName:
+                    response.customerName ??
+                    customer?.name ??
+                    null,
                 customerContactNumber:
-                    customer?.contactNumber ?? null,
+                    response.customerContactNumber ??
+                    customer?.contactNumber ??
+                    null,
                 customerOutstanding:
                     response.customerOutstanding ??
-                    customer?.outstanding ??
                     0,
                 items: [...cart],
-                createdAt: response.createdAt ??
+                createdAt:
+                    response.createdAt ??
                     new Date().toISOString(),
             };
 
