@@ -1,13 +1,8 @@
 import api from "./api";
 
-export async function getCustomers() {
-    const response = await api.get("/customers");
-    return response.data;
-}
-
-export async function searchCustomers(query) {
-    const response = await api.get("/customers/search", {
-        params: { query },
+export async function getCustomers(search = "") {
+    const response = await api.get("/customers", {
+        params: search ? { search } : {},
     });
 
     return response.data;
@@ -18,18 +13,26 @@ export async function getCustomer(id) {
     return response.data;
 }
 
-export async function createCustomer(payload) {
-    const response = await api.post("/customers", payload);
+export async function createCustomer(data) {
+    const response = await api.post("/customers", data);
     return response.data;
 }
 
-export async function updateCustomer(id, payload) {
-    const response = await api.put(`/customers/${id}`, payload);
+export async function updateCustomer(id, data) {
+    const response = await api.put(`/customers/${id}`, data);
     return response.data;
 }
 
 export async function deactivateCustomer(id) {
     await api.delete(`/customers/${id}`);
+}
+
+export async function searchCustomers(query) {
+    const response = await api.get("/customers/search", {
+        params: { query },
+    });
+
+    return response.data;
 }
 
 export async function getCustomerTransactions(id) {
@@ -40,10 +43,10 @@ export async function getCustomerTransactions(id) {
     return response.data;
 }
 
-export async function recordCustomerPayment(id, payload) {
+export async function recordCustomerPayment(id, data) {
     const response = await api.post(
         `/customers/${id}/payments`,
-        payload
+        data
     );
 
     return response.data;
@@ -52,6 +55,24 @@ export async function recordCustomerPayment(id, payload) {
 export async function getCustomerCheques(id) {
     const response = await api.get(
         `/cheques/customer/${id}`
+    );
+
+    return response.data;
+}
+
+export async function createCustomerCheque(id, data) {
+    const response = await api.post(
+        `/cheques/customer/${id}`,
+        data
+    );
+
+    return response.data;
+}
+
+export async function updateChequeStatus(id, data) {
+    const response = await api.patch(
+        `/cheques/${id}/status`,
+        data
     );
 
     return response.data;

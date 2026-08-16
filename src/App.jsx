@@ -16,6 +16,7 @@ import Staff from "./pages/Staff";
 import Customers from "./pages/Customers";
 import CustomerDetails from "./pages/customers/CustomerDetails";
 
+
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 
 export default function App() {

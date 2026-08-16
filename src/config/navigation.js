@@ -5,6 +5,7 @@ import {
     FolderTree,
     Receipt,
     Users,
+    Contact,
 } from "lucide-react";
 
 export const navigation = [
@@ -51,6 +52,12 @@ export const navigation = [
     {
         path: "/customers",
         icon: Users,
+        label: "Customers",
+        roles: ["ADMIN", "CASHIER"],
+    },
+    {
+        path: "/customers",
+        icon: Contact,
         label: "Customers",
         roles: ["ADMIN", "CASHIER"],
     },
