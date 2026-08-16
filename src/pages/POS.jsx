@@ -74,6 +74,7 @@ function POS() {
             toast.error("Cart is empty.");
             return;
         }
+
         if (!customer) {
             toast.error(
                 "Please select or create a customer before completing the sale."
@@ -86,7 +87,7 @@ function POS() {
             setProcessing(true);
 
             const payload = {
-                customerId: customer?.id,
+                customerId: Number(customer.id),
                 paymentMethod,
                 discount: Number(discount),
                 deliveryFee: Number(deliveryFee),
@@ -97,29 +98,16 @@ function POS() {
                 })),
             };
 
+            console.log("CHECKOUT PAYLOAD:", payload);
+
             const response = await completeSale(payload);
+
+            console.log("CHECKOUT RESPONSE:", response);
 
             const saleReceipt = {
                 ...response,
-                customerId:
-                    response.customerId ??
-                    customer?.id ??
-                    null,
-                customerName:
-                    response.customerName ??
-                    customer?.name ??
-                    null,
-                customerContactNumber:
-                    response.customerContactNumber ??
-                    customer?.contactNumber ??
-                    null,
-                customerOutstanding:
-                    response.customerOutstanding ??
-                    0,
                 items: [...cart],
-                createdAt:
-                    response.createdAt ??
-                    new Date().toISOString(),
+                createdAt: new Date().toISOString(),
             };
 
             setReceipt(saleReceipt);
@@ -134,6 +122,11 @@ function POS() {
             setDeliveryFee(0);
 
         } catch (error) {
+
+            console.error(
+                "CHECKOUT ERROR:",
+                error.response?.data || error
+            );
 
             toast.error(
                 error.response?.data?.message ??
@@ -168,6 +161,7 @@ function POS() {
 
                 <CustomerSelector
                     customer={customer}
+                    setCustomer={setCustomer}
                     onSelect={setCustomer}
                     onClear={() => setCustomer(null)}
                 />
