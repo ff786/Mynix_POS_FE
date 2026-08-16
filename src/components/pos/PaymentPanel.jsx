@@ -1,4 +1,4 @@
-import { Banknote, CreditCard, ArrowRightLeft } from "lucide-react";
+import { Banknote, CreditCard, ArrowRightLeft, ScrollText } from "lucide-react";
 
 const paymentMethods = [
     {
@@ -16,15 +16,20 @@ const paymentMethods = [
         label: "Bank Deposit",
         icon: ArrowRightLeft,
     },
+    {
+        value: "CHEQUE",
+        label: "Cheque",
+        icon: ScrollText,
+    },
 ];
 
 function PaymentPanel({
-                          cart,
-                          paymentMethod,
-                          setPaymentMethod,
-                          onCompleteSale,
-                          loading,
-                      }) {
+  cart,
+  paymentMethod,
+  setPaymentMethod,
+  onCompleteSale,
+  loading,
+}) {
 
     const disabled = cart.length === 0 || loading;
 
