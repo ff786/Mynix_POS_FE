@@ -100,6 +100,7 @@ function CustomerDetails() {
             {/* Customer ledger */}
             <CustomerLedger
                 customerId={customer.id}
+                customer={customer}
                 onCustomerUpdated={loadData}
             />
 
