@@ -98,11 +98,8 @@ function POS() {
                 })),
             };
 
-            console.log("CHECKOUT PAYLOAD:", payload);
 
             const response = await completeSale(payload);
-
-            console.log("CHECKOUT RESPONSE:", response);
 
             const saleReceipt = {
                 ...response,
