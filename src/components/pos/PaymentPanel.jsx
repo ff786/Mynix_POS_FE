@@ -12,8 +12,8 @@ const paymentMethods = [
         icon: CreditCard,
     },
     {
-        value: "ACCOUNT_TRANSFER",
-        label: "Account Transfer",
+        value: "BANK_DEPOSIT",
+        label: "Bank Deposit",
         icon: ArrowRightLeft,
     },
 ];
