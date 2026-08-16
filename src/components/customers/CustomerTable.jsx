@@ -4,12 +4,15 @@ import {
     Phone,
     Wallet,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 function CustomerTable({
     customers,
     onEdit,
     onDeactivate,
 }) {
+
+    const navigate = useNavigate();
 
     return (
         <div className="overflow-hidden rounded-2xl border bg-white shadow-sm">
@@ -161,13 +164,10 @@ function CustomerTable({
                                             {customer.active && (
                                                 <button
                                                     type="button"
-                                                    onClick={() =>
-                                                        onDeactivate(customer)
-                                                    }
-                                                    className="rounded-lg p-2 text-slate-400 hover:bg-red-50 hover:text-red-600"
-                                                    title="Deactivate"
+                                                    onClick={() => navigate(`/customers/${customer.id}`)}
+                                                    className="font-semibold text-slate-900 hover:text-emerald-600"
                                                 >
-                                                    <MoreHorizontal size={17} />
+                                                    {customer.name}
                                                 </button>
                                             )}
 

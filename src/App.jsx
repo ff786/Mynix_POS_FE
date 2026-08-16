@@ -14,6 +14,7 @@ import POS from "./pages/POS";
 import Sales from "./pages/Sales";
 import Staff from "./pages/Staff";
 import Customers from "./pages/Customers";
+import CustomerDetails from "./pages/customers/CustomerDetails";
 
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 
@@ -85,6 +86,14 @@ export default function App() {
                     element={
                         <ProtectedRoute>
                             <Customers />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/customers/:id"
+                    element={
+                        <ProtectedRoute>
+                            <CustomerDetails />
                         </ProtectedRoute>
                     }
                 />

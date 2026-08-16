@@ -31,3 +31,28 @@ export async function updateCustomer(id, payload) {
 export async function deactivateCustomer(id) {
     await api.delete(`/customers/${id}`);
 }
+
+export async function getCustomerTransactions(id) {
+    const response = await api.get(
+        `/customers/${id}/transactions`
+    );
+
+    return response.data;
+}
+
+export async function recordCustomerPayment(id, payload) {
+    const response = await api.post(
+        `/customers/${id}/payments`,
+        payload
+    );
+
+    return response.data;
+}
+
+export async function getCustomerCheques(id) {
+    const response = await api.get(
+        `/cheques/customer/${id}`
+    );
+
+    return response.data;
+}
