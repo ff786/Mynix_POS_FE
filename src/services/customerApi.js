@@ -14,12 +14,20 @@ export async function getCustomer(id) {
 }
 
 export async function createCustomer(data) {
-    const response = await api.post("/customers", data);
+    const response = await api.post(
+        "/customers",
+        data
+    );
+
     return response.data;
 }
 
 export async function updateCustomer(id, data) {
-    const response = await api.put(`/customers/${id}`, data);
+    const response = await api.put(
+        `/customers/${id}`,
+        data
+    );
+
     return response.data;
 }
 
@@ -28,16 +36,19 @@ export async function deactivateCustomer(id) {
 }
 
 export async function searchCustomers(query) {
-    const response = await api.get("/customers/search", {
-        params: { query },
-    });
+    const response = await api.get(
+        "/customers/search",
+        {
+            params: { query },
+        }
+    );
 
     return response.data;
 }
 
-export async function getCustomerTransactions(id) {
+export async function getCustomerTransactions(customerId) {
     const response = await api.get(
-        `/customers/${id}/transactions`
+        `/customers/${customerId}/transactions`
     );
 
     return response.data;
@@ -52,9 +63,9 @@ export async function recordCustomerPayment(id, data) {
     return response.data;
 }
 
-export async function getCustomerCheques(id) {
+export async function getCustomerCheques(customerId) {
     const response = await api.get(
-        `/cheques/customer/${id}`
+        `/cheques/customer/${customerId}`
     );
 
     return response.data;
@@ -69,10 +80,34 @@ export async function createCustomerCheque(id, data) {
     return response.data;
 }
 
-export async function updateChequeStatus(id, data) {
+export async function updateChequeStatus(
+    chequeId,
+    status,
+    options = {}
+) {
+
+    const payload = {
+        status,
+    };
+
+    if (status === "DEPOSITED") {
+        payload.depositDate =
+            options.depositDate ??
+            new Date().toISOString().split("T")[0];
+    }
+
+    if (status === "BOUNCED") {
+        payload.bounceReason =
+            options.bounceReason;
+    }
+
+    if (options.notes) {
+        payload.notes = options.notes;
+    }
+
     const response = await api.patch(
-        `/cheques/${id}/status`,
-        data
+        `/cheques/${chequeId}/status`,
+        payload
     );
 
     return response.data;

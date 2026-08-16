@@ -74,13 +74,9 @@ function POS() {
             toast.error("Cart is empty.");
             return;
         }
-
-        if (
-            ["CREDIT", "CHEQUE"].includes(paymentMethod) &&
-            !customer
-        ) {
+        if (!customer) {
             toast.error(
-                `Please select a customer for ${paymentMethod.toLowerCase()} payment.`
+                "Please select or create a customer before completing the sale."
             );
             return;
         }
@@ -90,7 +86,7 @@ function POS() {
             setProcessing(true);
 
             const payload = {
-                customerId: customer?.id ?? null,
+                customerId: customer?.id,
                 paymentMethod,
                 discount: Number(discount),
                 deliveryFee: Number(deliveryFee),

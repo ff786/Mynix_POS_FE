@@ -97,7 +97,8 @@ function CustomerDetails() {
             />
 
             <CustomerLedger
-                transactions={transactions}
+                customerId={customer.id}
+                onCustomerUpdated={loadData}
             />
 
             <CustomerModal
