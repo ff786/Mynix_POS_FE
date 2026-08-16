@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from "react";
-
 import {
     ArrowDownLeft,
     ArrowUpRight,
@@ -8,7 +7,6 @@ import {
     AlertCircle,
     Clock3,
 } from "lucide-react";
-
 import { toast } from "sonner";
 
 import {
@@ -26,11 +24,9 @@ function CustomerLedger({
     const [loading, setLoading] = useState(true);
     const [updatingCheque, setUpdatingCheque] = useState(null);
 
-    /* Load ledger */
+    // Load customer transactions and cheque records.
     async function loadLedger() {
-        if (!customerId) {
-            return;
-        }
+        if (!customerId) return;
 
         try {
             setLoading(true);
@@ -52,7 +48,10 @@ function CustomerLedger({
                     : []
             );
         } catch (error) {
-            console.error("Customer ledger error:", error);
+            console.error(
+                "Customer ledger error:",
+                error
+            );
 
             toast.error(
                 error.response?.data?.message ??
@@ -67,51 +66,50 @@ function CustomerLedger({
         loadLedger();
     }, [customerId]);
 
-    /*
-     * Exclude CHEQUE_PAYMENT because the cheque itself
-     * is already displayed in the ledger.
-     */
+    // Hide cheque-related transactions because the cheque is shown as a ledger entry.
     const normalTransactions = useMemo(() => {
-        return transactions.filter(
-            transaction =>
-                transaction.type !== "CHEQUE_PAYMENT"
-        );
+        return transactions.filter(transaction => {
+            if (transaction.type === "CHEQUE_PAYMENT") {
+                return false;
+            }
+
+            if (
+                transaction.type === "PAYMENT" &&
+                transaction.description
+                    ?.toLowerCase()
+                    .startsWith("cheque payment credited")
+            ) {
+                return false;
+            }
+
+            return true;
+        });
     }, [transactions]);
 
-    /* Combine transactions and cheques */
+    // Combine transactions and cheques into one chronological ledger.
     const ledger = useMemo(() => {
-        const normalRows = normalTransactions.map(
-            transaction => ({
-                ...transaction,
-                ledgerType: "TRANSACTION",
-                ledgerDate: transaction.createdAt,
-            })
-        );
+        const normalRows = normalTransactions.map(transaction => ({
+            ...transaction,
+            ledgerType: "TRANSACTION",
+            ledgerDate: transaction.createdAt,
+        }));
 
-        const chequeRows = cheques.map(
-            cheque => ({
-                ...cheque,
-                ledgerType: "CHEQUE",
-                ledgerDate:
-                    cheque.receivedDate ??
-                    cheque.chequeDate,
-            })
-        );
+        const chequeRows = cheques.map(cheque => ({
+            ...cheque,
+            ledgerType: "CHEQUE",
+            ledgerDate:
+                cheque.receivedDate ??
+                cheque.chequeDate,
+        }));
 
-        return [
-            ...normalRows,
-            ...chequeRows,
-        ].sort(
+        return [...normalRows, ...chequeRows].sort(
             (a, b) =>
                 new Date(b.ledgerDate) -
                 new Date(a.ledgerDate)
         );
-    }, [
-        normalTransactions,
-        cheques,
-    ]);
+    }, [normalTransactions, cheques]);
 
-    /* Update cheque status */
+    // Update cheque status.
     async function handleChequeStatus(
         cheque,
         newStatus
@@ -134,12 +132,10 @@ function CustomerLedger({
                     toast.error(
                         "Bounce reason is required."
                     );
-
                     return;
                 }
 
-                options.bounceReason =
-                    reason.trim();
+                options.bounceReason = reason.trim();
             }
 
             await updateChequeStatus(
@@ -179,7 +175,6 @@ function CustomerLedger({
         }
     }
 
-    /* Money format */
     function formatMoney(amount) {
         return Number(amount || 0).toLocaleString(
             undefined,
@@ -190,7 +185,6 @@ function CustomerLedger({
         );
     }
 
-    /* Date format */
     function formatDate(value) {
         if (!value) {
             return "-";
@@ -206,36 +200,28 @@ function CustomerLedger({
         );
     }
 
-    /* Cheque status style */
     function getStatusClass(status) {
         switch (status) {
             case "CREDITED":
                 return "bg-emerald-50 text-emerald-700";
-
             case "BOUNCED":
                 return "bg-red-50 text-red-700";
-
             case "DEPOSITED":
                 return "bg-blue-50 text-blue-700";
-
             case "RECEIVED":
             default:
                 return "bg-amber-50 text-amber-700";
         }
     }
 
-    /* Cheque status icon */
     function getStatusIcon(status) {
         switch (status) {
             case "CREDITED":
                 return <CheckCircle2 size={14} />;
-
             case "BOUNCED":
                 return <AlertCircle size={14} />;
-
             case "DEPOSITED":
                 return <Landmark size={14} />;
-
             case "RECEIVED":
             default:
                 return <Clock3 size={14} />;
@@ -284,7 +270,7 @@ function CustomerLedger({
             ) : (
                 <div className="divide-y">
                     {ledger.map(entry => {
-                        /* Cheque entry */
+                        // Cheque
                         if (entry.ledgerType === "CHEQUE") {
                             const cheque = entry;
                             const updating =
@@ -296,7 +282,6 @@ function CustomerLedger({
                                     className="px-5 py-5"
                                 >
                                     <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-                                        {/* Cheque information */}
                                         <div className="min-w-0">
                                             <div className="flex flex-wrap items-center gap-3">
                                                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-50">
@@ -373,8 +358,7 @@ function CustomerLedger({
                                                 </p>
                                             )}
 
-                                            {cheque.status ===
-                                                "BOUNCED" &&
+                                            {cheque.status === "BOUNCED" &&
                                                 cheque.bounceReason && (
                                                     <div className="mt-3 rounded-lg bg-red-50 px-3 py-2">
                                                         <p className="text-xs font-medium text-red-700">
@@ -395,82 +379,75 @@ function CustomerLedger({
 
                                         {/* Cheque actions */}
                                         <div className="flex shrink-0 flex-wrap gap-2">
-                                            {cheque.status ===
-                                                "RECEIVED" && (
+                                            {cheque.status === "RECEIVED" && (
+                                                <button
+                                                    type="button"
+                                                    disabled={updating}
+                                                    onClick={() =>
+                                                        handleChequeStatus(
+                                                            cheque,
+                                                            "DEPOSITED"
+                                                        )
+                                                    }
+                                                    className="rounded-lg border border-blue-200 bg-white px-3 py-2 text-xs font-semibold text-blue-700 transition hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-50"
+                                                >
+                                                    <span className="flex items-center gap-1.5">
+                                                        <Landmark size={14} />
+                                                        Mark Deposited
+                                                    </span>
+                                                </button>
+                                            )}
+
+                                            {cheque.status === "DEPOSITED" && (
+                                                <>
                                                     <button
                                                         type="button"
                                                         disabled={updating}
                                                         onClick={() =>
                                                             handleChequeStatus(
                                                                 cheque,
-                                                                "DEPOSITED"
+                                                                "CREDITED"
                                                             )
                                                         }
-                                                        className="rounded-lg border border-blue-200 bg-white px-3 py-2 text-xs font-semibold text-blue-700 transition hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-50"
+                                                        className="rounded-lg bg-emerald-600 px-3 py-2 text-xs font-semibold text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50"
                                                     >
-                                                    <span className="flex items-center gap-1.5">
-                                                        <Landmark
-                                                            size={14}
-                                                        />
-                                                        Mark Deposited
-                                                    </span>
-                                                    </button>
-                                                )}
-
-                                            {cheque.status ===
-                                                "DEPOSITED" && (
-                                                    <>
-                                                        <button
-                                                            type="button"
-                                                            disabled={updating}
-                                                            onClick={() =>
-                                                                handleChequeStatus(
-                                                                    cheque,
-                                                                    "CREDITED"
-                                                                )
-                                                            }
-                                                            className="rounded-lg bg-emerald-600 px-3 py-2 text-xs font-semibold text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50"
-                                                        >
                                                         <span className="flex items-center gap-1.5">
                                                             <CheckCircle2
                                                                 size={14}
                                                             />
                                                             Mark Credited
                                                         </span>
-                                                        </button>
+                                                    </button>
 
-                                                        <button
-                                                            type="button"
-                                                            disabled={updating}
-                                                            onClick={() =>
-                                                                handleChequeStatus(
-                                                                    cheque,
-                                                                    "BOUNCED"
-                                                                )
-                                                            }
-                                                            className="rounded-lg border border-red-200 bg-white px-3 py-2 text-xs font-semibold text-red-600 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
-                                                        >
+                                                    <button
+                                                        type="button"
+                                                        disabled={updating}
+                                                        onClick={() =>
+                                                            handleChequeStatus(
+                                                                cheque,
+                                                                "BOUNCED"
+                                                            )
+                                                        }
+                                                        className="rounded-lg border border-red-200 bg-white px-3 py-2 text-xs font-semibold text-red-600 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
+                                                    >
                                                         <span className="flex items-center gap-1.5">
                                                             <AlertCircle
                                                                 size={14}
                                                             />
                                                             Mark Bounced
                                                         </span>
-                                                        </button>
-                                                    </>
-                                                )}
+                                                    </button>
+                                                </>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
                             );
                         }
 
-                        /* Normal customer transaction */
+                        // Normal transaction
                         const isCreditSale =
                             entry.type === "CREDIT_SALE";
-
-                        const isPayment =
-                            entry.type === "PAYMENT";
 
                         return (
                             <div
@@ -520,11 +497,8 @@ function CustomerLedger({
                                                     : "font-semibold text-emerald-600"
                                             }
                                         >
-                                            {isCreditSale ? "+" : "-"}
-                                            {" "}Rs.{" "}
-                                            {formatMoney(
-                                                entry.amount
-                                            )}
+                                            {isCreditSale ? "+" : "-"} Rs.{" "}
+                                            {formatMoney(entry.amount)}
                                         </p>
 
                                         <p className="mt-1 text-xs text-slate-400">
