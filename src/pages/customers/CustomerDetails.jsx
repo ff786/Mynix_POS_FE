@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
+import { MessageSquare } from "lucide-react";
 
 import CustomerHeader from "@/components/customers/details/CustomerHeader";
 import CustomerFinancialSummary from "@/components/customers/details/CustomerFinancialSummary";
 import CustomerLedger from "@/components/customers/details/CustomerLedger";
 import CustomerModal from "@/components/customers/CustomerModal";
+import SmsModal from "@/components/notifications/SmsModal";
 
 import {
     getCustomer,
@@ -20,6 +22,7 @@ function CustomerDetails() {
     const [transactions, setTransactions] = useState([]);
     const [loading, setLoading] = useState(true);
     const [editOpen, setEditOpen] = useState(false);
+    const [smsOpen, setSmsOpen] = useState(false);
 
     // Load customer and transactions
     const loadData = async () => {
@@ -90,6 +93,15 @@ function CustomerDetails() {
                 onBack={() => navigate("/customers")}
                 onEdit={() => setEditOpen(true)}
             />
+            <button
+                type="button"
+                onClick={() => setSmsOpen(true)}
+                disabled={!customer.contactNumber}
+                className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700 disabled:bg-slate-200 disabled:text-slate-400"
+            >
+                <MessageSquare size={16} />
+                Send SMS
+            </button>
 
             {/* Financial summary */}
             <CustomerFinancialSummary
@@ -113,6 +125,13 @@ function CustomerDetails() {
                     setEditOpen(false);
                     await loadData();
                 }}
+            />
+            <SmsModal
+                open={smsOpen}
+                onClose={() => setSmsOpen(false)}
+                customer={customer}
+                title="Send Customer SMS"
+                message={`Dear ${customer.name}, thank you for choosing MYNIX.`}
             />
         </div>
     );
