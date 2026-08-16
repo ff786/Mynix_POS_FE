@@ -73,10 +73,13 @@ function CustomerTable({
                                             </div>
 
                                             <div>
-                                                <p className="font-semibold text-slate-900">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => navigate(`/customers/${customer.id}`)}
+                                                    className="font-semibold text-slate-900 hover:text-emerald-600"
+                                                >
                                                     {customer.name}
-                                                </p>
-
+                                                </button>
                                                 <p className="text-xs text-slate-400">
                                                     Customer #{customer.id}
                                                 </p>
@@ -164,10 +167,13 @@ function CustomerTable({
                                             {customer.active && (
                                                 <button
                                                     type="button"
-                                                    onClick={() => navigate(`/customers/${customer.id}`)}
-                                                    className="font-semibold text-slate-900 hover:text-emerald-600"
+                                                    onClick={() =>
+                                                        onDeactivate(customer)
+                                                    }
+                                                    className="rounded-lg p-2 text-slate-400 hover:bg-red-50 hover:text-red-600"
+                                                    title="Deactivate"
                                                 >
-                                                    {customer.name}
+                                                    <MoreHorizontal size={17} />
                                                 </button>
                                             )}
 
