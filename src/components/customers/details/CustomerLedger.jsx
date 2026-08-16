@@ -1,11 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
+
 import {
     ArrowDownLeft,
     ArrowUpRight,
     CheckCircle2,
     Landmark,
     AlertCircle,
+    Clock3,
 } from "lucide-react";
+
 import { toast } from "sonner";
 
 import {
@@ -15,28 +18,24 @@ import {
 } from "@/services/customerApi";
 
 function CustomerLedger({
-    customerId,
-    onCustomerUpdated,
-}) {
-
+                            customerId,
+                            onCustomerUpdated,
+                        }) {
     const [transactions, setTransactions] = useState([]);
     const [cheques, setCheques] = useState([]);
-
     const [loading, setLoading] = useState(true);
     const [updatingCheque, setUpdatingCheque] = useState(null);
 
+    /* Load ledger */
     async function loadLedger() {
-
-        if (!customerId) return;
+        if (!customerId) {
+            return;
+        }
 
         try {
-
             setLoading(true);
 
-            const [
-                transactionData,
-                chequeData,
-            ] = await Promise.all([
+            const [transactionData, chequeData] = await Promise.all([
                 getCustomerTransactions(customerId),
                 getCustomerCheques(customerId),
             ]);
@@ -52,18 +51,15 @@ function CustomerLedger({
                     ? chequeData
                     : []
             );
-
         } catch (error) {
+            console.error("Customer ledger error:", error);
 
             toast.error(
                 error.response?.data?.message ??
                 "Failed to load customer ledger."
             );
-
         } finally {
-
             setLoading(false);
-
         }
     }
 
@@ -72,40 +68,23 @@ function CustomerLedger({
     }, [customerId]);
 
     /*
-     * Once a cheque becomes CREDITED, the backend creates
-     * a CHEQUE_PAYMENT customer transaction.
-     *
-     * We don't display that transaction separately because
-     * the cheque itself is already displayed below.
-     *
-     * This prevents:
-     *
-     * CHEQUE #10001
-     * CHEQUE_PAYMENT
-     *
-     * appearing as two transactions.
+     * Exclude CHEQUE_PAYMENT because the cheque itself
+     * is already displayed in the ledger.
      */
     const normalTransactions = useMemo(() => {
-
         return transactions.filter(
             transaction =>
                 transaction.type !== "CHEQUE_PAYMENT"
         );
-
     }, [transactions]);
 
-    /*
-     * Merge normal customer transactions + cheque records
-     * into one chronological ledger.
-     */
+    /* Combine transactions and cheques */
     const ledger = useMemo(() => {
-
-        const normal = normalTransactions.map(
+        const normalRows = normalTransactions.map(
             transaction => ({
                 ...transaction,
                 ledgerType: "TRANSACTION",
-                ledgerDate:
-                transaction.createdAt,
+                ledgerDate: transaction.createdAt,
             })
         );
 
@@ -120,38 +99,42 @@ function CustomerLedger({
         );
 
         return [
-            ...normal,
+            ...normalRows,
             ...chequeRows,
         ].sort(
             (a, b) =>
                 new Date(b.ledgerDate) -
                 new Date(a.ledgerDate)
         );
-
     }, [
         normalTransactions,
         cheques,
     ]);
 
+    /* Update cheque status */
     async function handleChequeStatus(
         cheque,
         newStatus
     ) {
+        if (updatingCheque === cheque.id) {
+            return;
+        }
 
         try {
-
             setUpdatingCheque(cheque.id);
 
             const options = {};
 
             if (newStatus === "BOUNCED") {
-
-                const reason =
-                    window.prompt(
-                        "Why was this cheque bounced?"
-                    );
+                const reason = window.prompt(
+                    "Why was this cheque bounced?"
+                );
 
                 if (!reason?.trim()) {
+                    toast.error(
+                        "Bounce reason is required."
+                    );
+
                     return;
                 }
 
@@ -165,40 +148,39 @@ function CustomerLedger({
                 options
             );
 
+            const statusLabel =
+                newStatus.charAt(0).toUpperCase() +
+                newStatus.slice(1).toLowerCase();
+
             toast.success(
-                `Cheque marked as ${newStatus.toLowerCase()}.`
+                `Cheque marked as ${statusLabel}.`
             );
 
-            /*
-             * Reload BOTH.
-             *
-             * Important:
-             * CREDITED creates CHEQUE_PAYMENT
-             * on the backend, so the customer
-             * outstanding can change.
-             */
             await loadLedger();
 
-            if (onCustomerUpdated) {
+            if (
+                typeof onCustomerUpdated ===
+                "function"
+            ) {
                 await onCustomerUpdated();
             }
-
         } catch (error) {
+            console.error(
+                "Cheque status update error:",
+                error
+            );
 
             toast.error(
                 error.response?.data?.message ??
                 "Unable to update cheque status."
             );
-
         } finally {
-
             setUpdatingCheque(null);
-
         }
     }
 
+    /* Money format */
     function formatMoney(amount) {
-
         return Number(amount || 0).toLocaleString(
             undefined,
             {
@@ -208,9 +190,11 @@ function CustomerLedger({
         );
     }
 
+    /* Date format */
     function formatDate(value) {
-
-        if (!value) return "-";
+        if (!value) {
+            return "-";
+        }
 
         return new Date(value).toLocaleDateString(
             undefined,
@@ -222,10 +206,9 @@ function CustomerLedger({
         );
     }
 
+    /* Cheque status style */
     function getStatusClass(status) {
-
         switch (status) {
-
             case "CREDITED":
                 return "bg-emerald-50 text-emerald-700";
 
@@ -235,13 +218,31 @@ function CustomerLedger({
             case "DEPOSITED":
                 return "bg-blue-50 text-blue-700";
 
+            case "RECEIVED":
             default:
                 return "bg-amber-50 text-amber-700";
         }
     }
 
-    if (loading) {
+    /* Cheque status icon */
+    function getStatusIcon(status) {
+        switch (status) {
+            case "CREDITED":
+                return <CheckCircle2 size={14} />;
 
+            case "BOUNCED":
+                return <AlertCircle size={14} />;
+
+            case "DEPOSITED":
+                return <Landmark size={14} />;
+
+            case "RECEIVED":
+            default:
+                return <Clock3 size={14} />;
+        }
+    }
+
+    if (loading) {
         return (
             <div className="rounded-2xl border bg-white p-8 text-center text-sm text-slate-400">
                 Loading customer ledger...
@@ -251,15 +252,10 @@ function CustomerLedger({
 
     return (
         <div className="overflow-hidden rounded-2xl border bg-white shadow-sm">
-
-            {/* HEADER */}
-
+            {/* Header */}
             <div className="border-b px-5 py-5">
-
                 <div className="flex items-center justify-between">
-
                     <div>
-
                         <h2 className="text-lg font-semibold text-slate-900">
                             Customer Transactions
                         </h2>
@@ -267,7 +263,6 @@ function CustomerLedger({
                         <p className="mt-1 text-sm text-slate-500">
                             Sales, payments and cheque activity
                         </p>
-
                     </div>
 
                     <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100">
@@ -276,66 +271,42 @@ function CustomerLedger({
                             className="text-slate-600"
                         />
                     </div>
-
                 </div>
-
             </div>
 
-            {/* LEDGER */}
-
+            {/* Empty state */}
             {ledger.length === 0 ? (
-
                 <div className="px-5 py-12 text-center">
-
                     <p className="text-sm text-slate-400">
                         No transactions found.
                     </p>
-
                 </div>
-
             ) : (
-
                 <div className="divide-y">
-
-                    {ledger.map((entry) => {
-
-                        /* =========================
-                           CHEQUE
-                           ========================= */
-
-                        if (
-                            entry.ledgerType ===
-                            "CHEQUE"
-                        ) {
-
-                            const cheque =
-                                entry;
-
+                    {ledger.map(entry => {
+                        /* Cheque entry */
+                        if (entry.ledgerType === "CHEQUE") {
+                            const cheque = entry;
                             const updating =
-                                updatingCheque ===
-                                cheque.id;
+                                updatingCheque === cheque.id;
 
                             return (
                                 <div
                                     key={`cheque-${cheque.id}`}
                                     className="px-5 py-5"
                                 >
-
                                     <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-
+                                        {/* Cheque information */}
                                         <div className="min-w-0">
-
-                                            <div className="flex flex-wrap items-center gap-2">
-
-                                                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-amber-50">
+                                            <div className="flex flex-wrap items-center gap-3">
+                                                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-50">
                                                     <Landmark
-                                                        size={17}
+                                                        size={18}
                                                         className="text-amber-600"
                                                     />
                                                 </div>
 
                                                 <div>
-
                                                     <p className="font-semibold text-slate-900">
                                                         Cheque Payment
                                                     </p>
@@ -343,23 +314,22 @@ function CustomerLedger({
                                                     <p className="text-xs text-slate-500">
                                                         {cheque.chequeNumber}
                                                     </p>
-
                                                 </div>
 
                                                 <span
-                                                    className={`rounded-full px-2.5 py-1 text-xs font-semibold ${getStatusClass(
+                                                    className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ${getStatusClass(
                                                         cheque.status
                                                     )}`}
                                                 >
+                                                    {getStatusIcon(
+                                                        cheque.status
+                                                    )}
 
                                                     {cheque.status}
-
                                                 </span>
-
                                             </div>
 
                                             <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-xs text-slate-500">
-
                                                 <span>
                                                     Amount:{" "}
                                                     <strong className="text-slate-700">
@@ -392,36 +362,41 @@ function CustomerLedger({
                                                         )}
                                                     </span>
                                                 )}
-
                                             </div>
 
                                             {cheque.bankName && (
                                                 <p className="mt-2 text-xs text-slate-500">
                                                     Bank:{" "}
-                                                    {cheque.bankName}
+                                                    <span className="font-medium text-slate-700">
+                                                        {cheque.bankName}
+                                                    </span>
                                                 </p>
                                             )}
 
                                             {cheque.status ===
                                                 "BOUNCED" &&
                                                 cheque.bounceReason && (
-                                                    <p className="mt-2 text-xs font-medium text-red-600">
-                                                        Bounce reason:{" "}
-                                                        {
-                                                            cheque.bounceReason
-                                                        }
-                                                    </p>
+                                                    <div className="mt-3 rounded-lg bg-red-50 px-3 py-2">
+                                                        <p className="text-xs font-medium text-red-700">
+                                                            Bounce reason:{" "}
+                                                            {
+                                                                cheque.bounceReason
+                                                            }
+                                                        </p>
+                                                    </div>
                                                 )}
 
+                                            {cheque.notes && (
+                                                <p className="mt-2 text-xs text-slate-400">
+                                                    {cheque.notes}
+                                                </p>
+                                            )}
                                         </div>
 
-                                        {/* ACTIONS */}
-
+                                        {/* Cheque actions */}
                                         <div className="flex shrink-0 flex-wrap gap-2">
-
                                             {cheque.status ===
                                                 "RECEIVED" && (
-
                                                     <button
                                                         type="button"
                                                         disabled={updating}
@@ -431,7 +406,7 @@ function CustomerLedger({
                                                                 "DEPOSITED"
                                                             )
                                                         }
-                                                        className="rounded-lg border border-blue-200 px-3 py-2 text-xs font-semibold text-blue-700 hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-50"
+                                                        className="rounded-lg border border-blue-200 bg-white px-3 py-2 text-xs font-semibold text-blue-700 transition hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-50"
                                                     >
                                                     <span className="flex items-center gap-1.5">
                                                         <Landmark
@@ -454,7 +429,7 @@ function CustomerLedger({
                                                                     "CREDITED"
                                                                 )
                                                             }
-                                                            className="rounded-lg bg-emerald-600 px-3 py-2 text-xs font-semibold text-white hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50"
+                                                            className="rounded-lg bg-emerald-600 px-3 py-2 text-xs font-semibold text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50"
                                                         >
                                                         <span className="flex items-center gap-1.5">
                                                             <CheckCircle2
@@ -473,7 +448,7 @@ function CustomerLedger({
                                                                     "BOUNCED"
                                                                 )
                                                             }
-                                                            className="rounded-lg border border-red-200 px-3 py-2 text-xs font-semibold text-red-600 hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
+                                                            className="rounded-lg border border-red-200 bg-white px-3 py-2 text-xs font-semibold text-red-600 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
                                                         >
                                                         <span className="flex items-center gap-1.5">
                                                             <AlertCircle
@@ -484,74 +459,60 @@ function CustomerLedger({
                                                         </button>
                                                     </>
                                                 )}
-
                                         </div>
-
                                     </div>
-
                                 </div>
                             );
                         }
 
-                        /* =========================
-                           NORMAL TRANSACTION
-                           ========================= */
-
+                        /* Normal customer transaction */
                         const isCreditSale =
-                            entry.type ===
-                            "CREDIT_SALE";
+                            entry.type === "CREDIT_SALE";
+
+                        const isPayment =
+                            entry.type === "PAYMENT";
 
                         return (
                             <div
                                 key={`transaction-${entry.id}`}
                                 className="px-5 py-5"
                             >
-
                                 <div className="flex items-center justify-between gap-4">
-
-                                    <div className="flex items-center gap-3">
-
+                                    <div className="flex min-w-0 items-center gap-3">
                                         <div
                                             className={
                                                 isCreditSale
-                                                    ? "flex h-9 w-9 items-center justify-center rounded-lg bg-amber-50"
-                                                    : "flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-50"
+                                                    ? "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-50"
+                                                    : "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-50"
                                             }
                                         >
-
                                             {isCreditSale ? (
                                                 <ArrowUpRight
-                                                    size={17}
+                                                    size={18}
                                                     className="text-amber-600"
                                                 />
                                             ) : (
                                                 <ArrowDownLeft
-                                                    size={17}
+                                                    size={18}
                                                     className="text-emerald-600"
                                                 />
                                             )}
-
                                         </div>
 
-                                        <div>
-
+                                        <div className="min-w-0">
                                             <p className="font-semibold text-slate-900">
                                                 {isCreditSale
                                                     ? "Credit Sale"
                                                     : "Payment"}
                                             </p>
 
-                                            <p className="text-xs text-slate-500">
-                                                {entry.description ||
-                                                    "-"}
+                                            <p className="truncate text-xs text-slate-500">
+                                                {entry.description || "-"}
                                             </p>
-
                                         </div>
-
                                     </div>
 
-                                    <div className="text-right">
-
+                                    <div className="shrink-0 text-right">
                                         <p
                                             className={
                                                 isCreditSale
@@ -559,10 +520,8 @@ function CustomerLedger({
                                                     : "font-semibold text-emerald-600"
                                             }
                                         >
-                                            {isCreditSale
-                                                ? "+"
-                                                : "-"}
-                                            Rs.{" "}
+                                            {isCreditSale ? "+" : "-"}
+                                            {" "}Rs.{" "}
                                             {formatMoney(
                                                 entry.amount
                                             )}
@@ -573,18 +532,13 @@ function CustomerLedger({
                                                 entry.createdAt
                                             )}
                                         </p>
-
                                     </div>
-
                                 </div>
-
                             </div>
                         );
                     })}
-
                 </div>
             )}
-
         </div>
     );
 }
