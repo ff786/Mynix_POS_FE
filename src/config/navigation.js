@@ -51,12 +51,6 @@ export const navigation = [
     },
     {
         path: "/customers",
-        icon: Users,
-        label: "Customers",
-        roles: ["ADMIN", "CASHIER"],
-    },
-    {
-        path: "/customers",
         icon: Contact,
         label: "Customers",
         roles: ["ADMIN", "CASHIER"],
