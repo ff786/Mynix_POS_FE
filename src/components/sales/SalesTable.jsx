@@ -90,11 +90,10 @@ function SalesTable({
                 md:block
             ">
 
-                <div className="overflow-x-auto">
-
+                <div className=" max-h-[calc(100vh-330px)] overflow-auto" >
                     <table className="w-full">
 
-                        <thead>
+                        <thead className=" sticky top-0 z-10 ">
 
                         <tr className="
                                 border-b
@@ -214,10 +213,12 @@ function SalesTable({
             ========================== */}
 
             <div className="
+                max-h-[calc(100vh-300px)]
                 space-y-3
+                overflow-y-auto
+                pr-1
                 md:hidden
             ">
-
                 {sales.map(sale => (
 
                     <MobileSaleCard

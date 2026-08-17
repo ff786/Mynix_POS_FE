@@ -3,17 +3,24 @@ import {
     Search,
     RefreshCw,
     X,
+    CalendarDays,
 } from "lucide-react";
 
 function SalesToolbar({
                           search,
                           setSearch,
+                          selectedDate,
+                          setSelectedDate,
                           onRefresh,
                           refreshing,
                       }) {
 
-    function handleClear() {
+    function clearSearch() {
         setSearch("");
+    }
+
+    function clearDate() {
+        setSelectedDate("");
     }
 
     return (
@@ -107,8 +114,8 @@ function SalesToolbar({
                     <div className="
                         relative
                         w-full
-                        sm:min-w-[320px]
-                        lg:w-96
+                        sm:min-w-[280px]
+                        lg:w-80
                     ">
 
                         <Search
@@ -131,7 +138,7 @@ function SalesToolbar({
                                 )
                             }
                             placeholder="
-                                Search invoice, customer or payment...
+                                Search invoice or customer...
                             "
                             autoComplete="off"
                             className="
@@ -144,12 +151,8 @@ function SalesToolbar({
                                 pl-10
                                 pr-10
                                 text-sm
-                                text-slate-900
                                 outline-none
                                 transition
-
-                                placeholder:text-slate-400
-
                                 focus:border-emerald-500
                                 focus:bg-white
                                 focus:ring-4
@@ -160,7 +163,7 @@ function SalesToolbar({
                         {search && (
                             <button
                                 type="button"
-                                onClick={handleClear}
+                                onClick={clearSearch}
                                 className="
                                     absolute
                                     right-2
@@ -179,6 +182,82 @@ function SalesToolbar({
                                 aria-label="Clear search"
                             >
                                 <X size={15} />
+                            </button>
+                        )}
+
+                    </div>
+
+                    {/* Date */}
+
+                    <div className="
+                        relative
+                        w-full
+                        sm:w-auto
+                    ">
+
+                        <CalendarDays
+                            size={16}
+                            className="
+                                pointer-events-none
+                                absolute
+                                left-3.5
+                                top-1/2
+                                -translate-y-1/2
+                                text-slate-400
+                            "
+                        />
+
+                        <input
+                            type="date"
+                            value={selectedDate}
+                            onChange={(e) =>
+                                setSelectedDate(
+                                    e.target.value
+                                )
+                            }
+                            className="
+                                h-11
+                                w-full
+                                rounded-xl
+                                border
+                                border-slate-200
+                                bg-slate-50
+                                pl-10
+                                pr-3
+                                text-sm
+                                text-slate-700
+                                outline-none
+                                transition
+                                focus:border-emerald-500
+                                focus:bg-white
+                                focus:ring-4
+                                focus:ring-emerald-500/10
+                                sm:w-44
+                            "
+                        />
+
+                        {selectedDate && (
+                            <button
+                                type="button"
+                                onClick={clearDate}
+                                className="
+                                    absolute
+                                    right-1.5
+                                    top-1/2
+                                    flex
+                                    h-8
+                                    w-8
+                                    -translate-y-1/2
+                                    items-center
+                                    justify-center
+                                    rounded-lg
+                                    text-slate-400
+                                    hover:bg-slate-100
+                                    hover:text-slate-700
+                                "
+                                aria-label="Clear date"
+                            >
+                                <X size={14} />
                             </button>
                         )}
 
@@ -207,15 +286,11 @@ function SalesToolbar({
                             font-semibold
                             text-slate-600
                             transition
-
                             hover:bg-slate-50
                             hover:text-slate-900
-
                             active:scale-[0.98]
-
                             disabled:cursor-not-allowed
                             disabled:opacity-50
-
                             sm:w-auto
                         "
                     >
