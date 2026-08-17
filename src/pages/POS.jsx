@@ -147,7 +147,7 @@ function POS() {
                     customer={selectedCustomer}
                     onCustomerChange={setSelectedCustomer}
                     onSelect={setSelectedCustomer}
-                    onClear={() => setCustomer(null)}
+                    onClear={() => setSelectedCustomer(null)}
                 />
 
                 <CartTable
