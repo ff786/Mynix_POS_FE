@@ -7,20 +7,29 @@ import Topbar from "../components/layout/Topbar";
 function MainLayout() {
     const location = useLocation();
 
-    /* Sidebar states */
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+    const [isSidebarOpen, setIsSidebarOpen] =
+        useState(false);
 
-    /* Load desktop sidebar preference */
+    const [sidebarCollapsed, setSidebarCollapsed] =
+        useState(false);
+
+    /*
+     * Restore desktop sidebar preference
+     */
     useEffect(() => {
-        const saved = localStorage.getItem("mynix-sidebar-collapsed");
+        const saved =
+            localStorage.getItem(
+                "mynix-sidebar-collapsed"
+            );
 
         if (saved === "true") {
             setSidebarCollapsed(true);
         }
     }, []);
 
-    /* Save sidebar preference */
+    /*
+     * Save desktop sidebar preference
+     */
     useEffect(() => {
         localStorage.setItem(
             "mynix-sidebar-collapsed",
@@ -28,50 +37,125 @@ function MainLayout() {
         );
     }, [sidebarCollapsed]);
 
-    /* Route change */
+    /*
+     * Close mobile sidebar after navigation
+     */
     useEffect(() => {
         setIsSidebarOpen(false);
     }, [location.pathname]);
 
-    /* Escape key */
+    /*
+     * Escape closes mobile sidebar
+     */
     useEffect(() => {
+
         function handleKeyDown(event) {
+
             if (event.key === "Escape") {
                 setIsSidebarOpen(false);
             }
+
         }
 
-        window.addEventListener("keydown", handleKeyDown);
+        window.addEventListener(
+            "keydown",
+            handleKeyDown
+        );
 
         return () => {
-            window.removeEventListener("keydown", handleKeyDown);
+            window.removeEventListener(
+                "keydown",
+                handleKeyDown
+            );
         };
+
     }, []);
 
     return (
-        <div className="min-h-[100dvh] bg-slate-50 flex overflow-hidden">
-            {/* Sidebar */}
+        <div className="
+            flex
+            h-[100dvh]
+            min-h-0
+            w-full
+            overflow-hidden
+            bg-slate-50
+        ">
+
+            {/* =========================
+                SIDEBAR
+            ========================== */}
+
             <Sidebar
                 isOpen={isSidebarOpen}
-                onClose={() => setIsSidebarOpen(false)}
+                onClose={() =>
+                    setIsSidebarOpen(false)
+                }
                 collapsed={sidebarCollapsed}
-                onToggleCollapse={() => setSidebarCollapsed(previous => !previous)}
+                onToggleCollapse={() =>
+                    setSidebarCollapsed(
+                        previous => !previous
+                    )
+                }
             />
 
-            {/* Main area */}
-            <div className="flex flex-col flex-1 min-w-0 min-h-[100dvh]">
+            {/* =========================
+                APPLICATION AREA
+            ========================== */}
+
+            <div className="
+                flex
+                min-h-0
+                min-w-0
+                flex-1
+                flex-col
+                overflow-hidden
+            ">
+
+                {/* TOPBAR */}
+
                 <Topbar
-                    onMenuClick={() => setIsSidebarOpen(true)}
-                    sidebarCollapsed={sidebarCollapsed}
+                    onMenuClick={() =>
+                        setIsSidebarOpen(true)
+                    }
+                    sidebarCollapsed={
+                        sidebarCollapsed
+                    }
                 />
 
-                {/* Content */}
-                <main className="flex-1 min-w-0 overflow-y-auto overflow-x-hidden p-3 sm:p-4 md:p-5 lg:p-6 xl:p-8">
-                    <div className="w-full max-w-[1800px] mx-auto">
+                {/* =========================
+                    PAGE CONTENT
+                ========================== */}
+
+                <main className="
+                    min-h-0
+                    min-w-0
+                    flex-1
+                    overflow-y-auto
+                    overflow-x-hidden
+                    overscroll-contain
+                    bg-slate-50
+                    p-3
+                    sm:p-4
+                    md:p-5
+                    lg:p-6
+                    xl:p-8
+                ">
+
+                    <div className="
+                        mx-auto
+                        min-h-full
+                        w-full
+                        max-w-[1800px]
+                    ">
+
                         <Outlet />
+
                     </div>
+
                 </main>
+
             </div>
+
         </div>
     );
 }
