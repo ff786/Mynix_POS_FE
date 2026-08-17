@@ -146,7 +146,7 @@ function POS() {
                 <CustomerSelector
                     customer={selectedCustomer}
                     onCustomerChange={setSelectedCustomer}
-                    onSelect={setCustomer}
+                    onSelect={setSelectedCustomer}
                     onClear={() => setCustomer(null)}
                 />
 
