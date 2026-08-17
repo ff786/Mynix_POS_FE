@@ -1,10 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { ReceiptText, X } from "lucide-react";
 import { toast } from "sonner";
 
 import SalesToolbar from "../components/sales/SalesToolbar";
 import SalesTable from "../components/sales/SalesTable";
-
 import ReceiptModal from "@/components/receipt/ReceiptModal";
 
 import {
@@ -15,48 +14,53 @@ import {
 function Sales() {
     const [sales, setSales] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [refreshing, setRefreshing] = useState(false);
     const [search, setSearch] = useState("");
     const [selectedSale, setSelectedSale] = useState(null);
     const [receiptOpen, setReceiptOpen] = useState(false);
 
-    useEffect(() => {
-        loadSales();
-    }, []);
-
-    async function loadSales() {
+    const loadSales = useCallback(async (showRefresh = false) => {
         try {
-            setLoading(true);
+            if (showRefresh) {
+                setRefreshing(true);
+            } else {
+                setLoading(true);
+            }
 
             const data = await getSales();
 
-            setSales(
-                Array.isArray(data)
-                    ? data
-                    : []
-            );
+            setSales(Array.isArray(data) ? data : []);
         } catch (error) {
             console.error("Failed to load sales:", error);
 
             toast.error(
+                error.response?.data?.message ||
                 "Failed to load sales history."
             );
         } finally {
             setLoading(false);
+            setRefreshing(false);
         }
-    }
+    }, []);
+
+    useEffect(() => {
+        loadSales();
+    }, [loadSales]);
 
     async function handleViewSale(sale) {
         try {
-            const data = await getSale(
-                sale.invoiceNumber
-            );
+            const data = await getSale(sale.invoiceNumber);
 
             setSelectedSale(data);
             setReceiptOpen(true);
         } catch (error) {
-            console.error(error);
+            console.error(
+                "Failed to load sale details:",
+                error
+            );
 
             toast.error(
+                error.response?.data?.message ||
                 "Failed to load sale details."
             );
         }
@@ -76,9 +80,17 @@ function Sales() {
             const payment =
                 sale.paymentMethod?.toLowerCase() || "";
 
+            const customer =
+                sale.customerName?.toLowerCase() || "";
+
+            const customerId =
+                String(sale.customerId ?? "").toLowerCase();
+
             return (
                 invoice.includes(query) ||
-                payment.includes(query)
+                payment.includes(query) ||
+                customer.includes(query) ||
+                customerId.includes(query)
             );
         });
     }, [sales, search]);
@@ -89,47 +101,57 @@ function Sales() {
 
     if (loading) {
         return (
-            <div className="w-full max-w-[1600px] mx-auto space-y-6">
-                <div className="h-32 rounded-2xl border border-slate-200 bg-white animate-pulse" />
+            <div className="mx-auto w-full max-w-[1600px] space-y-5">
+                <div className="h-32 animate-pulse rounded-2xl border border-slate-200 bg-white" />
 
-                <div className="h-[420px] rounded-2xl border border-slate-200 bg-white animate-pulse" />
+                <div className="h-[420px] animate-pulse rounded-2xl border border-slate-200 bg-white" />
             </div>
         );
     }
 
     return (
-        <div className="w-full max-w-[1600px] mx-auto space-y-5">
+        <div className="mx-auto w-full max-w-[1600px] space-y-5">
             <SalesToolbar
                 search={search}
                 setSearch={setSearch}
+                onRefresh={() => loadSales(true)}
+                refreshing={refreshing}
             />
 
-            {/* Results summary */}
-            <div className="flex items-center justify-between gap-3 px-1">
-                <div className="flex items-center gap-2 text-sm text-slate-500">
-                    <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center">
+            {/* Results header */}
+
+            <div className="flex flex-col gap-3 px-1 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex items-center gap-2.5">
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-50">
                         <ReceiptText
                             size={16}
                             className="text-emerald-600"
                         />
                     </div>
 
-                    <span>
-                        <span className="font-semibold text-slate-700">
-                            {filteredSales.length}
-                        </span>{" "}
+                    <div>
+                        <p className="text-sm text-slate-500">
+                            <span className="font-semibold text-slate-700">
+                                {filteredSales.length}
+                            </span>{" "}
+                            {filteredSales.length === 1
+                                ? "transaction"
+                                : "transactions"}
+                        </p>
 
-                        {filteredSales.length === 1
-                            ? "transaction"
-                            : "transactions"}
-                    </span>
+                        {search && (
+                            <p className="text-xs text-slate-400">
+                                Matching "{search}"
+                            </p>
+                        )}
+                    </div>
                 </div>
 
                 {search && (
                     <button
                         type="button"
                         onClick={clearSearch}
-                        className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-medium text-slate-500 hover:text-slate-900 transition"
+                        className="inline-flex min-h-10 w-fit items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-500 transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-800"
                     >
                         Clear search
                         <X size={14} />
