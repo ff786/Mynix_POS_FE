@@ -13,7 +13,6 @@ import { toast } from "sonner";
 function POS() {
 
     const [cart, setCart] = useState([]);
-    const [customer, setCustomer] = useState(null);
 
     const [paymentMethod, setPaymentMethod] = useState("CASH");
     const [processing, setProcessing] = useState(false);
@@ -23,6 +22,8 @@ function POS() {
     const [receipt, setReceipt] = useState(null);
     const [receiptOpen, setReceiptOpen] = useState(false);
     const [selectedCustomer, setSelectedCustomer] = useState(null);
+
+    const [customerError, setCustomerError] = useState(false);
 
     const increaseQuantity = (barcode) => {
         setCart(previous =>
@@ -76,12 +77,17 @@ function POS() {
             return;
         }
 
-        if (!customer) {
+        if (!selectedCustomer) {
+            setCustomerError(true);
+
             toast.error(
                 "Please select or create a customer before completing the sale."
             );
+
             return;
         }
+
+        setCustomerError(false);
         try {
             setProcessing(true);
             const payload = {
@@ -112,6 +118,7 @@ function POS() {
 
             setCart([]);
             setSelectedCustomer(null);
+            setCustomerError(false);
             setPaymentMethod("CASH");
             setDiscount(0);
             setDeliveryFee(0);
@@ -146,8 +153,15 @@ function POS() {
                 <CustomerSelector
                     customer={selectedCustomer}
                     onCustomerChange={setSelectedCustomer}
-                    onSelect={setSelectedCustomer}
-                    onClear={() => setSelectedCustomer(null)}
+                    onSelect={(customer) => {
+                        setSelectedCustomer(customer);
+                        setCustomerError(false);
+                    }}
+                    onClear={() => {
+                        setSelectedCustomer(null);
+                        setCustomerError(false);
+                    }}
+                    showError={customerError}
                 />
 
                 <CartTable
