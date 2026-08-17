@@ -1,15 +1,15 @@
 import { useState } from "react";
 
-import ScanPanel from "../components/pos/ScanPanel";
-import CartTable from "../components/pos/CartTable";
-import CartSummary from "../components/pos/CartSummary";
-import PaymentPanel from "../components/pos/PaymentPanel";
-import CustomerSelector from "../components/pos/CustomerSelector";
+import ScanPanel from "@/components/pos/ScanPanel";
+import CartTable from "@/components/pos/CartTable";
+import CartSummary from "@/components/pos/CartSummary";
+import PaymentPanel from "@/components/pos/PaymentPanel";
+import CustomerSelector from "@/components/pos/CustomerSelector";
 
 import ReceiptModal from "@/components/receipt/ReceiptModal";
+
 import { completeSale } from "@/services/posApi";
 import { toast } from "sonner";
-
 function POS() {
 
     const [cart, setCart] = useState([]);
@@ -22,6 +22,7 @@ function POS() {
 
     const [receipt, setReceipt] = useState(null);
     const [receiptOpen, setReceiptOpen] = useState(false);
+    const [selectedCustomer, setSelectedCustomer] = useState(null);
 
     const increaseQuantity = (barcode) => {
         setCart(previous =>
@@ -81,13 +82,10 @@ function POS() {
             );
             return;
         }
-
         try {
-
             setProcessing(true);
-
             const payload = {
-                customerId: Number(customer.id),
+                customerId: selectedCustomer?.id ?? null,
                 paymentMethod,
                 discount: Number(discount),
                 deliveryFee: Number(deliveryFee),
@@ -113,7 +111,7 @@ function POS() {
             toast.success("Sale Completed");
 
             setCart([]);
-            setCustomer(null);
+            setSelectedCustomer(null);
             setPaymentMethod("CASH");
             setDiscount(0);
             setDeliveryFee(0);
@@ -145,6 +143,13 @@ function POS() {
                     setCart={setCart}
                 />
 
+                <CustomerSelector
+                    customer={selectedCustomer}
+                    onCustomerChange={setSelectedCustomer}
+                    onSelect={setCustomer}
+                    onClear={() => setCustomer(null)}
+                />
+
                 <CartTable
                     cart={cart}
                     onIncrease={increaseQuantity}
@@ -155,13 +160,6 @@ function POS() {
             </div>
 
             <div className="flex flex-col gap-4 md:gap-6">
-
-                <CustomerSelector
-                    customer={customer}
-                    setCustomer={setCustomer}
-                    onSelect={setCustomer}
-                    onClear={() => setCustomer(null)}
-                />
 
                 <CartSummary
                     cart={cart}

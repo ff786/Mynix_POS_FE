@@ -1,4 +1,11 @@
-import { Banknote, CreditCard, ArrowRightLeft, ScrollText, HandCoins } from "lucide-react";
+import {
+    Banknote,
+    CreditCard,
+    ArrowRightLeft,
+    ScrollText,
+    HandCoins,
+    Check,
+} from "lucide-react";
 
 const paymentMethods = [
     {
@@ -29,34 +36,31 @@ const paymentMethods = [
 ];
 
 function PaymentPanel({
-  cart,
-  paymentMethod,
-  setPaymentMethod,
-  onCompleteSale,
-  loading,
-}) {
-
+                          cart,
+                          paymentMethod,
+                          setPaymentMethod,
+                          onCompleteSale,
+                          loading,
+                      }) {
     const disabled = cart.length === 0 || loading;
 
     return (
-        <div className="bg-white rounded-xl shadow-sm border p-4 sm:p-6">
-
-            <div className="mb-6">
-                <h3 className="font-semibold text-lg">
+        <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+            {/* Header */}
+            <div className="mb-4">
+                <h3 className="text-base font-bold text-slate-900 sm:text-lg">
                     Payment
                 </h3>
 
-                <p className="text-sm text-slate-500 mt-1">
-                    Select payment method
+                <p className="mt-1 text-xs text-slate-500 sm:text-sm">
+                    Select how the customer is paying
                 </p>
             </div>
 
-            <div className="space-y-3">
-
+            {/* Payment Methods */}
+            <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-1 sm:gap-3">
                 {paymentMethods.map((method) => {
-
                     const Icon = method.icon;
-
                     const selected =
                         paymentMethod === method.value;
 
@@ -69,66 +73,89 @@ function PaymentPanel({
                                 setPaymentMethod(method.value)
                             }
                             className={`
-                                w-full flex items-center gap-3
-                                px-4 py-3 rounded-lg border
-                                transition
+                                relative flex min-h-[72px] items-center gap-3
+                                rounded-xl border px-3 text-left transition-all
+                                active:scale-[0.98] sm:min-h-[58px] sm:px-4
                                 ${
                                 selected
-                                    ? "border-emerald-500 bg-emerald-50 text-emerald-700"
-                                    : "border-slate-200 hover:bg-slate-50 text-slate-700"
+                                    ? "border-emerald-500 bg-emerald-50 text-emerald-700 shadow-sm"
+                                    : "border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50"
                             }
                             `}
                         >
+                            <div
+                                className={`
+                                    flex h-9 w-9 shrink-0 items-center
+                                    justify-center rounded-lg
+                                    ${
+                                    selected
+                                        ? "bg-emerald-100"
+                                        : "bg-slate-100"
+                                }
+                                `}
+                            >
+                                <Icon
+                                    size={18}
+                                    className={
+                                        selected
+                                            ? "text-emerald-600"
+                                            : "text-slate-500"
+                                    }
+                                />
+                            </div>
 
-                            <Icon size={20} className="shrink-0" />
-
-                            <span className="font-medium text-left">
+                            <span className="text-sm font-semibold">
                                 {method.label}
                             </span>
 
                             {selected && (
-                                <span className="ml-auto text-emerald-600">
-                                    ✓
-                                </span>
+                                <div className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-emerald-600 text-white">
+                                    <Check size={12} />
+                                </div>
                             )}
-
                         </button>
                     );
-
                 })}
-
             </div>
 
+            {/* Selected Payment */}
+            <div className="mt-4 rounded-xl bg-slate-50 px-3 py-2.5 text-xs text-slate-500">
+                Payment:
+
+                <span className="ml-1 font-semibold text-slate-800">
+                    {
+                        paymentMethods.find(
+                            (method) =>
+                                method.value === paymentMethod
+                        )?.label
+                    }
+                </span>
+            </div>
+
+            {/* Complete Sale */}
             <button
                 type="button"
                 onClick={onCompleteSale}
                 disabled={disabled}
                 className="
-                    w-full mt-8
-                    bg-emerald-600
-                    hover:bg-emerald-700
+                    mt-4 flex min-h-12 w-full items-center justify-center
+                    rounded-xl bg-emerald-600 px-4 text-sm font-bold
+                    text-white shadow-sm transition hover:bg-emerald-700
+                    active:scale-[0.99] disabled:cursor-not-allowed
                     disabled:bg-slate-300
-                    disabled:cursor-not-allowed
-                    text-white
-                    rounded-lg
-                    py-4
-                    font-semibold
-                    transition
                 "
             >
                 {loading
                     ? "PROCESSING..."
-                    : "COMPLETE SALE"
-                }
+                    : "COMPLETE SALE"}
             </button>
 
             {cart.length === 0 && (
-                <p className="text-xs text-center text-slate-400 mt-3">
-                    Add products to the cart to complete the sale.
+                <p className="mt-3 text-center text-xs text-slate-400">
+                    Add products to the cart first.
                 </p>
             )}
-
-        </div>
+        </section>
     );
 }
 

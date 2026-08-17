@@ -15,6 +15,7 @@ import Sales from "./pages/Sales";
 import Staff from "./pages/Staff";
 import Customers from "./pages/Customers";
 import CustomerDetails from "./pages/customers/CustomerDetails";
+import PublicInvoice from "@/pages/invoice/PublicInvoice";
 
 
 import ProtectedRoute from "./components/auth/ProtectedRoute";
@@ -27,6 +28,10 @@ export default function App() {
             <Route
                 path="/login"
                 element={<Login />}
+            />
+            <Route
+                path="/invoice/:token"
+                element={<PublicInvoice />}
             />
             <Route
                 element={

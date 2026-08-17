@@ -3,9 +3,10 @@ import ReceiptItem from "./ReceiptItem";
 function Receipt({ sale }) {
     if (!sale) return null;
 
-    const customerOutstanding = Number(
-        sale.customerOutstanding || 0
-    );
+    const customerOutstanding = Number(sale.customerOutstanding || 0);
+    const isCredit = sale.paymentMethod === "CREDIT";
+    const isCheque = sale.paymentMethod === "CHEQUE";
+    const hasOutstanding = isCredit || isCheque;
 
     return (
         <div
@@ -17,7 +18,6 @@ function Receipt({ sale }) {
                 <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
                     MYNIX POS
                 </h2>
-
                 <p className="text-xs sm:text-sm text-slate-500 mt-1">
                     Business Management System
                 </p>
@@ -77,16 +77,10 @@ function Receipt({ sale }) {
                             value={sale.customerContactNumber}
                         />
 
-                        {sale.paymentMethod === "CREDIT" && (
+                        {hasOutstanding && (
                             <ReceiptInfo
                                 label="Outstanding"
-                                value={`Rs. ${customerOutstanding.toLocaleString(
-                                    undefined,
-                                    {
-                                        minimumFractionDigits: 2,
-                                        maximumFractionDigits: 2,
-                                    }
-                                )}`}
+                                value={`Rs. ${formatAmount(customerOutstanding)}`}
                             />
                         )}
                     </div>
@@ -141,20 +135,13 @@ function Receipt({ sale }) {
                     </span>
 
                     <span className="text-xl sm:text-2xl font-bold text-emerald-600">
-                        Rs.{" "}
-                        {Number(sale.grandTotal || 0).toLocaleString(
-                            undefined,
-                            {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2,
-                            }
-                        )}
+                        Rs. {formatAmount(sale.grandTotal)}
                     </span>
                 </div>
             </div>
 
             {/* Credit notice */}
-            {sale.paymentMethod === "CREDIT" && (
+            {isCredit && (
                 <div className="rounded-xl bg-amber-50 border border-amber-200 p-3 text-center">
                     <p className="text-xs font-semibold text-amber-800">
                         CREDIT SALE
@@ -162,13 +149,21 @@ function Receipt({ sale }) {
 
                     <p className="text-xs text-amber-700 mt-1">
                         Outstanding balance: Rs.{" "}
-                        {customerOutstanding.toLocaleString(
-                            undefined,
-                            {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2,
-                            }
-                        )}
+                        {formatAmount(customerOutstanding)}
+                    </p>
+                </div>
+            )}
+
+            {/* Cheque notice */}
+            {isCheque && (
+                <div className="rounded-xl bg-blue-50 border border-blue-200 p-3 text-center">
+                    <p className="text-xs font-semibold text-blue-800">
+                        CHEQUE PAYMENT
+                    </p>
+
+                    <p className="text-xs text-blue-700 mt-1">
+                        Cheque received. Outstanding balance: Rs.{" "}
+                        {formatAmount(customerOutstanding)}
                     </p>
                 </div>
             )}
@@ -222,14 +217,7 @@ function ReceiptTotal({
             </span>
 
             <span className="font-medium">
-                Rs.{" "}
-                {Number(value || 0).toLocaleString(
-                    undefined,
-                    {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                    }
-                )}
+                Rs. {formatAmount(value)}
             </span>
         </div>
     );
@@ -246,6 +234,17 @@ function formatPaymentMethod(method) {
     };
 
     return labels[method] || method || "—";
+}
+
+/* Money format */
+function formatAmount(value) {
+    return Number(value || 0).toLocaleString(
+        undefined,
+        {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+        }
+    );
 }
 
 export default Receipt;

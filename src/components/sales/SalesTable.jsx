@@ -154,30 +154,25 @@ function DesktopSaleRow({
     );
 }
 
-/* ================================= */
-/* MOBILE CARD                       */
-/* ================================= */
-
-function MobileSaleCard({
-                            sale,
-                            onView,
-                        }) {
+function MobileSaleCard({ sale, onView }) {
     return (
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4">
-            {/* Header */}
+        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
             <div className="flex items-start justify-between gap-3">
-                <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center shrink-0">
-                        <ReceiptText size={17} className="text-emerald-600" />
+                <div className="flex min-w-0 items-center gap-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-50">
+                        <ReceiptText
+                            size={17}
+                            className="text-emerald-600"
+                        />
                     </div>
 
                     <div className="min-w-0">
-                        <p className="font-semibold text-slate-900 font-mono text-sm truncate">
+                        <p className="truncate font-semibold font-mono text-sm text-slate-900">
                             {sale.invoiceNumber}
                         </p>
 
-                        <p className="text-xs text-slate-400 mt-1">
-                            {formatDate(sale.createdAt)}
+                        <p className="mt-1 truncate text-xs text-slate-400">
+                            {sale.customerName || "Walk-in Customer"}
                         </p>
                     </div>
                 </div>
@@ -185,28 +180,40 @@ function MobileSaleCard({
                 <PaymentBadge method={sale.paymentMethod} />
             </div>
 
-            {/* Details */}
-            <div className="mt-4 pt-3 border-t border-slate-100 flex items-end justify-between gap-3">
+            <div className="mt-4 grid grid-cols-2 gap-3 border-t border-slate-100 pt-4">
                 <div>
+                    <p className="text-xs text-slate-400">
+                        Date
+                    </p>
+
+                    <p className="mt-1 text-sm font-medium text-slate-700">
+                        {formatDate(sale.createdAt)}
+                    </p>
+                </div>
+
+                <div className="text-right">
                     <p className="text-xs text-slate-400">
                         Total
                     </p>
 
-                    <p className="text-lg font-bold text-slate-900 mt-0.5">
+                    <p className="mt-1 text-lg font-bold text-slate-900">
                         Rs.{" "}
-                        {Number(sale.grandTotal).toLocaleString()}
+                        {Number(sale.grandTotal || 0).toLocaleString()}
                     </p>
                 </div>
-
-                <ViewButton onClick={() => onView(sale)} />
             </div>
+
+            <button
+                type="button"
+                onClick={() => onView(sale)}
+                className="mt-4 flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-emerald-50 text-sm font-semibold text-emerald-700 hover:bg-emerald-100 active:bg-emerald-200"
+            >
+                <Eye size={16} />
+                View Invoice
+            </button>
         </div>
     );
 }
-
-/* ================================= */
-/* PAYMENT BADGE                     */
-/* ================================= */
 
 function PaymentBadge({
                           method,
