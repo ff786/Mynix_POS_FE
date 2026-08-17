@@ -1,14 +1,16 @@
-function CartSummary({
-                         cart,
-                         discount,
-                         setDiscount,
-                         deliveryFee,
-                         setDeliveryFee,
-                     }) {
+import {
+    ReceiptText,
+    Tag,
+    Truck,
+} from "lucide-react";
+
+function CartSummary({cart, discount, setDiscount, deliveryFee, setDeliveryFee,}) {
 
     const subtotal = cart.reduce(
         (sum, item) =>
-            sum + item.quantity * Number(item.sellingPrice),
+            sum +
+            Number(item.quantity || 0) *
+            Number(item.sellingPrice || 0),
         0
     );
 
@@ -23,7 +25,19 @@ function CartSummary({
     );
 
     const total =
-        subtotal - safeDiscount + deliveryAmount;
+        subtotal -
+        safeDiscount +
+        deliveryAmount;
+
+    function formatMoney(value) {
+        return Number(value || 0).toLocaleString(
+            undefined,
+            {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            }
+        );
+    }
 
     function handleDiscountChange(e) {
         const value = Number(e.target.value) || 0;
@@ -39,117 +53,171 @@ function CartSummary({
     function handleDeliveryChange(e) {
         const value = Number(e.target.value) || 0;
 
-        setDeliveryFee(
-            Math.max(value, 0)
-        );
+        setDeliveryFee(Math.max(value, 0));
     }
 
     return (
-        <div className="bg-white rounded-xl shadow-sm border p-4 sm:p-6">
-            <div className="flex items-center justify-between mb-6">
-                <div>
-                    <h3 className="font-semibold text-lg">
-                        Order Summary
-                    </h3>
-                    <p className="text-sm text-slate-500 mt-1">
-                        {cart.length} item{cart.length !== 1 ? "s" : ""}
-                    </p>
+        <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+            {/* Header */}
+
+            <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50">
+                        <ReceiptText size={19} className="text-emerald-600" />
+                    </div>
+
+                    <div>
+                        <h3 className="text-base font-semibold text-slate-900 sm:text-lg">
+                            Order Summary
+                        </h3>
+
+                        <p className="mt-0.5 text-xs text-slate-500 sm:text-sm">
+                            {cart.length} {cart.length === 1 ? "product" : "products"}
+                        </p>
+                    </div>
                 </div>
             </div>
 
-            <div className="space-y-4">
-                {/* SUBTOTAL */}
-                <div className="flex justify-between text-sm">
+            {/* Summary */}
+
+            <div className="mt-5 space-y-4">
+                {/* Subtotal */}
+
+                <div className="flex items-center justify-between gap-4 text-sm">
                     <span className="text-slate-500">
                         Subtotal
                     </span>
-                    <span className="font-medium">
-                        Rs. {subtotal.toLocaleString(undefined, {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                    })}
+
+                    <span className="font-semibold text-slate-800">
+                        Rs. {formatMoney(subtotal)}
                     </span>
                 </div>
 
-                {/* DISCOUNT */}
-                <div className="flex items-center justify-between gap-3">
-                    <span>
-                        Discount
-                    </span>
-                    <div className="flex items-center">
-                        <span className="mr-2">
-                            Rs.
-                        </span>
-                        <input
-                            type="text"
-                            inputMode="decimal"
-                            min="0"
-                            max={subtotal}
-                            value={discount}
-                            onChange={handleDiscountChange}
-                            className="w-24 sm:w-28 border rounded-lg px-3 py-2 text-right outline-none focus:ring-2 focus:ring-emerald-500"
-                        />
+                {/* Discount */}
+
+                <div className="rounded-xl border border-slate-100 bg-slate-50 p-3">
+                    <div className="flex items-center justify-between gap-3">
+                        <div className="flex min-w-0 items-center gap-2">
+                            <Tag size={16} className="shrink-0 text-slate-400" />
+
+                            <div>
+                                <p className="text-sm font-medium text-slate-700">
+                                    Discount
+                                </p>
+
+                                <p className="hidden text-[11px] text-slate-400 sm:block">
+                                    Applied to subtotal
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="flex shrink-0 items-center gap-1.5">
+                            <span className="text-sm font-medium text-slate-500">
+                                Rs.
+                            </span>
+
+                            <input
+                                type="text"
+                                inputMode="decimal"
+                                min="0"
+                                max={subtotal}
+                                value={discount}
+                                onChange={handleDiscountChange}
+                                disabled={cart.length === 0}
+                                className="h-10 w-24 rounded-lg border border-slate-200 bg-white px-3 text-right text-sm font-semibold text-slate-800 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400 sm:w-28"
+                            />
+                        </div>
                     </div>
                 </div>
 
-                {/* DELIVERY FEE */}
-                <div className="flex items-center justify-between gap-3">
-                    <span>
-                        Delivery Fee
-                    </span>
-                    <div className="flex items-center">
-                        <span className="mr-2">
-                            Rs.
-                        </span>
-                        <input
-                            type="text"
-                            inputMode="decimal"
-                            min="0"
-                            value={deliveryFee}
-                            onChange={handleDeliveryChange}
-                            className="w-24 sm:w-28 border rounded-lg px-3 py-2 text-right outline-none focus:ring-2 focus:ring-emerald-500"
-                            placeholder="0.00"
-                        />
+                {/* Delivery */}
+
+                <div className="rounded-xl border border-slate-100 bg-slate-50 p-3">
+                    <div className="flex items-center justify-between gap-3">
+                        <div className="flex min-w-0 items-center gap-2">
+                            <Truck size={16} className="shrink-0 text-slate-400" />
+
+                            <div>
+                                <p className="text-sm font-medium text-slate-700">
+                                    Delivery Fee
+                                </p>
+
+                                <p className="hidden text-[11px] text-slate-400 sm:block">
+                                    Added to total
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="flex shrink-0 items-center gap-1.5">
+                            <span className="text-sm font-medium text-slate-500">
+                                Rs.
+                            </span>
+
+                            <input
+                                type="text"
+                                inputMode="decimal"
+                                min="0"
+                                value={deliveryFee}
+                                onChange={handleDeliveryChange}
+                                disabled={cart.length === 0}
+                                placeholder="0.00"
+                                className="h-10 w-24 rounded-lg border border-slate-200 bg-white px-3 text-right text-sm font-semibold text-slate-800 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400 sm:w-28"
+                            />
+                        </div>
                     </div>
                 </div>
-                <hr />
-                {/* BREAKDOWN */}
-                <div className="space-y-2 text-sm">
-                    <div className="flex justify-between text-slate-500">
-                        <span>Discount</span>
-                        <span>
-                            - Rs. {safeDiscount.toLocaleString(undefined, {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                        })}
-                        </span>
-                    </div>
-                    <div className="flex justify-between text-slate-500">
-                        <span>Delivery Fee</span>
-                        <span>
-                            + Rs. {deliveryAmount.toLocaleString(undefined, {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                        })}
-                        </span>
+
+                {/* Calculation */}
+
+                <div className="border-t border-slate-100 pt-4">
+                    <div className="space-y-2 text-sm">
+                        {safeDiscount > 0 && (
+                            <div className="flex justify-between gap-3 text-slate-500">
+                                <span>
+                                    Discount
+                                </span>
+
+                                <span className="font-medium text-red-500">
+                                    - Rs. {formatMoney(safeDiscount)}
+                                </span>
+                            </div>
+                        )}
+
+                        {deliveryAmount > 0 && (
+                            <div className="flex justify-between gap-3 text-slate-500">
+                                <span>
+                                    Delivery
+                                </span>
+
+                                <span className="font-medium text-slate-700">
+                                    + Rs. {formatMoney(deliveryAmount)}
+                                </span>
+                            </div>
+                        )}
                     </div>
                 </div>
-                {/* TOTAL */}
-                <div className="border-t pt-4">
-                    <div className="flex justify-between items-center">
-                        <span className="text-base sm:text-lg font-semibold">
-                            TOTAL
-                        </span>
-                        <span className="text-xl sm:text-2xl font-bold text-emerald-600">
-                            Rs. {total.toLocaleString(undefined, {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                        })}
-                        </span>
+
+                {/* Grand total */}
+
+                <div className="rounded-2xl bg-slate-900 p-4 text-white">
+                    <div className="flex items-center justify-between gap-4">
+                        <div>
+                            <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
+                                Total Payable
+                            </p>
+
+                            <p className="mt-1 text-xs text-slate-400">
+                                Final amount
+                            </p>
+                        </div>
+
+                        <p className="text-xl font-bold tracking-tight sm:text-2xl">
+                            Rs. {formatMoney(total)}
+                        </p>
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
     );
 }
 
