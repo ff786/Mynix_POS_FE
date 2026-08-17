@@ -132,14 +132,8 @@ function SalesToolbar({
 
                         <input
                             value={search}
-                            onChange={(e) =>
-                                setSearch(
-                                    e.target.value
-                                )
-                            }
-                            placeholder="
-                                Search invoice or customer...
-                            "
+                            onChange={(e) => setSearch(e.target.value)}
+                            placeholder="Search invoice or customer..."
                             autoComplete="off"
                             className="
                                 h-11
@@ -148,11 +142,23 @@ function SalesToolbar({
                                 border
                                 border-slate-200
                                 bg-slate-50
+
                                 pl-10
                                 pr-10
+
+                                text-left
                                 text-sm
+                                leading-normal
+                                text-slate-800
+
+                                placeholder:text-left
+                                placeholder:text-sm
+                                placeholder:font-normal
+                                placeholder:text-slate-400
+
                                 outline-none
                                 transition
+
                                 focus:border-emerald-500
                                 focus:bg-white
                                 focus:ring-4
