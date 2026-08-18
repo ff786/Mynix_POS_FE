@@ -140,7 +140,6 @@ function MainLayout() {
                     lg:p-6
                     xl:p-8
                 ">
-
                     <div className="
                         mx-auto
                         min-h-full
