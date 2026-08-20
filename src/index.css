@@ -142,6 +142,16 @@
         background: white !important;
     }
 
+    .mynix-print-label {
+        width: 30mm !important;
+        height: 15mm !important;
+    }
+
+    svg {
+        shape-rendering: crispEdges;
+        image-rendering: pixelated;
+    }
+
     body * {
         visibility: hidden !important;
     }

@@ -84,18 +84,25 @@ export function printLabels(labels) {
                 .barcode-wrap {
                     width: 100%;
                     height: 7mm;
+                
                     display: flex;
-                    justify-content: center;
                     align-items: center;
-                    overflow: hidden;
+                    justify-content: center;
+                
+                    overflow: visible;
                 }
                 
                 .barcode-wrap svg {
                     display: block;
+                
+                    width: auto !important;
+                    height: auto !important;
+                
                     max-width: 27mm;
                     max-height: 7mm;
-                    width: auto;
-                    height: auto;
+                
+                    shape-rendering: crispEdges;
+                    image-rendering: pixelated;
                 }
 
                 .barcode-text {
