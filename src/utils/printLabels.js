@@ -110,7 +110,7 @@ export function printLabels(labels) {
 
                 .barcode-text {
                     font-family: monospace;
-                    font-size: 6px;
+                    font-size: 7px;
                     font-weight: 700;
                     line-height: 1;
                     letter-spacing: 0.25px;
@@ -118,9 +118,8 @@ export function printLabels(labels) {
                 }
 
                 .price {
-                    font-size: 7px;
+                    font-size: 9px;
                     font-weight: 800;
-
                     line-height: 1;
                 }
 
