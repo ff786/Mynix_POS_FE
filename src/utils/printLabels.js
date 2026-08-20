@@ -79,7 +79,7 @@ export function printLabels(labels) {
                 .product-name {
                     width: 100%;
 
-                    font-size: 7px;
+                    font-size: 8px;
                     font-weight: 700;
 
                     line-height: 1;
@@ -132,7 +132,7 @@ export function printLabels(labels) {
 
 
                 .price {
-                    font-size: 7px;
+                    font-size: 9px;
                     font-weight: 800;
 
                     line-height: 1;
