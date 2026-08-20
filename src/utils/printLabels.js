@@ -97,7 +97,7 @@ export function printLabels(labels) {
 
                 .barcode-text {
                     font-family: monospace;
-                    font-size: 7px;
+                    font-size: 9px;
                     font-weight: 700;
                     line-height: 1;
                     letter-spacing: 0.25px;
