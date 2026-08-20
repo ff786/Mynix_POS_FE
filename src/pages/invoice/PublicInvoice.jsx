@@ -14,6 +14,7 @@ function PublicInvoice() {
     const { token } = useParams();
 
     const [invoice, setInvoice] = useState(null);
+    const [expired, setExpired] = useState(false);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
@@ -28,15 +29,24 @@ function PublicInvoice() {
 
                 setInvoice(data);
             } catch (error) {
+
                 console.error(
                     "Public invoice error:",
                     error
                 );
 
-                setError(
+                const message =
                     error.response?.data?.message ||
-                    "This invoice could not be found."
+                    "This invoice could not be found.";
+
+                setError(message);
+
+                setExpired(
+                    message
+                        .toLowerCase()
+                        .includes("expired")
                 );
+
             } finally {
                 setLoading(false);
             }
@@ -110,24 +120,20 @@ function PublicInvoice() {
                         />
                     </div>
 
-                    <h1 className="
-                        mt-5
-                        text-lg
-                        font-bold
-                        text-slate-900
-                    ">
-                        Invoice unavailable
+                    <h1 className=" mt-5 text-xl font-bold text-slate-900 ">
+                        {expired
+                            ? "Invoice Link Expired"
+                            : "Invoice Unavailable"}
                     </h1>
-
-                    <p className="
-                        mt-2
-                        text-sm
-                        leading-6
-                        text-slate-500
-                    ">
-                        {error ||
-                            "Unable to load this invoice."}
+                    <p className="mt-1 text-xs leading-4 text-slate-500">
+                        {expired
+                            ? "This invoice link was available for 3 days and is no longer accessible."
+                            : error || "Unable to load this invoice."}
                     </p>
+                    <div className="mt-4 rounded-lg bg-slate-50 px-3 py-2 text-center">
+                        <p className="text-xs font-medium text-slate-500">For assistance</p>
+                        <p className="mt-0.5 text-sm font-semibold text-slate-800">Inquiries, 0778843815</p>
+                    </div>
                 </div>
             </div>
         );

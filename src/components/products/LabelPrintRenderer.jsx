@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import Barcode from "react-barcode";
+
 import { printLabels } from "@/utils/printLabels";
 
 
@@ -43,6 +44,7 @@ function LabelPrintRenderer({
                         .querySelector("svg")
                         ?.outerHTML || "";
 
+
                 for (
                     let i = 0;
                     i < quantity;
@@ -54,93 +56,35 @@ function LabelPrintRenderer({
                         html: `
                             <div
                                 class="mynix-print-label"
-                                style="
-                                    width: 50mm;
-                                    height: 30mm;
-                                    box-sizing: border-box;
-                                    padding: 2.5mm;
-                                    background: white;
-                                    color: black;
-                                    display: flex;
-                                    flex-direction: column;
-                                    align-items: center;
-                                    justify-content: space-between;
-                                    overflow: hidden;
-                                    font-family: Arial, Helvetica, sans-serif;
-                                    page-break-inside: avoid;
-                                "
                             >
 
                                 <div
-                                    style="
-                                        text-align: center;
-                                        line-height: 1;
-                                    "
-                                >
-                                    <div
-                                        style="
-                                            font-size: 13px;
-                                            font-weight: 800;
-                                            letter-spacing: 3px;
-                                        "
-                                    >
-                                        MYNIX
-                                    </div>
-
-                                    <div
-                                        style="
-                                            margin-top: 1px;
-                                            font-size: 6px;
-                                            letter-spacing: 1.5px;
-                                        "
-                                    >
-                                        POS SYSTEM
-                                    </div>
-                                </div>
-
-                                <div
-                                    style="
-                                        width: 100%;
-                                        text-align: center;
-                                        font-size: 10px;
-                                        font-weight: 700;
-                                        white-space: nowrap;
-                                        overflow: hidden;
-                                        text-overflow: ellipsis;
-                                    "
+                                    class="product-name"
+                                    title="${escapeHtml(product.name)}"
                                 >
                                     ${escapeHtml(product.name)}
                                 </div>
 
-                                <div
-                                    style="
-                                        display: flex;
-                                        justify-content: center;
-                                        width: 100%;
-                                    "
-                                >
+
+                                <div class="barcode-wrap">
                                     ${barcode}
                                 </div>
 
-                                <div
-                                    style="
-                                        font-family: monospace;
-                                        font-size: 7px;
-                                        letter-spacing: 1px;
-                                    "
-                                >
+
+                                <div class="barcode-text">
                                     ${escapeHtml(product.barcode)}
                                 </div>
 
-                                <div
-                                    style="
-                                        font-size: 11px;
-                                        font-weight: 800;
-                                    "
-                                >
+
+                                <div class="price">
                                     Rs. ${Number(
-                            product.sellingPrice
-                        ).toLocaleString()}
+                            product.sellingPrice || 0
+                        ).toLocaleString(
+                            "en-LK",
+                            {
+                                maximumFractionDigits: 0,
+                            }
+                        )}
                                 </div>
 
                             </div>
@@ -152,6 +96,7 @@ function LabelPrintRenderer({
 
             });
 
+
             if (labels.length > 0) {
 
                 printLabels(labels);
@@ -160,7 +105,8 @@ function LabelPrintRenderer({
 
             }
 
-        }, 150);
+        }, 200);
+
 
         return () => clearTimeout(timer);
 
@@ -193,10 +139,17 @@ function LabelPrintRenderer({
                     <Barcode
                         value={product.barcode}
                         format="CODE128"
-                        width={1.7}
-                        height={45}
+
+                        width={1.1}
+                        height={24}
+
                         displayValue={false}
+
                         margin={0}
+
+                        background="transparent"
+
+                        lineColor="#000000"
                     />
 
                 </div>
@@ -204,13 +157,14 @@ function LabelPrintRenderer({
             ))}
 
         </div>
+
     );
 }
 
 
 /*
- * Prevent product names/barcodes from breaking
- * the generated print HTML.
+ * Prevent product names/barcodes from
+ * breaking the generated print HTML.
  */
 function escapeHtml(value) {
 
@@ -222,6 +176,5 @@ function escapeHtml(value) {
         .replace(/'/g, "&#039;");
 
 }
-
 
 export default LabelPrintRenderer;

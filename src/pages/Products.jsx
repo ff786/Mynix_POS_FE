@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { SlidersHorizontal, Printer, X } from "lucide-react";
 import { toast } from "sonner";
 
@@ -8,548 +9,309 @@ import ProductModal from "../components/products/ProductModal";
 import DeleteDialog from "../components/products/DeleteDialog";
 import PrintLabelModal from "../components/products/PrintLabelModal";
 
-import {
-    getProducts,
-    deleteProduct,
-} from "../services/productApi";
-
+import { getProducts, deleteProduct } from "../services/productApi";
+import { useAuth } from "@/context/AuthContext";
 
 function Products() {
+    const { user } = useAuth();
+    const isAdmin = user?.role === "ADMIN";
+
+    const [searchParams, setSearchParams] =
+        useSearchParams();
+
+    const stockFilter =
+        searchParams.get("stock");
 
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
-
     const [search, setSearch] = useState("");
-    const [dateFilter, setDateFilter] = useState("");
-
+    const [categoryFilter, setCategoryFilter] = useState("ALL");
     const [selectedProducts, setSelectedProducts] = useState([]);
-
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState(null);
-
     const [deleteOpen, setDeleteOpen] = useState(false);
     const [productToDelete, setProductToDelete] = useState(null);
-
     const [printLabelOpen, setPrintLabelOpen] = useState(false);
     const [productsToPrint, setProductsToPrint] = useState([]);
-
 
     useEffect(() => {
         loadProducts();
     }, []);
 
-
     async function loadProducts() {
-
         try {
-
             setLoading(true);
-
             const data = await getProducts();
-
-            setProducts(data);
-
+            setProducts(Array.isArray(data) ? data : []);
         } catch (error) {
-
-            console.error(error);
-
+            console.error("Failed to load products:", error);
             toast.error("Failed to load products.");
-
         } finally {
-
             setLoading(false);
-
         }
     }
 
+    const categories = useMemo(() => {
+        const values = products
+            .map((product) => product.category?.trim())
+            .filter(Boolean);
 
-    /*
-     * Search + date filtering
-     */
+        return ["ALL", ...Array.from(new Set(values)).sort()];
+    }, [products]);
+
     const filteredProducts = useMemo(() => {
 
         const normalizedSearch =
             search.trim().toLowerCase();
 
-        return products.filter((product) => {
+        return products.filter(product => {
 
+            const name =
+                product.name
+                    ?.toLowerCase() || "";
+            const barcode =
+                product.barcode
+                    ?.toLowerCase() || "";
+            const category =
+                product.category
+                    ?.toLowerCase() || "";
+            const stock =
+                Number(
+                    product.stockQuantity
+                ) || 0;
+            const minimumStock =
+                Number(
+                    product.minimumStock
+                ) || 0;
+
+            /* SEARCH */
             const matchesSearch =
                 !normalizedSearch ||
-                product.name
-                    ?.toLowerCase()
-                    .includes(normalizedSearch) ||
-                product.barcode
-                    ?.toLowerCase()
-                    .includes(normalizedSearch);
+                name.includes(
+                    normalizedSearch
+                ) ||
+                barcode.includes(
+                    normalizedSearch
+                );
 
-            if (!dateFilter) {
-                return matchesSearch;
-            }
+            /* CATEGORY */
+            const matchesCategory =
+                categoryFilter === "ALL" ||
+                category ===
+                categoryFilter.toLowerCase();
 
-            if (!product.createdAt) {
-                return false;
-            }
-
-            const productDate =
-                new Date(product.createdAt)
-                    .toISOString()
-                    .split("T")[0];
+            /* LOW STOCK */
+            const matchesStock =
+                stockFilter !== "low" ||
+                stock <= minimumStock;
 
             return (
                 matchesSearch &&
-                productDate === dateFilter
+                matchesCategory &&
+                matchesStock
             );
 
         });
 
-    }, [products, search, dateFilter]);
+    }, [
+        products,
+        search,
+        categoryFilter,
+        stockFilter,
+    ]);
 
-
-    /*
-     * Selection
-     */
     function toggleProductSelection(product) {
+        if (!isAdmin) return;
 
         setSelectedProducts((previous) => {
-
-            const exists = previous.some(
-                item => item.id === product.id
-            );
+            const exists = previous.some((item) => item.id === product.id);
 
             if (exists) {
-
-                return previous.filter(
-                    item => item.id !== product.id
-                );
-
+                return previous.filter((item) => item.id !== product.id);
             }
 
-            return [
-                ...previous,
-                product,
-            ];
-
+            return [...previous, product];
         });
-
     }
 
-
-    /*
-     * Select / deselect all currently filtered products
-     */
     function toggleSelectAll() {
+        if (!isAdmin || filteredProducts.length === 0) return;
 
-        if (filteredProducts.length === 0) {
-            return;
-        }
-
-        const allSelected =
-            filteredProducts.every(product =>
-                selectedProducts.some(
-                    selected =>
-                        selected.id === product.id
-                )
-            );
-
+        const allSelected = filteredProducts.every((product) =>
+            selectedProducts.some((selected) => selected.id === product.id)
+        );
 
         if (allSelected) {
-
-            setSelectedProducts(previous =>
+            setSelectedProducts((previous) =>
                 previous.filter(
-                    selected =>
+                    (selected) =>
                         !filteredProducts.some(
-                            product =>
-                                product.id === selected.id
+                            (product) => product.id === selected.id
                         )
                 )
             );
-
         } else {
+            setSelectedProducts((previous) => {
+                const existingIds = new Set(
+                    previous.map((product) => product.id)
+                );
 
-            setSelectedProducts(previous => {
+                const newProducts = filteredProducts.filter(
+                    (product) => !existingIds.has(product.id)
+                );
 
-                const existingIds =
-                    new Set(
-                        previous.map(
-                            product => product.id
-                        )
-                    );
-
-                const newProducts =
-                    filteredProducts.filter(
-                        product =>
-                            !existingIds.has(product.id)
-                    );
-
-                return [
-                    ...previous,
-                    ...newProducts,
-                ];
-
+                return [...previous, ...newProducts];
             });
-
         }
-
     }
 
-
-    /*
-     * Open Add Product
-     */
     function handleAddProduct() {
+        if (!isAdmin) return;
 
         setSelectedProduct(null);
         setModalOpen(true);
-
     }
 
-
-    /*
-     * Open Edit Product
-     */
     function handleEditProduct(product) {
+        if (!isAdmin) return;
 
         setSelectedProduct(product);
         setModalOpen(true);
-
     }
 
-
-    /*
-     * Open Delete Confirmation
-     */
     function handleDeleteProduct(product) {
+        if (!isAdmin) return;
 
         setProductToDelete(product);
         setDeleteOpen(true);
-
     }
 
-
-    /*
-     * Delete
-     */
     async function handleDelete() {
-
-        if (!productToDelete) {
-            return;
-        }
+        if (!isAdmin || !productToDelete) return;
 
         try {
-
             await deleteProduct(productToDelete.id);
 
-            toast.success(
-                "Product deleted successfully."
-            );
+            toast.success("Product deleted successfully.");
 
             setDeleteOpen(false);
-            setProductToDelete(null);
-
-            /*
-             * Remove it from selection as well.
-             */
-            setSelectedProducts(previous =>
+            setSelectedProducts((previous) =>
                 previous.filter(
-                    product =>
-                        product.id !== productToDelete.id
+                    (product) => product.id !== productToDelete.id
                 )
             );
+            setProductToDelete(null);
 
             await loadProducts();
-
         } catch (error) {
-
-            console.error(error);
-
-            toast.error(
-                "Failed to delete product."
-            );
-
+            console.error("Delete product error:", error);
+            toast.error("Failed to delete product.");
         }
-
     }
 
-
-    /*
-     * Print one product
-     */
     function handlePrintProduct(product) {
+        if (!isAdmin) return;
 
         setProductsToPrint([product]);
         setPrintLabelOpen(true);
-
     }
 
-
-    /*
-     * Print all selected products
-     */
     function handlePrintSelected() {
+        if (!isAdmin) return;
 
         if (selectedProducts.length === 0) {
-
-            toast.error(
-                "Please select at least one product."
-            );
-
+            toast.error("Please select at least one product.");
             return;
         }
 
-        setProductsToPrint(
-            [...selectedProducts]
-        );
-
+        setProductsToPrint([...selectedProducts]);
         setPrintLabelOpen(true);
-
     }
 
-
-    /*
-     * Clear selection
-     */
     function clearSelection() {
-
         setSelectedProducts([]);
-
     }
-
 
     if (loading) {
-
         return (
-            <div className="space-y-6">
-
-                <div className="
-                    h-8
-                    w-40
-                    rounded-lg
-                    bg-slate-200
-                    animate-pulse
-                " />
-
-                <div className="
-                    h-12
-                    w-full
-                    rounded-xl
-                    bg-slate-100
-                    animate-pulse
-                " />
-
-                <div className="
-                    h-96
-                    w-full
-                    rounded-2xl
-                    bg-slate-100
-                    animate-pulse
-                " />
-
+            <div className="space-y-4">
+                <div className="h-8 w-40 animate-pulse rounded-lg bg-slate-200" />
+                <div className="h-10 w-full animate-pulse rounded-lg bg-slate-100" />
+                <div className="h-96 w-full animate-pulse rounded-xl bg-slate-100" />
             </div>
         );
-
     }
 
-
     return (
-
-        <div className="w-full max-w-[1600px] mx-auto">
-
-            {/* Header + Search */}
+        <div className="mx-auto w-full max-w-[1600px]">
             <ProductToolbar
                 search={search}
                 setSearch={setSearch}
-                onAdd={handleAddProduct}
+                onAdd={isAdmin ? handleAddProduct : undefined}
+                isAdmin={isAdmin}
             />
 
-
             {/* Filters */}
-            <div className="
-                mb-4
-                flex
-                flex-col
-                sm:flex-row
-                sm:items-center
-                sm:justify-between
-                gap-3
-            ">
-
-                <div className="
-                    flex
-                    items-center
-                    gap-2
-                    text-sm
-                    text-slate-600
-                ">
-
-                    <div className="
-                        w-8 h-8
-                        rounded-lg
-                        bg-slate-100
-                        flex
-                        items-center
-                        justify-center
-                    ">
-                        <SlidersHorizontal
-                            size={16}
-                            className="text-slate-500"
-                        />
+            <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex items-center gap-2 text-sm text-slate-600">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100">
+                        <SlidersHorizontal size={16} className="text-slate-500" />
                     </div>
-
-                    <span className="font-medium">
-                        Filter by date
-                    </span>
-
+                    <span className="font-medium">Category</span>
                 </div>
 
+                <div className="flex flex-wrap items-center gap-2">
+                    <select
+                        value={categoryFilter}
+                        onChange={(e) => setCategoryFilter(e.target.value)}
+                        className="h-9 min-w-[180px] rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 outline-none shadow-sm transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10"
+                    >
+                        {categories.map((category) => (
+                            <option key={category} value={category}>
+                                {category === "ALL"
+                                    ? "All Categories"
+                                    : category}
+                            </option>
+                        ))}
+                    </select>
 
-                <div className="flex items-center gap-2">
-
-                    <input
-                        type="date"
-                        value={dateFilter}
-                        onChange={(e) =>
-                            setDateFilter(
-                                e.target.value
-                            )
-                        }
-                        className="
-                            h-10
-                            border border-slate-200
-                            rounded-xl
-                            px-3
-                            text-sm
-                            bg-white
-                            text-slate-700
-                            outline-none
-                            shadow-sm
-                            focus:border-emerald-500
-                            focus:ring-4
-                            focus:ring-emerald-500/10
-                        "
-                    />
-
-                    {dateFilter && (
-
+                    {categoryFilter !== "ALL" && (
                         <button
                             type="button"
-                            onClick={() =>
-                                setDateFilter("")
-                            }
-                            className="
-                                h-10
-                                px-3
-                                rounded-xl
-                                text-sm
-                                font-medium
-                                text-slate-500
-                                hover:text-slate-900
-                                hover:bg-slate-100
-                                transition
-                            "
+                            onClick={() => setCategoryFilter("ALL")}
+                            className="inline-flex h-9 items-center gap-1 rounded-lg px-3 text-sm font-medium text-slate-500 transition hover:bg-slate-100 hover:text-slate-900"
                         >
-                            <span className="hidden sm:inline">
-                                Clear
-                            </span>
-
-                            <X
-                                size={16}
-                                className="sm:hidden"
-                            />
+                            Clear
+                            <X size={15} />
                         </button>
-
                     )}
-
                 </div>
-
             </div>
 
-
-            {/* Selection toolbar */}
-            {selectedProducts.length > 0 && (
-
-                <div className="
-                    mb-4
-                    rounded-2xl
-                    border border-emerald-100
-                    bg-emerald-50
-                    p-3
-                    sm:p-4
-                    flex
-                    flex-col
-                    sm:flex-row
-                    sm:items-center
-                    sm:justify-between
-                    gap-3
-                ">
-
-                    <div className="
-                        flex
-                        items-center
-                        gap-3
-                    ">
-
-                        <div className="
-                            w-9 h-9
-                            rounded-xl
-                            bg-emerald-100
-                            flex
-                            items-center
-                            justify-center
-                        ">
-                            <Printer
-                                size={17}
-                                className="text-emerald-700"
-                            />
+            {/* Admin Selection Toolbar */}
+            {isAdmin && selectedProducts.length > 0 && (
+                <div className="mb-3 flex flex-col gap-2 rounded-xl border border-emerald-100 bg-emerald-50 p-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="flex items-center gap-2.5">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-100">
+                            <Printer size={16} className="text-emerald-700" />
                         </div>
 
                         <div>
-
-                            <p className="
-                                text-sm
-                                font-semibold
-                                text-emerald-900
-                            ">
+                            <p className="text-sm font-semibold text-emerald-900">
                                 {selectedProducts.length} product
-                                {selectedProducts.length !== 1
-                                    ? "s"
-                                    : ""} selected
+                                {selectedProducts.length !== 1 ? "s" : ""} selected
                             </p>
-
-                            <p className="
-                                text-xs
-                                text-emerald-700/70
-                            ">
-                                Ready to print product labels
+                            <p className="text-xs text-emerald-700/70">
+                                Ready to print labels
                             </p>
-
                         </div>
-
                     </div>
 
-
-                    <div className="
-                        flex
-                        items-center
-                        gap-2
-                    ">
-
+                    <div className="flex items-center gap-2">
                         <button
                             type="button"
                             onClick={clearSelection}
-                            className="
-                                flex-1
-                                sm:flex-none
-                                px-4
-                                py-2.5
-                                rounded-xl
-                                bg-white
-                                border border-emerald-200
-                                text-sm
-                                font-medium
-                                text-slate-600
-                                hover:bg-slate-50
-                                transition
-                            "
+                            className="flex-1 rounded-lg border border-emerald-200 bg-white px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50 sm:flex-none"
                         >
                             Clear
                         </button>
@@ -557,116 +319,77 @@ function Products() {
                         <button
                             type="button"
                             onClick={handlePrintSelected}
-                            className="
-                                flex-1
-                                sm:flex-none
-                                flex
-                                items-center
-                                justify-center
-                                gap-2
-                                px-4
-                                py-2.5
-                                rounded-xl
-                                bg-emerald-600
-                                hover:bg-emerald-700
-                                text-white
-                                text-sm
-                                font-semibold
-                                shadow-sm
-                                transition
-                            "
+                            className="flex-1 rounded-lg bg-emerald-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700 sm:flex-none"
                         >
-                            <Printer size={16} />
-
                             Print Labels
                         </button>
-
                     </div>
-
                 </div>
-
             )}
 
-
-            {/* Results information */}
-            <div className="
-                flex
-                items-center
-                justify-between
-                mb-3
-                px-1
-            ">
-
-                <p className="
-                    text-xs
-                    sm:text-sm
-                    text-slate-400
-                ">
+            {/* Results */}
+            <div className="mb-2 flex items-center justify-between px-1">
+                <p className="text-xs text-slate-400 sm:text-sm">
                     Showing{" "}
-                    <span className="
-                        font-semibold
-                        text-slate-600
-                    ">
+                    <span className="font-semibold text-slate-600">
                         {filteredProducts.length}
                     </span>{" "}
                     of{" "}
-                    <span className="
-                        font-semibold
-                        text-slate-600
-                    ">
+                    <span className="font-semibold text-slate-600">
                         {products.length}
                     </span>{" "}
                     products
                 </p>
 
+                {!isAdmin && (
+                    <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-500">
+                        View only
+                    </span>
+                )}
             </div>
 
-
-            {/* Product Table / Mobile Cards */}
+            {/* Products */}
             <ProductTable
                 products={filteredProducts}
-                onEdit={handleEditProduct}
-                onDelete={handleDeleteProduct}
-                onPrintLabel={handlePrintProduct}
-                selectedProducts={selectedProducts}
-                onSelect={toggleProductSelection}
-                onSelectAll={toggleSelectAll}
+                onEdit={isAdmin ? handleEditProduct : undefined}
+                onDelete={isAdmin ? handleDeleteProduct : undefined}
+                onPrintLabel={isAdmin ? handlePrintProduct : undefined}
+                selectedProducts={isAdmin ? selectedProducts : []}
+                onSelect={isAdmin ? toggleProductSelection : undefined}
+                onSelectAll={isAdmin ? toggleSelectAll : undefined}
+                isAdmin={isAdmin}
             />
 
+            {/* Admin Modals */}
+            {isAdmin && (
+                <>
+                    <ProductModal
+                        open={modalOpen}
+                        onOpenChange={setModalOpen}
+                        product={selectedProduct}
+                        onSuccess={loadProducts}
+                    />
 
-            {/* Product Modal */}
-            <ProductModal
-                open={modalOpen}
-                onOpenChange={setModalOpen}
-                product={selectedProduct}
-                onSuccess={loadProducts}
-            />
+                    <DeleteDialog
+                        open={deleteOpen}
+                        onOpenChange={setDeleteOpen}
+                        product={productToDelete}
+                        onConfirm={handleDelete}
+                    />
 
+                    <PrintLabelModal
+                        open={printLabelOpen}
+                        onOpenChange={(value) => {
+                            setPrintLabelOpen(value);
 
-            {/* Delete Modal */}
-            <DeleteDialog
-                open={deleteOpen}
-                onOpenChange={setDeleteOpen}
-                product={productToDelete}
-                onConfirm={handleDelete}
-            />
-
-
-            {/* Print Labels */}
-            <PrintLabelModal
-                open={printLabelOpen}
-                onOpenChange={(value) => {
-
-                    setPrintLabelOpen(value);
-
-                    if (!value) {
-                        setProductsToPrint([]);
-                    }
-
-                }}
-                products={productsToPrint}
-            />
-
+                            if (!value) {
+                                setProductsToPrint([]);
+                            }
+                        }}
+                        products={productsToPrint}
+                    />
+                </>
+            )}
         </div>
     );
 }

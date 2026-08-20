@@ -36,8 +36,7 @@ export default function App() {
             <Route
                 element={
                     <ProtectedRoute
-                        roles={["ADMIN", "CASHIER"]}
-                    >
+                        roles={["ADMIN", "CASHIER"]}>
                         <MainLayout />
                     </ProtectedRoute>
                 }
@@ -66,7 +65,7 @@ export default function App() {
                 <Route
                     path="/products"
                     element={
-                        <ProtectedRoute roles={["ADMIN"]}>
+                        <ProtectedRoute roles={["ADMIN", "CASHIER"]}>
                             <Products />
                         </ProtectedRoute>
                     }

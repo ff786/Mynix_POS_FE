@@ -28,7 +28,7 @@ export const navigation = [
         path: "/products",
         icon: Package,
         label: "Products",
-        roles: ["ADMIN"],
+        roles: ["ADMIN", "CASHIER"],
     },
 
     {
