@@ -49,7 +49,7 @@ export function printLabels(labels) {
 
                 .mynix-print-label {
                     width: 30mm !important;
-                    height: 15mm !important;
+                    height: 15mm || 20mm !important;
                     box-sizing: border-box;
                     margin: 0;
                     padding: 0.8mm 1mm;
@@ -91,7 +91,7 @@ export function printLabels(labels) {
 
                 .barcode-wrap svg {
                     display: block;
-                    width: 27mm !important;
+                    width: 28mm !important;
                     height: 6.5mm !important;
                 }
 
