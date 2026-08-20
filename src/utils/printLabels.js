@@ -104,21 +104,16 @@ export function printLabels(labels) {
 
                 .barcode-wrap svg {
                     display: block;
-
                     width: 27mm !important;
                     height: 6.5mm !important;
                 }
 
                 .barcode-text {
                     font-family: monospace;
-
-                    font-size: 5px;
-                    font-weight: 600;
-
+                    font-size: 6px;
+                    font-weight: 700;
                     line-height: 1;
-
-                    letter-spacing: 0.2px;
-
+                    letter-spacing: 0.25px;
                     white-space: nowrap;
                 }
 
