@@ -79,14 +79,10 @@ export function printLabels(labels) {
 
                 .product-name {
                     width: 100%;
-
-                    font-size: 7px;
+                    font-size: 10px;
                     font-weight: 700;
-
                     line-height: 1;
-
                     text-align: center;
-
                     white-space: nowrap;
                     overflow: hidden;
                     text-overflow: ellipsis;
@@ -94,11 +90,9 @@ export function printLabels(labels) {
 
                 .barcode-wrap {
                     width: 100%;
-
                     display: flex;
                     justify-content: center;
                     align-items: center;
-
                     overflow: hidden;
                 }
 
