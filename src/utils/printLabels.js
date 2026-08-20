@@ -50,25 +50,18 @@ export function printLabels(labels) {
                 .mynix-print-label {
                     width: 30mm !important;
                     height: 15mm !important;
-
                     box-sizing: border-box;
-
                     margin: 0;
                     padding: 0.8mm 1mm;
-
                     display: flex;
                     flex-direction: column;
                     align-items: center;
                     justify-content: space-between;
-
                     overflow: hidden;
-
                     background: white;
                     color: black;
-
                     page-break-after: always;
                     break-after: page;
-
                     font-family: Arial, Helvetica, sans-serif;
                 }
 
@@ -79,7 +72,7 @@ export function printLabels(labels) {
 
                 .product-name {
                     width: 100%;
-                    font-size: 10px;
+                    font-size: 9px;
                     font-weight: 700;
                     line-height: 1;
                     text-align: center;
