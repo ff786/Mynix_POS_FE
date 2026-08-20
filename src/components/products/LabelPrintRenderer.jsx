@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import Barcode from "react-barcode";
+import bwipjs from "bwip-js/browser";
 
 import { printLabels } from "@/utils/printLabels";
 
@@ -21,94 +21,165 @@ function LabelPrintRenderer({
             return;
         }
 
-        const timer = setTimeout(() => {
+        let cancelled = false;
+
+        async function prepareLabels() {
 
             const labels = [];
 
-            products.forEach(product => {
+            try {
 
-                const quantity =
-                    quantities[product.id] || 1;
+                for (const product of products) {
 
-                const container =
-                    document.querySelector(
-                        `[data-print-product="${product.id}"]`
-                    );
+                    if (cancelled) {
+                        return;
+                    }
 
-                if (!container) {
-                    return;
-                }
-
-                const barcode =
-                    container
-                        .querySelector("svg")
-                        ?.outerHTML || "";
+                    const quantity =
+                        quantities[product.id] || 1;
 
 
-                for (
-                    let i = 0;
-                    i < quantity;
-                    i++
-                ) {
+                    /*
+                     * 203 DPI is common for thermal
+                     * label printers.
+                     *
+                     * Physical target:
+                     * 27mm wide × ~6mm high
+                     */
 
-                    labels.push({
-
-                        html: `
-                            <div
-                                class="mynix-print-label"
-                            >
-
-                                <div
-                                    class="product-name"
-                                    title="${escapeHtml(product.name)}"
-                                >
-                                    ${escapeHtml(product.name)}
-                                </div>
+                    const canvas =
+                        document.createElement("canvas");
 
 
-                                <div class="barcode-wrap">
-                                    ${barcode}
-                                </div>
+                    bwipjs.toCanvas(canvas, {
 
+                        bcid: "code128",
 
-                                <div class="barcode-text">
-                                    ${escapeHtml(product.barcode)}
-                                </div>
+                        text: String(
+                            product.barcode || ""
+                        ),
 
+                        scale: 2,
 
-                                <div class="price">
-                                    Rs. ${Number(
-                            product.sellingPrice || 0
-                        ).toLocaleString(
-                            "en-LK",
-                            {
-                                maximumFractionDigits: 0,
-                            }
-                        )}
-                                </div>
+                        height: 24,
 
-                            </div>
-                        `,
+                        includetext: false,
+
+                        backgroundcolor: "FFFFFF",
+
+                        barcolor: "000000",
+
+                        paddingwidth: 0,
+
+                        paddingheight: 0,
 
                     });
 
+
+                    const barcodeImage =
+                        canvas.toDataURL(
+                            "image/png"
+                        );
+
+
+                    for (
+                        let i = 0;
+                        i < quantity;
+                        i++
+                    ) {
+
+                        labels.push({
+
+                            html: `
+                                <div
+                                    class="mynix-print-label"
+                                >
+
+                                    <div
+                                        class="product-name"
+                                    >
+                                        ${escapeHtml(
+                                product.name
+                            )}
+                                    </div>
+
+
+                                    <div
+                                        class="barcode-wrap"
+                                    >
+
+                                        <img
+                                            src="${barcodeImage}"
+                                            class="barcode-image"
+                                            alt=""
+                                        />
+
+                                    </div>
+
+
+                                    <div
+                                        class="barcode-text"
+                                    >
+                                        ${escapeHtml(
+                                product.barcode
+                            )}
+                                    </div>
+
+
+                                    <div
+                                        class="price"
+                                    >
+                                        Rs. ${Number(
+                                product.sellingPrice || 0
+                            ).toLocaleString(
+                                "en-LK",
+                                {
+                                    maximumFractionDigits: 0,
+                                }
+                            )}
+                                    </div>
+
+                                </div>
+                            `,
+
+                        });
+
+                    }
+
                 }
 
-            });
 
+                if (
+                    !cancelled &&
+                    labels.length > 0
+                ) {
 
-            if (labels.length > 0) {
+                    printLabels(labels);
 
-                printLabels(labels);
+                    onPrinted?.();
 
-                onPrinted?.();
+                }
+
+            } catch (error) {
+
+                console.error(
+                    "Barcode generation failed:",
+                    error
+                );
+
+                alert(
+                    "Unable to generate the barcode for printing."
+                );
 
             }
 
-        }, 200);
+        }
 
+        prepareLabels();
 
-        return () => clearTimeout(timer);
+        return () => {
+            cancelled = true;
+        };
 
     }, [
         printRequested,
@@ -118,43 +189,7 @@ function LabelPrintRenderer({
     ]);
 
 
-    return (
-
-        <div
-            className="
-                fixed
-                left-[-99999px]
-                top-0
-                pointer-events-none
-            "
-        >
-
-            {products.map(product => (
-
-                <div
-                    key={product.id}
-                    data-print-product={product.id}
-                >
-
-                    <Barcode
-                        value={product.barcode}
-                        format="CODE128"
-                        width={1.4}
-                        height={28}
-                        displayValue={false}
-                        margin={0}
-                        background="#ffffff"
-                        lineColor="#000000"
-                        flat
-                    />
-
-                </div>
-
-            ))}
-
-        </div>
-
-    );
+    return null;
 }
 
 
@@ -162,6 +197,7 @@ function LabelPrintRenderer({
  * Prevent product names/barcodes from
  * breaking the generated print HTML.
  */
+
 function escapeHtml(value) {
 
     return String(value ?? "")
@@ -172,5 +208,6 @@ function escapeHtml(value) {
         .replace(/'/g, "&#039;");
 
 }
+
 
 export default LabelPrintRenderer;

@@ -48,21 +48,26 @@ export function printLabels(labels) {
                 }
 
                 .mynix-print-label {
-                    width: 30mm !important;
-                    height: 15mm || 20mm !important;
+                    width: 30mm;
+                    height: 15mm;
+
                     box-sizing: border-box;
+
                     margin: 0;
                     padding: 0.8mm 1mm;
+
                     display: flex;
                     flex-direction: column;
                     align-items: center;
                     justify-content: space-between;
+
                     overflow: hidden;
+
                     background: white;
                     color: black;
+
                     page-break-after: always;
                     break-after: page;
-                    font-family: Arial, Helvetica, sans-serif;
                 }
 
                 .mynix-print-label:last-child {
@@ -70,67 +75,86 @@ export function printLabels(labels) {
                     break-after: auto;
                 }
 
+
                 .product-name {
                     width: 100%;
-                    font-size: 9px;
+
+                    font-size: 7px;
                     font-weight: 700;
+
                     line-height: 1;
+
                     text-align: center;
+
                     white-space: nowrap;
                     overflow: hidden;
                     text-overflow: ellipsis;
                 }
 
+
                 .barcode-wrap {
-                    width: 100%;
-                    height: 7mm;
-                
+                    width: 27mm;
+                    height: 6.5mm;
+
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                
-                    overflow: visible;
+
+                    overflow: hidden;
                 }
-                
-                .barcode-wrap svg {
+
+
+                .barcode-image {
                     display: block;
-                
-                    width: auto !important;
-                    height: auto !important;
-                
+
+                    width: 27mm;
+                    height: auto;
+
                     max-width: 27mm;
-                    max-height: 7mm;
-                
-                    shape-rendering: crispEdges;
+                    max-height: 6.5mm;
+
                     image-rendering: pixelated;
                 }
 
+
                 .barcode-text {
                     font-family: monospace;
-                    font-size: 9px;
+
+                    font-size: 6px;
                     font-weight: 700;
+
                     line-height: 1;
-                    letter-spacing: 0.25px;
+
+                    letter-spacing: 0.2px;
+
                     white-space: nowrap;
                 }
 
+
                 .price {
-                    font-size: 9px;
+                    font-size: 7px;
                     font-weight: 800;
+
                     line-height: 1;
                 }
+
 
                 @media print {
 
                     html,
                     body {
                         width: 30mm;
-                        height: auto;
+                        margin: 0;
+                        padding: 0;
                     }
 
                     .mynix-print-label {
                         width: 30mm !important;
                         height: 15mm !important;
+                    }
+
+                    .barcode-image {
+                        image-rendering: pixelated;
                     }
 
                 }
@@ -158,7 +182,7 @@ export function printLabels(labels) {
 
         setTimeout(() => {
             printWindow.close();
-        }, 300);
+        }, 500);
 
     }, 700);
 }
