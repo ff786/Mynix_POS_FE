@@ -139,16 +139,11 @@ function LabelPrintRenderer({
                     <Barcode
                         value={product.barcode}
                         format="CODE128"
-
-                        width={1.1}
-                        height={24}
-
+                        width={1.2}
+                        height={25}
                         displayValue={false}
-
                         margin={0}
-
                         background="transparent"
-
                         lineColor="#000000"
                     />
 
