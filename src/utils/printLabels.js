@@ -78,14 +78,10 @@ export function printLabels(labels) {
 
                 .product-name {
                     width: 100%;
-
                     font-size: 8px;
                     font-weight: 700;
-
                     line-height: 1;
-
                     text-align: center;
-
                     white-space: nowrap;
                     overflow: hidden;
                     text-overflow: ellipsis;
@@ -95,46 +91,35 @@ export function printLabels(labels) {
                 .barcode-wrap {
                     width: 27mm;
                     height: 6.5mm;
-
                     display: flex;
                     align-items: center;
                     justify-content: center;
-
                     overflow: hidden;
                 }
 
 
                 .barcode-image {
                     display: block;
-
                     width: 27mm;
                     height: auto;
-
                     max-width: 27mm;
                     max-height: 6.5mm;
-
                     image-rendering: pixelated;
                 }
 
 
                 .barcode-text {
                     font-family: monospace;
-
                     font-size: 6px;
                     font-weight: 700;
-
                     line-height: 1;
-
                     letter-spacing: 0.2px;
-
                     white-space: nowrap;
                 }
-
 
                 .price {
                     font-size: 9px;
                     font-weight: 800;
-
                     line-height: 1;
                 }
 

@@ -1,6 +1,4 @@
-function ReceiptItem({
-                         item,
-                     }) {
+function ReceiptItem({ item }) {
     const name =
         item.name ??
         item.productName ??
@@ -21,16 +19,41 @@ function ReceiptItem({
     );
 
     return (
-        <div className="flex justify-between gap-4 py-3 border-b border-slate-100 last:border-b-0">
-            <div className="min-w-0">
-                <p className="font-semibold text-sm text-slate-900 break-words">
+        <div className="
+            mynix-receipt-item
+            grid
+            grid-cols-[minmax(0,1fr)_auto]
+            gap-3
+            border-b
+            border-slate-100
+            px-4
+            py-3
+            last:border-b-0
+        ">
+            <div className="
+                min-w-0
+            ">
+                <p className="
+                    min-w-0
+                    break-words
+                    text-[11px]
+                    font-bold
+                    leading-tight
+                    text-slate-900
+                ">
                     {name}
                 </p>
 
-                <p className="text-xs text-slate-500 mt-1">
+                <p className="
+                    mt-1
+                    text-[9px]
+                    font-medium
+                    leading-tight
+                    text-slate-400
+                ">
                     {quantity} × Rs.{" "}
                     {unitPrice.toLocaleString(
-                        undefined,
+                        "en-LK",
                         {
                             minimumFractionDigits: 2,
                             maximumFractionDigits: 2,
@@ -39,10 +62,17 @@ function ReceiptItem({
                 </p>
             </div>
 
-            <div className="font-semibold text-sm text-slate-900 whitespace-nowrap">
+            <div className="
+                shrink-0
+                self-center
+                whitespace-nowrap
+                text-[11px]
+                font-extrabold
+                text-slate-900
+            ">
                 Rs.{" "}
                 {lineTotal.toLocaleString(
-                    undefined,
+                    "en-LK",
                     {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2,

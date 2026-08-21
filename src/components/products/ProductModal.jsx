@@ -24,8 +24,8 @@ function ProductModal({
 
             <DialogContent className="
                 w-[calc(100%-1rem)]
-                max-w-4xl
-                max-h-[92vh]
+                max-w-6xl
+                max-h-[96vh]
                 overflow-y-auto
                 rounded-2xl
                 p-5
