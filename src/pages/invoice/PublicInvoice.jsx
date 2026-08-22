@@ -206,9 +206,17 @@ function PublicInvoice() {
                     </div>
                 </div>
 
-                <p className="mt-5 text-center text-[9px] font-semibold uppercase tracking-[0.16em] text-slate-300 print:hidden">
-                    MYNIX — The Signature of Perfection
-                </p>
+                <div className="mt-5 text-center print:hidden">
+                    <p className="text-[9px] font-semibold uppercase tracking-[0.16em] text-slate-300">
+                        MYNIX — The Signature of Perfection
+                    </p>
+                    <p className="mt-2 text-[9px] text-slate-300">
+                        © 2026 MYNIX PVT (LTD)
+                        <span className="mx-1 text-slate-200">·</span>
+                        Crafted &amp; developed by
+                        <span className="ml-1 font-semibold text-slate-400">FS Technologies</span>
+                    </p>
+                </div>
             </main>
         </div>
     );
