@@ -19,30 +19,93 @@ import PublicInvoice from "@/pages/invoice/PublicInvoice";
 
 
 import ProtectedRoute from "./components/auth/ProtectedRoute";
+import SessionExpiredModal from "@/components/auth/SessionExpiredModal.jsx";
 
 export default function App() {
 
     return (
-
-        <Routes>
-            <Route
-                path="/login"
-                element={<Login />}
-            />
-            <Route
-                path="/invoice/:token"
-                element={<PublicInvoice />}
-            />
-            <Route
-                element={
-                    <ProtectedRoute
-                        roles={["ADMIN", "CASHIER"]}>
-                        <MainLayout />
-                    </ProtectedRoute>
-                }
-            >
+        <>
+            <Routes>
                 <Route
-                    path="/"
+                    path="/login"
+                    element={<Login />}
+                />
+                <Route
+                    path="/invoice/:token"
+                    element={<PublicInvoice />}
+                />
+                <Route
+                    element={
+                        <ProtectedRoute
+                            roles={["ADMIN", "CASHIER"]}>
+                            <MainLayout />
+                        </ProtectedRoute>
+                    }
+                >
+                    <Route
+                        path="/"
+                        element={
+                            <Navigate
+                                to="/dashboard"
+                                replace
+                            />
+                        }
+                    />
+                    <Route
+                        path="/dashboard"
+                        element={<Dashboard />}
+                    />
+                    <Route
+                        path="/pos"
+                        element={<POS />}
+                    />
+                    <Route
+                        path="/sales"
+                        element={<Sales />}
+                    />
+                    <Route
+                        path="/products"
+                        element={
+                            <ProtectedRoute roles={["ADMIN", "CASHIER"]}>
+                                <Products />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/categories"
+                        element={
+                            <ProtectedRoute roles={["ADMIN"]}>
+                                <Categories />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/staff"
+                        element={
+                            <ProtectedRoute roles={["ADMIN"]}>
+                                <Staff />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/customers"
+                        element={
+                            <ProtectedRoute>
+                                <Customers />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/customers/:id"
+                        element={
+                            <ProtectedRoute>
+                                <CustomerDetails />
+                            </ProtectedRoute>
+                        }
+                    />
+                </Route>
+                <Route
+                    path="*"
                     element={
                         <Navigate
                             to="/dashboard"
@@ -50,68 +113,10 @@ export default function App() {
                         />
                     }
                 />
-                <Route
-                    path="/dashboard"
-                    element={<Dashboard />}
-                />
-                <Route
-                    path="/pos"
-                    element={<POS />}
-                />
-                <Route
-                    path="/sales"
-                    element={<Sales />}
-                />
-                <Route
-                    path="/products"
-                    element={
-                        <ProtectedRoute roles={["ADMIN", "CASHIER"]}>
-                            <Products />
-                        </ProtectedRoute>
-                    }
-                />
-                <Route
-                    path="/categories"
-                    element={
-                        <ProtectedRoute roles={["ADMIN"]}>
-                            <Categories />
-                        </ProtectedRoute>
-                    }
-                />
-                <Route
-                    path="/staff"
-                    element={
-                        <ProtectedRoute roles={["ADMIN"]}>
-                            <Staff />
-                        </ProtectedRoute>
-                    }
-                />
-                <Route
-                    path="/customers"
-                    element={
-                        <ProtectedRoute>
-                            <Customers />
-                        </ProtectedRoute>
-                    }
-                />
-                <Route
-                    path="/customers/:id"
-                    element={
-                        <ProtectedRoute>
-                            <CustomerDetails />
-                        </ProtectedRoute>
-                    }
-                />
-            </Route>
-            <Route
-                path="*"
-                element={
-                    <Navigate
-                        to="/dashboard"
-                        replace
-                    />
-                }
-            />
-        </Routes>
+            </Routes>
+
+            <SessionExpiredModal />
+
+        </>
     );
 }

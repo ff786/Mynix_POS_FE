@@ -32,227 +32,206 @@ function Receipt({ sale }) {
             className="
                 mynix-receipt
                 w-full
-                min-w-0
+                max-w-4xl
+                mx-auto
+                p-1
+                max-h-screen
+                overflow-y-auto
                 bg-white
                 text-slate-900
+                print:bg-white
             "
         >
             {/* =====================================================
-                BRAND
+                BRAND HEADER
             ====================================================== */}
 
             <header className="
                 mynix-receipt-header
+                px-2
+                py-2
+                text-black
                 text-center
             ">
                 <div className="
-                    mynix-logo-mark
-                    mx-auto
                     flex
-                    h-12
-                    w-12
-                    items-center
                     justify-center
-                    rounded-2xl
-                    bg-emerald-600
-                    text-xl
-                    font-black
-                    text-white
-                    shadow-sm
+                    gap-2
+                    items-center
+                    mb-3
                 ">
-                    M
+                    <h1 className="
+                        text-3xl
+                        font-black
+                        text-emerald-950
+                        tracking-tight
+                    ">
+                        MYNIX PVT (LTD)
+                    </h1>
                 </div>
 
-                <h1 className="
-                    mt-3
-                    text-2xl
-                    font-black
-                    tracking-tight
-                    text-slate-950
-                ">
-                    MYNIX
-                </h1>
-
-                <p className="
-                    mt-0.5
-                    text-[10px]
-                    font-semibold
+                {/*<p className="
+                    text-emerald-50
+                    text-xs
+                    font-medium
+                    tracking-wide
                     uppercase
-                    tracking-[0.22em]
-                    text-slate-400
+                    mb-3
                 ">
                     POS & Business Management
                 </p>
-
+*/}
                 <div className="
-                    mt-3
                     inline-flex
                     items-center
                     rounded-full
                     border
-                    border-emerald-200
-                    bg-emerald-50
-                    px-3
-                    py-1.5
-                    text-[10px]
+                    border-white
+                    px-4
+                    py-2
+                    text-xs
                     font-bold
                     uppercase
-                    tracking-[0.12em]
-                    text-emerald-700
+                    tracking-wide
+                    text-emerald-600
+                    bg-emerald-50
                 ">
-                    Customer Receipt
+                    ✓ Customer Receipt
                 </div>
             </header>
 
 
             {/* =====================================================
-                INVOICE INFORMATION
+                INVOICE META
             ====================================================== */}
 
             <section className="
-                mynix-receipt-card
-                mt-5
-                rounded-2xl
-                border
+                px-6
+                py-4
+                border-b
                 border-slate-200
-                bg-slate-50
-                p-4
+                bg-white
             ">
                 <div className="
-                    grid
-                    grid-cols-2
-                    gap-x-5
-                    gap-y-4
+                    space-y-4
                 ">
-                    <ReceiptInfo
-                        label="Invoice No."
-                        value={
-                            sale.invoiceNumber
-                        }
-                        mono
-                    />
-
-                    <ReceiptInfo
-                        label="Payment"
-                        value={
-                            paymentMethod
-                        }
-                    />
-
-                    <ReceiptInfo
-                        label="Date"
-                        value={
-                            formatDate(
-                                sale.createdAt
-                            )
-                        }
-                    />
-
-                    <ReceiptInfo
-                        label="Cashier"
-                        value={
-                            sale.cashierName ||
-                            sale.cashierUsername ||
-                            "Admin"
-                        }
-                    />
+                    <div className="grid grid-cols-2 gap-6">
+                        <MetaItem
+                            label="Invoice No."
+                            value={sale.invoiceNumber}
+                            mono
+                        />
+                        <MetaItem
+                            label="Payment Method"
+                            value={paymentMethod}
+                        />
+                    </div>
+                    <div className="grid grid-cols-2 gap-6">
+                        <MetaItem
+                            label="Date & Time"
+                            value={formatDate(sale.createdAt)}
+                        />
+                        <MetaItem
+                            label="Cashier"
+                            value={
+                                sale.cashierName ||
+                                sale.cashierUsername ||
+                                "System"
+                            }
+                        />
+                    </div>
                 </div>
             </section>
 
 
             {/* =====================================================
-                CUSTOMER
+                CUSTOMER SECTION
             ====================================================== */}
 
             {hasCustomer && (
                 <section className="
-                    mynix-receipt-card
-                    mt-3
-                    rounded-2xl
-                    border
+                    px-6
+                    py-4
+                    border-b
                     border-slate-200
                     bg-white
-                    p-4
                 ">
                     <div className="
-                        flex
-                        items-start
-                        justify-between
-                        gap-4
+                        space-y-2
                     ">
-                        <div className="min-w-0">
-
-                            <p className="
-                                text-[9px]
-                                font-bold
-                                uppercase
-                                tracking-[0.14em]
-                                text-slate-400
-                            ">
-                                Customer
-                            </p>
-
-                            <p className="
-                                mt-1
-                                truncate
-                                text-sm
-                                font-bold
-                                text-slate-950
-                            ">
-                                {sale.customerName ||
-                                    "Customer"}
-                            </p>
+                        <div className="
+                            flex
+                            items-start
+                            justify-between
+                            gap-4
+                        ">
+                            <div className="flex-1">
+                                <p className="
+                                    text-xs
+                                    font-semibold
+                                    uppercase
+                                    tracking-wide
+                                    text-slate-500
+                                    mb-1
+                                ">
+                                    Customer
+                                </p>
+                                <p className="
+                                    text-lg
+                                    font-bold
+                                    text-slate-900
+                                ">
+                                    {sale.customerName ||
+                                        "Customer"}
+                                </p>
+                            </div>
+                            {sale.customerContactNumber && (
+                                <p className="
+                                    shrink-0
+                                    text-right
+                                    text-sm
+                                    font-medium
+                                    text-slate-600
+                                    font-mono
+                                ">
+                                    {sale.customerContactNumber}
+                                </p>
+                            )}
                         </div>
 
-                        {sale.customerContactNumber && (
-                            <p className="
-                                shrink-0
-                                text-right
-                                text-[10px]
-                                font-semibold
-                                text-slate-500
+                        {isCredit && (
+                            <div className="
+                                mt-2
+                                flex
+                                items-center
+                                justify-between
+                                gap-3
+                                rounded-lg
+                                border
+                                border-amber-300
+                                bg-amber-50
+                                px-4
+                                py-3
                             ">
-                                {sale.customerContactNumber}
-                            </p>
+                                <span className="
+                                    text-xs
+                                    font-semibold
+                                    uppercase
+                                    tracking-wide
+                                    text-amber-700
+                                ">
+                                    Amount Due
+                                </span>
+                                <span className="
+                                    text-base
+                                    font-bold
+                                    text-amber-900
+                                ">
+                                    Rs. {formatAmount(customerOutstanding)}
+                                </span>
+                            </div>
                         )}
                     </div>
-
-                    {isCredit && (
-                        <div className="
-                            mt-3
-                            flex
-                            items-center
-                            justify-between
-                            gap-3
-                            rounded-xl
-                            border
-                            border-amber-200
-                            bg-amber-50
-                            px-3
-                            py-2.5
-                        ">
-                            <span className="
-                                text-[9px]
-                                font-bold
-                                uppercase
-                                tracking-[0.12em]
-                                text-amber-700
-                            ">
-                                Outstanding
-                            </span>
-
-                            <span className="
-                                text-xs
-                                font-extrabold
-                                text-amber-900
-                            ">
-                                Rs.{" "}
-                                {formatAmount(
-                                    customerOutstanding
-                                )}
-                            </span>
-                        </div>
-                    )}
                 </section>
             )}
 
@@ -262,52 +241,37 @@ function Receipt({ sale }) {
             ====================================================== */}
 
             <section className="
-                mt-5
+                px-6
+                py-4
+                border-b
+                border-slate-200
+                bg-white
             ">
                 <div className="
-                    mb-2
-                    flex
-                    items-end
-                    justify-between
-                    px-1
+                    mb-4
                 ">
-                    <div>
-                        <p className="
-                            text-[9px]
-                            font-bold
-                            uppercase
-                            tracking-[0.14em]
-                            text-slate-400
-                        ">
-                            Purchase
-                        </p>
-
-                        <p className="
-                            mt-0.5
-                            text-sm
-                            font-bold
-                            text-slate-800
-                        ">
-                            {itemCount}{" "}
-                            {itemCount === 1
-                                ? "item"
-                                : "items"}
-                        </p>
-                    </div>
-
                     <p className="
-                        text-[9px]
-                        font-medium
-                        text-slate-400
+                        text-xs
+                        font-semibold
+                        uppercase
+                        tracking-wide
+                        text-slate-500
+                        mb-2
                     ">
-                        Amount
+                        Items Purchased
+                    </p>
+                    <p className="
+                        text-sm
+                        font-bold
+                        text-slate-900
+                    ">
+                        {itemCount} {itemCount === 1 ? "item" : "items"}
                     </p>
                 </div>
 
                 <div className="
-                    mynix-item-table
                     overflow-hidden
-                    rounded-2xl
+                    rounded-lg
                     border
                     border-slate-200
                     bg-white
@@ -315,101 +279,87 @@ function Receipt({ sale }) {
                     <div className="
                         grid
                         grid-cols-[minmax(0,1fr)_auto]
-                        gap-3
-                        bg-slate-950
-                        px-4
-                        py-2.5
-                        text-[9px]
-                        font-bold
+                        gap-4
+                        bg-slate-900
+                        px-5
+                        py-3
+                        text-xs
+                        font-semibold
                         uppercase
-                        tracking-[0.12em]
-                        text-white
+                        tracking-wide
+                        text-slate-300
                     ">
-                        <span>
-                            Product
-                        </span>
-
-                        <span className="
-                            text-right
-                        ">
-                            Amount
-                        </span>
+                        <span>Product</span>
+                        <span className="text-right">Amount</span>
                     </div>
 
-                    {itemCount > 0 ? (
-                        sale.items.map(
-                            (item, index) => (
-                                <ReceiptItem
-                                    key={
-                                        item.id ??
-                                        item.barcode ??
-                                        `${item.productName}-${index}`
-                                    }
-                                    item={item}
-                                />
+                    <div className="divide-y divide-slate-100">
+                        {itemCount > 0 ? (
+                            sale.items.map(
+                                (item, index) => (
+                                    <ReceiptItem
+                                        key={
+                                            item.id ??
+                                            item.barcode ??
+                                            `${item.productName}-${index}`
+                                        }
+                                        item={item}
+                                    />
+                                )
                             )
-                        )
-                    ) : (
-                        <div className="
-                            px-4
-                            py-6
-                            text-center
-                            text-xs
-                            text-slate-400
-                        ">
-                            Item details are not
-                            available for this
-                            historical sale.
-                        </div>
-                    )}
+                        ) : (
+                            <div className="
+                                px-5
+                                py-8
+                                text-center
+                                text-sm
+                                text-slate-400
+                            ">
+                                Item details not available
+                            </div>
+                        )}
+                    </div>
                 </div>
             </section>
 
 
             {/* =====================================================
-                SUMMARY
+                TOTALS
             ====================================================== */}
 
             <section className="
-                mynix-summary-card
-                mt-4
-                rounded-2xl
-                border
+                px-6
+                py-4
+                border-b
                 border-slate-200
                 bg-white
-                p-4
             ">
-                <div className="
-                    space-y-2
-                ">
-                    <ReceiptTotal
+                <div className="space-y-3 mb-4">
+                    <SummaryRow
                         label="Subtotal"
-                        value={
-                            sale.subtotal
-                        }
+                        value={sale.subtotal}
                     />
 
-                    <ReceiptTotal
-                        label="Discount"
-                        value={
-                            sale.discount
-                        }
-                        negative
-                    />
+                    {sale.discount > 0 && (
+                        <SummaryRow
+                            label="Discount"
+                            value={sale.discount}
+                            negative
+                        />
+                    )}
 
-                    <ReceiptTotal
-                        label="Delivery Fee"
-                        value={
-                            sale.deliveryFee || 0
-                        }
-                    />
+                    {sale.deliveryFee > 0 && (
+                        <SummaryRow
+                            label="Delivery Fee"
+                            value={sale.deliveryFee}
+                        />
+                    )}
                 </div>
 
                 <div className="
-                    my-3
                     border-t
-                    border-dashed
                     border-slate-300
+                    pt-4
                 " />
 
                 <div className="
@@ -417,39 +367,39 @@ function Receipt({ sale }) {
                     items-end
                     justify-between
                     gap-4
+                    mt-4
                 ">
                     <div>
                         <p className="
-                            text-[9px]
-                            font-bold
-                            uppercase
-                            tracking-[0.14em]
-                            text-slate-400
-                        ">
-                            Total
-                        </p>
-
-                        <p className="
-                            mt-1
-                            text-[10px]
+                            text-xs
                             font-semibold
-                            text-slate-400
+                            uppercase
+                            tracking-wide
+                            text-slate-500
+                            mb-1
+                        ">
+                            Total Amount
+                        </p>
+                        <p className="
+                            text-sm
+                            font-medium
+                            text-slate-600
                         ">
                             {paymentMethod}
                         </p>
                     </div>
 
-                    <p className="
-                        text-2xl
-                        font-black
-                        tracking-tight
-                        text-slate-950
+                    <div className="
+                        text-right
                     ">
-                        Rs.{" "}
-                        {formatAmount(
-                            sale.grandTotal
-                        )}
-                    </p>
+                        <p className="
+                            text-xl
+                            font-black
+                            text-emerald-600
+                        ">
+                            Rs. {formatAmount(sale.grandTotal)}
+                        </p>
+                    </div>
                 </div>
             </section>
 
@@ -460,37 +410,41 @@ function Receipt({ sale }) {
 
             {isCredit && (
                 <section className="
-                    mt-3
-                    rounded-2xl
+                    mx-6
+                    my-4
+                    rounded-lg
                     border
-                    border-amber-200
+                    border-amber-300
                     bg-amber-50
-                    px-4
-                    py-3
+                    px-5
+                    py-4
                     text-center
                 ">
                     <p className="
-                        text-[9px]
-                        font-black
+                        text-xs
+                        font-bold
                         uppercase
-                        tracking-[0.15em]
+                        tracking-wide
                         text-amber-700
+                        mb-2
                     ">
-                        Credit Sale
+                        Credit Transaction
                     </p>
 
                     <p className="
-                        mt-1
-                        text-[11px]
+                        text-sm
                         font-semibold
                         text-amber-900
                     ">
-                        Outstanding balance:
-                        {" "}
-                        Rs.{" "}
-                        {formatAmount(
-                            customerOutstanding
-                        )}
+                        Outstanding Balance
+                    </p>
+                    <p className="
+                        text-2xl
+                        font-bold
+                        text-amber-700
+                        mt-2
+                    ">
+                        Rs. {formatAmount(customerOutstanding)}
                     </p>
                 </section>
             )}
@@ -501,60 +455,60 @@ function Receipt({ sale }) {
             ====================================================== */}
 
             <footer className="
-                mynix-receipt-footer
-                mt-6
-                border-t
-                border-dashed
-                border-slate-300
-                pt-4
+                px-4
+                py-3
                 text-center
+                border-t
+                border-slate-200
+                bg-white
             ">
                 <p className="
-                    text-xs
+                    text-base
                     font-bold
-                    text-slate-800
+                    text-slate-900
+                    mb-1
                 ">
-                    Thank you for choosing MYNIX.
+                    Thank you for your business!
                 </p>
 
                 <p className="
-                    mt-1
-                    text-[10px]
-                    font-medium
-                    text-slate-400
+                    text-sm
+                    text-slate-600
+                    mb-2
                 ">
-                    We appreciate your business.
+                    We appreciate your trust in MYNIX
+                </p>
+
+                <div className="
+                    my-3
+                    border-t
+                    border-slate-200
+                " />
+
+                <p className="
+                    text-base
+                    font-bold
+                    text-emerald-600
+                    mb-1
+                ">
+                    MYNIX POS
                 </p>
 
                 <p className="
-                    mt-3
-                    text-[9px]
-                    font-semibold
-                    text-slate-500
+                    text-sm
+                    text-slate-600
+                    mb-2
                 ">
                     Inquiries: 0778843815
                 </p>
 
                 <p className="
-                    mt-1.5
-                    text-[8px]
-                    font-medium
+                    text-xs
+                    text-slate-400
                     uppercase
-                    tracking-[0.16em]
-                    text-slate-300
+                    tracking-wide
                 ">
-                    Computer-generated receipt
-                </p>
-
-                <p className="
-                    mt-1
-                    text-[8px]
-                    font-bold
-                    uppercase
-                    tracking-[0.18em]
-                    text-emerald-600
-                ">
-                    MYNIX POS
+                    Computer-Generated Receipt
                 </p>
             </footer>
         </div>
@@ -563,41 +517,34 @@ function Receipt({ sale }) {
 
 
 /* =========================================================
-   INFO
+   META INFO (Invoice, Payment, Date, Cashier)
 ========================================================= */
 
-function ReceiptInfo({
-                         label,
-                         value,
-                         mono = false,
-                     }) {
+function MetaItem({
+                      label,
+                      value,
+                      mono = false,
+                  }) {
     return (
-        <div className="
-            min-w-0
-        ">
+        <div>
             <p className="
-                text-[9px]
-                font-bold
+                text-xs
+                font-semibold
                 uppercase
-                tracking-[0.12em]
-                text-slate-400
+                tracking-wide
+                text-slate-500
+                mb-1
             ">
                 {label}
             </p>
 
             <p
                 className={`
-                    mt-1
-                    min-w-0
-                    break-words
-                    text-[11px]
+                    text-sm
                     font-bold
                     text-slate-800
-                    ${
-                    mono
-                        ? "font-mono"
-                        : ""
-                }
+                    word-break
+                    ${mono ? "font-mono" : ""}
                 `}
             >
                 {value || "—"}
@@ -608,14 +555,16 @@ function ReceiptInfo({
 
 
 /* =========================================================
-   TOTAL
+   SUMMARY ROW (Subtotal, Discount, Delivery)
 ========================================================= */
 
-function ReceiptTotal({
-                          label,
-                          value,
-                          negative = false,
-                      }) {
+function SummaryRow({
+                        label,
+                        value,
+                        negative = false,
+                    }) {
+    if (!value) return null;
+
     return (
         <div className="
             flex
@@ -624,24 +573,26 @@ function ReceiptTotal({
             gap-4
         ">
             <span className="
-                text-xs
+                text-sm
                 font-medium
-                text-slate-500
+                text-slate-600
             ">
                 {label}
             </span>
 
-            <span className="
+            <span className={`
                 shrink-0
-                text-xs
-                font-semibold
-                text-slate-800
-            ">
-                {negative
-                    ? "- "
-                    : ""}
-                Rs.{" "}
-                {formatAmount(value)}
+                text-sm
+                font-bold
+                font-mono
+                ${
+                negative
+                    ? "text-red-600"
+                    : "text-slate-800"
+            }
+            `}>
+                {negative ? "− " : ""}
+                Rs. {formatAmount(value)}
             </span>
         </div>
     );
@@ -653,9 +604,7 @@ function ReceiptTotal({
 ========================================================= */
 
 function formatAmount(value) {
-    return Number(
-        value || 0
-    ).toLocaleString(
+    return Number(value || 0).toLocaleString(
         "en-LK",
         {
             minimumFractionDigits: 2,
@@ -664,50 +613,34 @@ function formatAmount(value) {
     );
 }
 
-
 function formatDate(value) {
-    if (!value) {
+    if (!value) return "—";
+
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
         return "—";
     }
 
-    const date =
-        new Date(value);
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
 
-    if (
-        Number.isNaN(
-            date.getTime()
-        )
-    ) {
-        return "—";
-    }
-
-    return date.toLocaleString(
-        "en-LK",
-        {
-            dateStyle: "medium",
-            timeStyle: "short",
-        }
-    );
+    return `${day}/${month}/${year} ${hours}:${minutes}`;
 }
 
-
-function formatPaymentMethod(
-    method
-) {
+function formatPaymentMethod(method) {
     const labels = {
         CASH: "Cash",
         CARD: "Card",
-        BANK_DEPOSIT:
-            "Bank Deposit",
+        BANK_DEPOSIT: "Bank Deposit",
         CREDIT: "Credit",
         CHEQUE: "Cheque",
     };
 
-    return (
-        labels[method] ||
-        method ||
-        "—"
-    );
+    return labels[method] || method || "—";
 }
 
 export default Receipt;

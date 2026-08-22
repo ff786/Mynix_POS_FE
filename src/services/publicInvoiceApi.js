@@ -7,10 +7,23 @@ const publicApi = axios.create({
     },
 });
 
+
 export async function getPublicInvoice(token) {
-    const response = await publicApi.get(
-        `/public/invoices/${token}`
-    );
+
+    if (!token) {
+        throw new Error(
+            "Invoice token is required."
+        );
+    }
+
+
+    const response =
+        await publicApi.get(
+            `/public/invoices/${encodeURIComponent(
+                token
+            )}`
+        );
+
 
     return response.data;
 }

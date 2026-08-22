@@ -8,12 +8,7 @@ import {
 import ProductForm from "./ProductForm";
 
 
-function ProductModal({
-                          open,
-                          onOpenChange,
-                          product,
-                          onSuccess,
-                      }) {
+function ProductModal({open, onOpenChange, product, onSuccess,}) {
 
     return (
 

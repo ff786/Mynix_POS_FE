@@ -618,29 +618,21 @@ function ReceiptModal({
 
 
     return (
-        <Dialog
-            open={open}
-            onOpenChange={
-                onOpenChange
-            }
-        >
+        <Dialog open={open} onOpenChange={onOpenChange}>
+            <DialogContent className="
+                w-[calc(100%-1rem)]
+                max-w-xl
+                max-h-[92vh]
+                overflow-hidden
+                rounded-2xl
+                border
+                border-slate-200
+                bg-white
+                p-0
+                shadow-lg
+            ">
 
-            <DialogContent
-                className="
-                    w-[calc(100%-1rem)]
-                    max-w-xl
-                    max-h-[92vh]
-                    overflow-hidden
-                    rounded-3xl
-                    border
-                    border-slate-200
-                    bg-slate-50
-                    p-0
-                    shadow-2xl
-                "
-            >
-
-                {/* SOFTCOPY HEADER */}
+                {/* HEADER */}
 
                 <div className="
                     flex
@@ -649,43 +641,35 @@ function ReceiptModal({
                     border-b
                     border-slate-200
                     bg-white
-                    px-5
+                    px-6
                     py-4
                 ">
                     <div>
-
                         <p className="
-                            text-sm
+                            text-base
                             font-bold
                             text-slate-900
                         ">
                             Invoice Preview
                         </p>
-
                         <p className="
                             mt-0.5
                             text-xs
-                            text-slate-400
+                            text-slate-500
                         ">
-                            {
-                                sale.invoiceNumber
-                            }
+                            {sale.invoiceNumber}
                         </p>
-
                     </div>
-
                 </div>
 
 
-                {/* SOFTCOPY */}
+                {/* RECEIPT CONTENT */}
 
                 <div className="
                     min-h-0
                     overflow-y-auto
-                    px-3
-                    py-5
-                    sm:px-6
-                    sm:py-7
+                    px-4
+                    py-4
                 ">
 
                     <div
@@ -694,24 +678,14 @@ function ReceiptModal({
                             mx-auto
                             w-full
                             max-w-[480px]
-                            rounded-3xl
-                            border
-                            border-slate-200
                             bg-white
-                            p-5
-                            shadow-sm
-                            sm:p-7
                         "
                     >
-
-                        <Receipt
-                            sale={sale}
-                        />
-
+                        <Receipt sale={sale} />
                     </div>
 
 
-                    {/* HIDDEN THERMAL VERSION */}
+                    {/* HIDDEN THERMAL VERSION FOR PRINTING */}
 
                     <div
                         id="thermal-receipt-print-area"
@@ -725,28 +699,25 @@ function ReceiptModal({
                             bg-white
                         "
                     >
-
-                        <ThermalReceipt
-                            sale={sale}
-                        />
-
+                        <ThermalReceipt sale={sale} />
                     </div>
 
                 </div>
 
 
-                {/* ACTIONS */}
+                {/* ACTION BUTTONS */}
 
                 <div className="
                     flex
                     flex-col-reverse
-                    gap-2.5
+                    gap-2
                     border-t
                     border-slate-200
                     bg-white
                     p-4
                     sm:flex-row
                     sm:justify-end
+                    sm:gap-3
                 ">
 
                     <button
@@ -755,17 +726,19 @@ function ReceiptModal({
                             onOpenChange(false)
                         }
                         className="
-                            min-h-11
+                            min-h-10
                             flex-1
-                            rounded-xl
+                            rounded-lg
                             border
-                            border-slate-200
-                            px-5
+                            border-slate-300
+                            bg-white
+                            px-4
                             text-sm
                             font-semibold
-                            text-slate-600
+                            text-slate-700
                             transition
                             hover:bg-slate-50
+                            active:scale-[0.98]
                             sm:flex-none
                         "
                     >
@@ -774,22 +747,19 @@ function ReceiptModal({
 
                     <button
                         type="button"
-                        onClick={
-                            handlePrint
-                        }
+                        onClick={handlePrint}
                         className="
-                            min-h-11
+                            min-h-10
                             flex-1
-                            rounded-xl
+                            rounded-lg
                             bg-emerald-600
-                            px-6
+                            px-5
                             text-sm
                             font-bold
                             text-white
-                            shadow-sm
                             transition
                             hover:bg-emerald-700
-                            active:scale-[0.99]
+                            active:scale-[0.98]
                             sm:flex-none
                         "
                     >
@@ -799,7 +769,6 @@ function ReceiptModal({
                 </div>
 
             </DialogContent>
-
         </Dialog>
     );
 }

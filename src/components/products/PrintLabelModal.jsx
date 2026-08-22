@@ -3,8 +3,6 @@ import { useEffect, useState } from "react";
 import {
     Dialog,
     DialogContent,
-    DialogHeader,
-    DialogTitle,
 } from "@/components/ui/dialog";
 
 import {
@@ -144,31 +142,43 @@ function PrintLabelModal({open, onOpenChange, products,}) {
         >
 
             <DialogContent className="
-                max-w-6xl
-                max-h-[96vh]
-                overflow-y-auto
+                w-[calc(100%-1rem)]
+                max-w-4xl
+                max-h-[92vh]
+                overflow-hidden
                 rounded-2xl
-                p-5
-                sm:p-6
+                border
+                border-slate-200
+                bg-white
+                p-0
+                shadow-lg
             ">
 
-                <DialogHeader>
+                {/* HEADER */}
 
-                    <DialogTitle className="
-                        flex
-                        items-center
-                        gap-2
-                        text-xl
-                        sm:text-2xl
-                    ">
+                <div className="
+                    flex
+                    items-center
+                    justify-between
+                    border-b
+                    border-slate-200
+                    bg-white
+                    px-5
+                    py-4
+                    sm:px-6
+                ">
+
+                    <div className="flex items-center gap-3">
 
                         <div className="
-                            w-9 h-9
-                            rounded-xl
-                            bg-emerald-50
+                            w-9
+                            h-9
+                            rounded-lg
+                            bg-emerald-100
                             flex
                             items-center
                             justify-center
+                            shrink-0
                         ">
                             <Printer
                                 size={18}
@@ -176,400 +186,446 @@ function PrintLabelModal({open, onOpenChange, products,}) {
                             />
                         </div>
 
-                        Print Product Labels
+                        <div>
+                            <p className="
+                                font-bold
+                                text-base
+                                text-slate-900
+                            ">
+                                Print Product Labels
+                            </p>
+                            <p className="
+                                text-xs
+                                text-slate-500
+                                mt-0.5
+                            ">
+                                {productList.length} product{productList.length !== 1 ? "s" : ""}
+                            </p>
+                        </div>
 
-                    </DialogTitle>
-
-                </DialogHeader>
-
-
-                {productList.length === 0 ? (
-
-                    <div className="
-                        py-12
-                        text-center
-                        text-slate-500
-                    ">
-                        No products selected.
                     </div>
 
-                ) : (
-
-                    <div className="space-y-5">
+                </div>
 
 
-                        {/* Products */}
+                {/* CONTENT */}
+
+                <div className="
+                    min-h-0
+                    overflow-y-auto
+                    px-5
+                    py-4
+                    sm:px-6
+                ">
+
+                    {productList.length === 0 ? (
+
                         <div className="
-                            border
-                            border-slate-200
-                            rounded-2xl
-                            overflow-hidden
+                            py-12
+                            text-center
+                            text-slate-500
                         ">
+                            No products selected.
+                        </div>
 
-                            {productList.map((product, index) => (
+                    ) : (
 
-                                <div
-                                    key={product.id}
-                                    className={`
-                                        p-4
-                                        flex
-                                        flex-col
-                                        sm:flex-row
-                                        sm:items-center
-                                        sm:justify-between
-                                        gap-4
-                                        ${
-                                        index !==
-                                        productList.length - 1
-                                            ? "border-b border-slate-100"
-                                            : ""
-                                    }
-                                    `}
-                                >
-
-                                    <div className="
-                                        flex
-                                        items-center
-                                        gap-3
-                                        min-w-0
-                                    ">
-
-                                        {product.imageUrl ? (
-
-                                            <img
-                                                src={product.imageUrl}
-                                                alt={product.name}
-                                                className="
-                                                    w-12 h-12
-                                                    rounded-xl
-                                                    object-cover
-                                                    border
-                                                    border-slate-200
-                                                    shrink-0
-                                                "
-                                            />
-
-                                        ) : (
-
-                                            <div className="
-                                                w-12 h-12
-                                                rounded-xl
-                                                bg-slate-100
-                                                flex
-                                                items-center
-                                                justify-center
-                                                shrink-0
-                                            ">
-                                                <Package
-                                                    size={19}
-                                                    className="text-slate-400"
-                                                />
-                                            </div>
-
-                                        )}
-
-                                        <div className="min-w-0">
-
-                                            <p className="
-                                                font-semibold
-                                                text-slate-900
-                                                truncate
-                                            ">
-                                                {product.name}
-                                            </p>
-
-                                            <p className="
-                                                text-xs
-                                                text-slate-500
-                                                font-mono
-                                                mt-1
-                                            ">
-                                                {product.barcode}
-                                            </p>
-
-                                        </div>
-
-                                    </div>
+                        <div className="space-y-4">
 
 
-                                    {/* Quantity */}
-                                    <div className="
-                                        flex
-                                        items-center
-                                        justify-between
-                                        sm:justify-end
-                                        gap-3
-                                    ">
+                            {/* PRODUCTS LIST */}
+                            <div className="
+                                border
+                                border-slate-200
+                                rounded-lg
+                                overflow-hidden
+                                divide-y
+                                divide-slate-100
+                            ">
 
-                                        <span className="
-                                            text-sm
-                                            text-slate-500
-                                        ">
-                                            Labels
-                                        </span>
+                                {productList.map((product) => (
+
+                                    <div
+                                        key={product.id}
+                                        className="
+                                            p-4
+                                            flex
+                                            flex-col
+                                            sm:flex-row
+                                            sm:items-center
+                                            sm:justify-between
+                                            gap-4
+                                        "
+                                    >
 
                                         <div className="
                                             flex
                                             items-center
-                                            border
-                                            border-slate-200
-                                            rounded-xl
-                                            overflow-hidden
+                                            gap-3
+                                            min-w-0
+                                            flex-1
                                         ">
 
-                                            <button
-                                                type="button"
-                                                onClick={() =>
-                                                    decreaseQuantity(
-                                                        product
-                                                    )
-                                                }
-                                                disabled={
-                                                    getQuantity(product) <= 1
-                                                }
-                                                className="
-                                                    w-9 h-9
+                                            {product.imageUrl ? (
+
+                                                <img
+                                                    src={product.imageUrl}
+                                                    alt={product.name}
+                                                    className="
+                                                        w-11
+                                                        h-11
+                                                        rounded-lg
+                                                        object-cover
+                                                        border
+                                                        border-slate-200
+                                                        shrink-0
+                                                    "
+                                                />
+
+                                            ) : (
+
+                                                <div className="
+                                                    w-11
+                                                    h-11
+                                                    rounded-lg
+                                                    bg-slate-100
                                                     flex
                                                     items-center
                                                     justify-center
-                                                    hover:bg-slate-50
-                                                    disabled:opacity-30
-                                                "
-                                            >
-                                                <Minus size={15} />
-                                            </button>
+                                                    shrink-0
+                                                ">
+                                                    <Package
+                                                        size={18}
+                                                        className="text-slate-400"
+                                                    />
+                                                </div>
 
-                                            <input
-                                                type="number"
-                                                min="1"
-                                                max="100"
-                                                value={getQuantity(product)}
-                                                onChange={(e) =>
-                                                    setQuantity(
-                                                        product.id,
-                                                        e.target.value
-                                                    )
-                                                }
-                                                className="
-                                                    w-12
-                                                    h-9
-                                                    border-x
-                                                    border-slate-200
-                                                    text-center
-                                                    text-sm
+                                            )}
+
+                                            <div className="min-w-0">
+
+                                                <p className="
                                                     font-semibold
-                                                    outline-none
-                                                "
-                                            />
+                                                    text-slate-900
+                                                    text-sm
+                                                    truncate
+                                                ">
+                                                    {product.name}
+                                                </p>
 
-                                            <button
-                                                type="button"
-                                                onClick={() =>
-                                                    increaseQuantity(
-                                                        product
-                                                    )
-                                                }
-                                                disabled={
-                                                    getQuantity(product) >= 100
-                                                }
-                                                className="
-                                                    w-9 h-9
-                                                    flex
-                                                    items-center
-                                                    justify-center
-                                                    hover:bg-slate-50
-                                                    disabled:opacity-30
-                                                "
-                                            >
-                                                <Plus size={15} />
-                                            </button>
+                                                <p className="
+                                                    text-xs
+                                                    text-slate-500
+                                                    font-mono
+                                                    mt-0.5
+                                                    truncate
+                                                ">
+                                                    {product.barcode}
+                                                </p>
+
+                                            </div>
+
+                                        </div>
+
+
+                                        {/* QUANTITY CONTROL */}
+                                        <div className="
+                                            flex
+                                            items-center
+                                            justify-between
+                                            sm:justify-end
+                                            gap-3
+                                        ">
+
+                                            <span className="
+                                                text-xs
+                                                sm:text-sm
+                                                text-slate-500
+                                                font-medium
+                                            ">
+                                                Labels
+                                            </span>
+
+                                            <div className="
+                                                flex
+                                                items-center
+                                                border
+                                                border-slate-200
+                                                rounded-lg
+                                                overflow-hidden
+                                            ">
+
+                                                <button
+                                                    type="button"
+                                                    onClick={() =>
+                                                        decreaseQuantity(
+                                                            product
+                                                        )
+                                                    }
+                                                    disabled={
+                                                        getQuantity(product) <= 1
+                                                    }
+                                                    className="
+                                                        w-8
+                                                        h-8
+                                                        flex
+                                                        items-center
+                                                        justify-center
+                                                        hover:bg-slate-50
+                                                        disabled:opacity-30
+                                                        transition
+                                                    "
+                                                >
+                                                    <Minus size={14} />
+                                                </button>
+
+                                                <input
+                                                    type="number"
+                                                    min="1"
+                                                    max="100"
+                                                    value={getQuantity(product)}
+                                                    onChange={(e) =>
+                                                        setQuantity(
+                                                            product.id,
+                                                            e.target.value
+                                                        )
+                                                    }
+                                                    className="
+                                                        w-10
+                                                        h-8
+                                                        border-x
+                                                        border-slate-200
+                                                        text-center
+                                                        text-xs
+                                                        sm:text-sm
+                                                        font-semibold
+                                                        outline-none
+                                                    "
+                                                />
+
+                                                <button
+                                                    type="button"
+                                                    onClick={() =>
+                                                        increaseQuantity(
+                                                            product
+                                                        )
+                                                    }
+                                                    disabled={
+                                                        getQuantity(product) >= 100
+                                                    }
+                                                    className="
+                                                        w-8
+                                                        h-8
+                                                        flex
+                                                        items-center
+                                                        justify-center
+                                                        hover:bg-slate-50
+                                                        disabled:opacity-30
+                                                        transition
+                                                    "
+                                                >
+                                                    <Plus size={14} />
+                                                </button>
+
+                                            </div>
 
                                         </div>
 
                                     </div>
-
-                                </div>
-
-                            ))}
-
-                        </div>
-
-
-                        {/* Preview */}
-                        <div className="
-                            rounded-2xl
-                            border
-                            border-slate-200
-                            bg-slate-50
-                            p-4
-                            sm:p-5
-                        ">
-
-                            <div className="
-                                flex
-                                items-center
-                                justify-between
-                                mb-4
-                            ">
-
-                                <div>
-
-                                    <p className="
-                                        font-semibold
-                                        text-slate-800
-                                    ">
-                                        Label Preview
-                                    </p>
-
-                                    <p className="
-                                        text-xs
-                                        text-slate-400
-                                        mt-0.5
-                                    ">
-                                        Actual printed labels use a compact
-                                        label layout.
-                                    </p>
-
-                                </div>
-
-                                <span className="
-                                    text-xs
-                                    font-semibold
-                                    bg-white
-                                    border
-                                    border-slate-200
-                                    rounded-full
-                                    px-3
-                                    py-1
-                                    text-slate-600
-                                ">
-                                    {totalLabels} label
-                                    {totalLabels !== 1
-                                        ? "s"
-                                        : ""}
-                                </span>
-
-                            </div>
-
-
-                            <div className="
-                                flex
-                                flex-wrap
-                                gap-4
-                                justify-center
-                                max-h-[360px]
-                                overflow-auto
-                                p-2
-                            ">
-
-                                {productList.map(product => (
-
-                                    <ProductLabel
-                                        key={product.id}
-                                        product={product}
-                                    />
 
                                 ))}
 
                             </div>
 
-                        </div>
 
-
-                        {/* Footer */}
-                        <div className="
-                            flex
-                            flex-col-reverse
-                            sm:flex-row
-                            sm:items-center
-                            sm:justify-between
-                            gap-3
-                        ">
-
-                            <p className="
-                                text-sm
-                                text-slate-500
-                                text-center
-                                sm:text-left
-                            ">
-                                {productList.length} product
-                                {productList.length !== 1
-                                    ? "s"
-                                    : ""}
-                                {" • "}
-                                {totalLabels} label
-                                {totalLabels !== 1
-                                    ? "s"
-                                    : ""}
-                            </p>
-
-
+                            {/* PREVIEW SECTION */}
                             <div className="
-                                flex
-                                gap-2
+                                rounded-lg
+                                border
+                                border-slate-200
+                                bg-slate-50
+                                p-4
                             ">
 
-                                <button
-                                    type="button"
-                                    onClick={() =>
-                                        onOpenChange(false)
-                                    }
-                                    className="
-                                        flex-1
-                                        sm:flex-none
-                                        px-5
-                                        py-2.5
-                                        rounded-xl
+                                <div className="
+                                    flex
+                                    flex-col
+                                    sm:flex-row
+                                    sm:items-center
+                                    sm:justify-between
+                                    gap-3
+                                    mb-4
+                                ">
+
+                                    <div>
+
+                                        <p className="
+                                            font-semibold
+                                            text-slate-800
+                                            text-sm
+                                        ">
+                                            Label Preview
+                                        </p>
+
+                                        <p className="
+                                            text-xs
+                                            text-slate-500
+                                            mt-0.5
+                                        ">
+                                            Compact label layout used for printing.
+                                        </p>
+
+                                    </div>
+
+                                    <span className="
+                                        text-xs
+                                        font-semibold
+                                        bg-white
                                         border
                                         border-slate-200
-                                        text-sm
-                                        font-medium
+                                        rounded-full
+                                        px-3
+                                        py-1
                                         text-slate-600
-                                        hover:bg-slate-50
-                                    "
-                                >
-                                    Cancel
-                                </button>
+                                        whitespace-nowrap
+                                    ">
+                                        {totalLabels} label{totalLabels !== 1 ? "s" : ""}
+                                    </span>
 
-                                <button
-                                    type="button"
-                                    onClick={handlePrint}
-                                    disabled={printRequested}
-                                    className="
-                                        flex-1
-                                        sm:flex-none
-                                        px-5
-                                        py-2.5
-                                        rounded-xl
-                                        bg-emerald-600
-                                        hover:bg-emerald-700
-                                        text-white
-                                        text-sm
-                                        font-semibold
-                                        flex
-                                        items-center
-                                        justify-center
-                                        gap-2
-                                        disabled:opacity-50
-                                    "
-                                >
+                                </div>
 
-                                    <Printer size={16} />
 
-                                    {printRequested
-                                        ? "Preparing..."
-                                        : `Print ${totalLabels} Label${totalLabels !== 1 ? "s" : ""}`
-                                    }
+                                <div className="
+                                    flex
+                                    flex-wrap
+                                    gap-3
+                                    justify-center
+                                    max-h-[300px]
+                                    overflow-auto
+                                ">
 
-                                </button>
+                                    {productList.map(product => (
+
+                                        <ProductLabel
+                                            key={product.id}
+                                            product={product}
+                                        />
+
+                                    ))}
+
+                                </div>
 
                             </div>
 
                         </div>
 
+                    )}
+
+                </div>
+
+
+                {/* FOOTER */}
+
+                <div className="
+                    flex
+                    flex-col-reverse
+                    gap-2
+                    border-t
+                    border-slate-200
+                    bg-white
+                    p-4
+                    sm:p-5
+                    sm:flex-row
+                    sm:items-center
+                    sm:justify-between
+                ">
+
+                    <p className="
+                        text-xs
+                        sm:text-sm
+                        text-slate-600
+                        text-center
+                        sm:text-left
+                    ">
+                        {productList.length} product{productList.length !== 1 ? "s" : ""} • {totalLabels} label{totalLabels !== 1 ? "s" : ""}
+                    </p>
+
+
+                    <div className="
+                        flex
+                        gap-2
+                    ">
+
+                        <button
+                            type="button"
+                            onClick={() =>
+                                onOpenChange(false)
+                            }
+                            className="
+                                flex-1
+                                sm:flex-none
+                                px-4
+                                py-2
+                                rounded-lg
+                                border
+                                border-slate-300
+                                bg-white
+                                text-xs
+                                sm:text-sm
+                                font-medium
+                                text-slate-700
+                                transition
+                                hover:bg-slate-50
+                                active:scale-[0.98]
+                            "
+                        >
+                            Cancel
+                        </button>
+
+                        <button
+                            type="button"
+                            onClick={handlePrint}
+                            disabled={printRequested}
+                            className="
+                                flex-1
+                                sm:flex-none
+                                px-4
+                                py-2
+                                rounded-lg
+                                bg-emerald-600
+                                hover:bg-emerald-700
+                                text-white
+                                text-xs
+                                sm:text-sm
+                                font-semibold
+                                flex
+                                items-center
+                                justify-center
+                                gap-2
+                                transition
+                                disabled:opacity-50
+                                active:scale-[0.98]
+                            "
+                        >
+
+                            <Printer size={15} />
+
+                            <span className="hidden sm:inline">
+                                {printRequested
+                                    ? "Preparing..."
+                                    : `Print ${totalLabels} Label${totalLabels !== 1 ? "s" : ""}`
+                                }
+                            </span>
+
+                            <span className="sm:hidden">
+                                {printRequested ? "..." : "Print"}
+                            </span>
+
+                        </button>
+
                     </div>
 
-                )}
+                </div>
 
 
                 <LabelPrintRenderer
