@@ -167,7 +167,7 @@ function Receipt({ sale }) {
                     </div>
 
                     <div className="text-left sm:text-right">
-                        <p className="break-words text-2xl font-black tracking-tight text-emerald-600 sm:text-3xl">
+                        <p className="break-words text-lg font-black tracking-tight text-emerald-600 sm:text-xl">
                             Rs. {formatAmount(grandTotal)}
                         </p>
                     </div>
