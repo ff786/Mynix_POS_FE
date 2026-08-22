@@ -176,14 +176,14 @@ function PublicInvoice() {
                     </div>
                 </div>
 
-                <button
+                {/*<button
                     type="button"
                     onClick={() => window.print()}
                     className="inline-flex min-h-10 shrink-0 items-center gap-2 rounded-xl bg-emerald-600 px-3.5 text-xs font-bold text-white shadow-sm transition hover:bg-emerald-700 active:scale-[0.98] focus:outline-none focus:ring-4 focus:ring-emerald-500/15 sm:px-4 sm:text-sm"
                 >
                     <Printer size={16} />
                     Print
-                </button>
+                </button>*/}
             </header>
 
             <main className="mx-auto mt-4 w-full max-w-2xl px-2 sm:mt-6 sm:px-4 print:mt-0 print:max-w-none print:px-0">
