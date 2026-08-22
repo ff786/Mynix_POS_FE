@@ -88,7 +88,7 @@ function ReceiptModal({
 
                 body {
                     color: #000000 !important;
-                    font-family: "Courier New", Courier, monospace !important;
+                    font-family: Arial, Helvetica, sans-serif !important;
                     font-size: 9px !important;
                     overflow: visible !important;
                 }
@@ -159,14 +159,25 @@ function ReceiptModal({
                     font-weight: 700 !important;
                 }
 
+                /*.thermal-divider {*/
+                /*    width: 100% !important;*/
+                /*    margin: 1.8mm 0 !important;*/
+                /*    overflow: hidden !important;*/
+                /*    white-space: nowrap !important;*/
+                /*    font-size: 8px !important;*/
+                /*    line-height: 1 !important;*/
+                /*    letter-spacing: 0.2px !important;*/
+                /*}*/
                 .thermal-divider {
-                    width: 100% !important;
-                    margin: 1.8mm 0 !important;
+                    width: calc(100% - 4px) !important;
+                    height: 1px !important;
+                    margin: 2mm auto !important;
+                    border-top: 1px dashed #000000 !important;
+                    box-sizing: border-box !important;
+                    background: transparent !important;
                     overflow: hidden !important;
-                    white-space: nowrap !important;
-                    font-size: 8px !important;
-                    line-height: 1 !important;
-                    letter-spacing: 0.2px !important;
+                    font-size: 0 !important;
+                    line-height: 0 !important;
                 }
 
                 .thermal-sale-header {
