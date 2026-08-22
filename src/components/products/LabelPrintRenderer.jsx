@@ -4,12 +4,7 @@ import bwipjs from "bwip-js/browser";
 import { printLabels } from "@/utils/printLabels";
 
 
-function LabelPrintRenderer({
-                                products,
-                                quantities,
-                                printRequested,
-                                onPrinted,
-                            }) {
+function LabelPrintRenderer({products, quantities, printRequested, onPrinted,}) {
 
     useEffect(() => {
 
@@ -60,19 +55,12 @@ function LabelPrintRenderer({
                         ),
 
                         scale: 2,
-
                         height: 24,
-
                         includetext: false,
-
                         backgroundcolor: "FFFFFF",
-
                         barcolor: "000000",
-
                         paddingwidth: 0,
-
                         paddingheight: 0,
-
                     });
 
 
