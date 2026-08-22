@@ -240,6 +240,28 @@ function SessionExpiredModal() {
                                 />
                             </div>
 
+                            <div>
+
+                                <p className="
+                                    text-xs
+                                    font-semibold
+                                    text-slate-800
+                                ">
+                                    Your Session has Expired...
+                                </p>
+                                {/*<p className="
+                                    mt-0.5
+                                    text-[11px]
+                                    leading-5
+                                    text-slate-500
+                                ">
+                                    Your expired
+                                    authentication token
+                                    has been removed.
+                                </p>*/}
+
+                            </div>
+
                         </div>
 
                     </div>
