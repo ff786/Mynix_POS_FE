@@ -123,7 +123,7 @@ function CategoryTable({
                             ">
                                 Status
                             </th>
-
+{/*
                             <th className="
                                 text-left
                                 px-6
@@ -135,7 +135,7 @@ function CategoryTable({
                                 text-slate-500
                             ">
                                 Products
-                            </th>
+                            </th>*/}
 
                             <th className="
                                 text-right

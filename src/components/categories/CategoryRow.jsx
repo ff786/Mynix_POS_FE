@@ -2,15 +2,9 @@ import {
     Edit3,
     Trash2,
     Package,
-    ChevronRight,
 } from "lucide-react";
 
-function CategoryRow({
-                         category,
-                         onEdit,
-                         onDelete,
-                         mobile = false,
-                     }) {
+function CategoryRow({category, onEdit, onDelete, mobile = false,}) {
     /* ========================= */
     /* MOBILE CARD                */
     /* ========================= */
@@ -111,12 +105,12 @@ function CategoryRow({
             </td>
 
             {/* Products */}
-            <td className="px-6 py-5">
+            {/*<td className="px-6 py-5">
                 <div className="inline-flex items-center gap-2 text-sm text-slate-500">
                     <Package size={15} />
                     <span>—</span>
                 </div>
-            </td>
+            </td>*/}
 
             {/* Actions */}
             <td className="px-6 py-5">

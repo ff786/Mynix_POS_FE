@@ -3,11 +3,8 @@ import {
     Search,
 } from "lucide-react";
 
-function CategoryToolbar({
-                             search,
-                             setSearch,
-                             onAdd,
-                         }) {
+function CategoryToolbar({search, setSearch, onAdd,}) {
+
     return (
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-5 lg:p-6">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
