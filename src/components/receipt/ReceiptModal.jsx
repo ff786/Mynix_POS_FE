@@ -127,6 +127,7 @@ function ReceiptModal({open, onOpenChange, sale,}) {
                 .thermal-header {
                     width: 100% !important;
                     text-align: center !important;
+                    margin-top: 2mm !important;
                 }
 
                 .thermal-brand {
