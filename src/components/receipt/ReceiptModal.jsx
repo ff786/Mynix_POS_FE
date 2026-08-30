@@ -451,7 +451,7 @@ function ReceiptModal({open, onOpenChange, sale,}) {
 
                 .thermal-footer .thermal-divider {
                     margin-top: 0 !important;
-                    margin-bottom: 2.5mm !important;
+                    margin-bottom: 0.5mm !important;
                 }
 
                 .thermal-footer-thanks {
