@@ -95,7 +95,7 @@ function Login() {
 
                         <div>
                             <div className="mb-4 h-px w-24 bg-gradient-to-r from-emerald-500 to-transparent" />
-                            <p className="text-xs font-semibold text-slate-400">© 2026 MYNIX PVT (LTD)</p>
+                            <p className="text-xs font-semibold text-slate-400">© 2026 MYNIX (PVT) LTD</p>
                             <p className="mt-1 text-[11px] text-slate-500">
                                 Crafted &amp; developed by{" "}
                                 <span className="font-semibold text-slate-300">FS Technologies</span>
@@ -208,7 +208,7 @@ function Login() {
                         </div>
 
                         <div className="mt-6 text-center lg:hidden">
-                            <p className="text-[10px] font-medium text-slate-400">© 2026 MYNIX PVT (LTD)</p>
+                            <p className="text-[10px] font-medium text-slate-400">© 2026 MYNIX (PVT) LTD</p>
                             <p className="mt-1 text-[10px] text-slate-400">
                                 Crafted &amp; developed by{" "}
                                 <span className="font-semibold text-slate-500">FS Technologies</span>

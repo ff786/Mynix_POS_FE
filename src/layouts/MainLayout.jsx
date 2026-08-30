@@ -66,7 +66,7 @@ function MainLayout() {
 
                         <footer className="mt-8 border-t border-slate-200/80 pt-5 pb-2 text-center sm:mt-10 sm:pt-6">
                             <p className="text-[10px] font-medium leading-5 text-slate-400 sm:text-[11px]">
-                                © 2026 MYNIX PVT (LTD)
+                                © 2026 MYNIX (PVT) LTD
                                 <span className="mx-1.5 text-slate-300">·</span>
                                 Crafted &amp; developed by
                                 <span className="ml-1 font-semibold text-slate-500">

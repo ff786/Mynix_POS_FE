@@ -22,7 +22,7 @@ function Receipt({ sale }) {
             <header className="border-b border-slate-200 px-4 py-5 text-center sm:px-6 sm:py-6">
                 <div className="flex flex-col items-center">
                     <h1 className="text-2xl font-black tracking-tight text-emerald-950 sm:text-3xl">
-                        MYNIX PVT (LTD)
+                        MYNIX (PVT) LTD
                     </h1>
 
                     <p className="mt-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-400 sm:text-xs">

@@ -6,26 +6,18 @@ import {
 import Receipt from "./Receipt";
 import ThermalReceipt from "./ReceiptPrint";
 
-function ReceiptModal({
-                          open,
-                          onOpenChange,
-                          sale,
-                      }) {
+function ReceiptModal({open, onOpenChange, sale,}) {
+
     if (!sale) {
         return null;
     }
 
     function collectStyles() {
         return Array.from(
-            document.querySelectorAll(
-                "style, link[rel='stylesheet']"
-            )
+            document.querySelectorAll("style, link[rel='stylesheet']")
         )
             .map((node) => {
-                if (
-                    node.tagName.toLowerCase() ===
-                    "style"
-                ) {
+                if (node.tagName.toLowerCase() === "style") {
                     return node.outerHTML;
                 }
 
@@ -89,8 +81,11 @@ function ReceiptModal({
                 body {
                     color: #000000 !important;
                     font-family: Arial, Helvetica, sans-serif !important;
-                    font-size: 9px !important;
+                    font-size: 10px !important;
+                    line-height: 1.3 !important;
                     overflow: visible !important;
+                    -webkit-print-color-adjust: exact;
+                    print-color-adjust: exact;
                 }
 
                 *,
@@ -131,98 +126,106 @@ function ReceiptModal({
 
                 .thermal-brand {
                     font-family: Arial, Helvetica, sans-serif !important;
-                    font-size: 22px !important;
+                    font-size: 24px !important;
                     line-height: 1 !important;
                     font-weight: 900 !important;
-                    letter-spacing: 2.5px !important;
+                    letter-spacing: 2.2px !important;
                 }
 
                 .thermal-tagline {
                     margin-top: 1.2mm !important;
-                    font-size: 9px !important;
-                    line-height: 1.2 !important;
+                    font-size: 9.5px !important;
+                    line-height: 1.25 !important;
                     font-weight: 700 !important;
-                    letter-spacing: 0.9px !important;
-                }
-
-                .thermal-business {
-                    margin-top: 0.8mm !important;
-                    font-size: 8px !important;
-                    line-height: 1.2 !important;
-                    letter-spacing: 0.5px !important;
+                    letter-spacing: 0.65px !important;
                 }
 
                 .thermal-contact {
-                    margin-top: 0.8mm !important;
-                    font-size: 8px !important;
-                    line-height: 1.2 !important;
+                    margin-top: 0.9mm !important;
+                    font-size: 9px !important;
+                    line-height: 1.25 !important;
                     font-weight: 700 !important;
                 }
 
-                /*.thermal-divider {*/
-                /*    width: 100% !important;*/
-                /*    margin: 1.8mm 0 !important;*/
-                /*    overflow: hidden !important;*/
-                /*    white-space: nowrap !important;*/
-                /*    font-size: 8px !important;*/
-                /*    line-height: 1 !important;*/
-                /*    letter-spacing: 0.2px !important;*/
-                /*}*/
                 .thermal-divider {
                     width: calc(100% - 4px) !important;
-                    height: 1px !important;
+                    height: 0 !important;
                     margin: 2mm auto !important;
                     border-top: 1px dashed #000000 !important;
-                    box-sizing: border-box !important;
                     background: transparent !important;
-                    overflow: hidden !important;
-                    font-size: 0 !important;
-                    line-height: 0 !important;
+                    box-sizing: border-box !important;
+                    overflow: visible !important;
                 }
 
                 .thermal-sale-header {
                     width: 100% !important;
                     display: flex !important;
                     justify-content: space-between !important;
-                    gap: 4mm !important;
-                    font-size: 8.5px !important;
-                    line-height: 1.5 !important;
+                    align-items: flex-start !important;
+                    gap: 3mm !important;
+                    font-size: 9.5px !important;
+                    line-height: 1.45 !important;
+                }
+
+                .thermal-sale-left,
+                .thermal-sale-right {
+                    min-width: 0 !important;
                 }
 
                 .thermal-sale-left {
-                    min-width: 0 !important;
-                    flex: 1 1 auto !important;
+                    max-width: 54% !important;
                 }
 
                 .thermal-sale-right {
-                    flex: 0 0 auto !important;
+                    max-width: 46% !important;
                     text-align: right !important;
                 }
 
-                .thermal-sale-left strong {
-                    font-weight: 900 !important;
+                .thermal-invoice-number {
+                    margin-top: 0.5mm !important;
+                    font-size: 9px !important;
+                    font-weight: 700 !important;
+                    overflow-wrap: anywhere !important;
                 }
 
                 .thermal-customer {
                     width: 100% !important;
-                    font-size: 8.5px !important;
-                    line-height: 1.5 !important;
+                    font-size: 9.5px !important;
+                    line-height: 1.45 !important;
+                    overflow-wrap: anywhere !important;
                 }
 
                 .thermal-customer-title {
-                    margin-bottom: 0.5mm !important;
+                    margin-bottom: 0.6mm !important;
+                    font-size: 8.5px !important;
                     font-weight: 900 !important;
+                    letter-spacing: 0.8px !important;
+                }
+
+                .thermal-customer-name {
+                    font-weight: 800 !important;
+                }
+
+                .thermal-customer-contact {
+                    margin-top: 0.4mm !important;
+                    font-size: 9px !important;
+                    font-weight: 700 !important;
                 }
 
                 .thermal-item-header {
                     width: 100% !important;
                     display: grid !important;
-                    grid-template-columns: 5mm minmax(0,1fr) 9mm 15mm 18mm !important;
+                    grid-template-columns: 5mm minmax(0, 1fr) 9mm 15mm 18mm !important;
                     column-gap: 0.7mm !important;
                     align-items: end !important;
-                    font-size: 7.5px !important;
-                    line-height: 1 !important;
+                    font-size: 8.5px !important;
+                    line-height: 1.2 !important;
                     font-weight: 900 !important;
+                    letter-spacing: 0.15px !important;
+                }
+
+                .thermal-item-header span {
+                    min-width: 0 !important;
                 }
 
                 .thermal-item-header .col-qty,
@@ -231,38 +234,50 @@ function ReceiptModal({
                     text-align: right !important;
                 }
 
+                .thermal-items {
+                    width: 100% !important;
+                    min-width: 0 !important;
+                }
+
                 .thermal-item {
                     width: 100% !important;
                     min-width: 0 !important;
-                    padding: 1.8mm 0 !important;
+                    padding: 2mm 0 !important;
+                    break-inside: avoid !important;
+                    page-break-inside: avoid !important;
                 }
 
                 .thermal-item-main {
                     width: 100% !important;
                     display: grid !important;
-                    grid-template-columns: 5mm minmax(0,1fr) 9mm 15mm 18mm !important;
+                    grid-template-columns: 5mm minmax(0, 1fr) 9mm 15mm 18mm !important;
                     column-gap: 0.7mm !important;
                     align-items: start !important;
-                    font-size: 8px !important;
-                    line-height: 1.3 !important;
+                    font-size: 9px !important;
+                    line-height: 1.4 !important;
                 }
 
                 .thermal-item-number {
-                    font-weight: 700 !important;
+                    font-weight: 800 !important;
                 }
 
                 .thermal-item-name {
                     min-width: 0 !important;
+                    font-size: 9px !important;
+                    font-weight: 800 !important;
+                    line-height: 1.35 !important;
                     overflow-wrap: anywhere !important;
                     word-break: break-word !important;
-                    font-weight: 700 !important;
                 }
 
                 .thermal-item-qty,
                 .thermal-item-price,
                 .thermal-item-amount {
+                    min-width: 0 !important;
                     text-align: right !important;
                     white-space: nowrap !important;
+                    font-size: 9px !important;
+                    line-height: 1.35 !important;
                 }
 
                 .thermal-item-amount {
@@ -272,9 +287,21 @@ function ReceiptModal({
                 .thermal-item-barcode {
                     margin-top: 0.8mm !important;
                     margin-left: 5.7mm !important;
-                    font-size: 7px !important;
-                    line-height: 1 !important;
-                    letter-spacing: 0.25px !important;
+                    max-width: calc(100% - 5.7mm) !important;
+                    font-size: 7.5px !important;
+                    line-height: 1.2 !important;
+                    font-weight: 700 !important;
+                    letter-spacing: 0.2px !important;
+                    overflow-wrap: anywhere !important;
+                    word-break: break-all !important;
+                }
+
+                .thermal-empty {
+                    width: 100% !important;
+                    padding: 2mm 0 !important;
+                    text-align: center !important;
+                    font-size: 8.5px !important;
+                    font-weight: 700 !important;
                 }
 
                 .thermal-totals {
@@ -288,18 +315,27 @@ function ReceiptModal({
                     justify-content: space-between !important;
                     align-items: baseline !important;
                     gap: 4mm !important;
-                    font-size: 8.5px !important;
-                    line-height: 1.6 !important;
+                    min-width: 0 !important;
+                    font-size: 9.5px !important;
+                    line-height: 1.65 !important;
+                    font-weight: 700 !important;
+                }
+
+                .thermal-amount-row span:first-child {
+                    min-width: 0 !important;
+                    overflow-wrap: anywhere !important;
                 }
 
                 .thermal-amount-row span:last-child {
+                    flex-shrink: 0 !important;
                     white-space: nowrap !important;
                     text-align: right !important;
                 }
 
                 .thermal-amount-row-strong {
-                    font-size: 10px !important;
+                    font-size: 11.5px !important;
                     font-weight: 900 !important;
+                    line-height: 1.7 !important;
                 }
 
                 .thermal-payment-summary {
@@ -310,12 +346,15 @@ function ReceiptModal({
                 .thermal-payment-notice {
                     width: 100% !important;
                     text-align: center !important;
-                    font-size: 8px !important;
-                    line-height: 1.5 !important;
+                    font-size: 9px !important;
+                    line-height: 1.55 !important;
+                    font-weight: 700 !important;
                 }
 
                 .thermal-payment-notice-title {
+                    font-size: 9.5px !important;
                     font-weight: 900 !important;
+                    letter-spacing: 0.4px !important;
                 }
 
                 .thermal-footer {
@@ -323,6 +362,8 @@ function ReceiptModal({
                     margin-top: auto !important;
                     padding-top: 1mm !important;
                     text-align: center !important;
+                    break-inside: avoid !important;
+                    page-break-inside: avoid !important;
                 }
 
                 .thermal-footer .thermal-divider {
@@ -331,34 +372,34 @@ function ReceiptModal({
                 }
 
                 .thermal-footer-thanks {
-                    font-size: 9px !important;
+                    font-size: 10px !important;
                     font-weight: 900 !important;
-                    line-height: 1.4 !important;
+                    line-height: 1.45 !important;
                 }
 
                 .thermal-footer-brand {
-                    margin-top: 0.7mm !important;
-                    font-size: 9px !important;
+                    margin-top: 0.8mm !important;
+                    font-size: 10px !important;
                     font-weight: 900 !important;
-                    line-height: 1.3 !important;
+                    line-height: 1.35 !important;
                 }
 
                 .thermal-footer-tagline {
                     margin-top: 1mm !important;
-                    font-size: 7px !important;
+                    font-size: 7.5px !important;
                     font-weight: 700 !important;
                     letter-spacing: 0.8px !important;
                 }
 
                 .thermal-footer-contact {
                     margin-top: 1.5mm !important;
-                    font-size: 8px !important;
+                    font-size: 8.5px !important;
                     font-weight: 800 !important;
                 }
 
                 .thermal-footer-generated {
                     margin-top: 1.2mm !important;
-                    font-size: 6px !important;
+                    font-size: 6.5px !important;
                     letter-spacing: 0.5px !important;
                     color: #555555 !important;
                 }
@@ -414,11 +455,18 @@ function ReceiptModal({
                 </div>
 
                 <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain bg-slate-100 px-2 py-3 sm:px-4 sm:py-5">
-                    <div id="receipt-print-area" className="mx-auto w-full max-w-[480px] overflow-visible rounded-2xl bg-white shadow-sm sm:rounded-xl">
+                    <div
+                        id="receipt-print-area"
+                        className="mx-auto w-full max-w-[480px] overflow-visible rounded-2xl bg-white shadow-sm sm:rounded-xl"
+                    >
                         <Receipt sale={sale} />
                     </div>
 
-                    <div id="thermal-receipt-print-area" aria-hidden="true" className="fixed left-[-100000px] top-0 w-[79mm] overflow-hidden bg-white">
+                    <div
+                        id="thermal-receipt-print-area"
+                        aria-hidden="true"
+                        className="fixed left-[-100000px] top-0 w-[79mm] overflow-hidden bg-white"
+                    >
                         <ThermalReceipt sale={sale} />
                     </div>
                 </div>

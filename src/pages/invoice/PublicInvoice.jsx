@@ -211,7 +211,7 @@ function PublicInvoice() {
                         MYNIX — The Signature of Perfection
                     </p>
                     <p className="mt-2 text-[9px] text-slate-300">
-                        © 2026 MYNIX PVT (LTD)
+                        © 2026 MYNIX (PVT) LTD
                         <span className="mx-1 text-slate-200">·</span>
                         Crafted &amp; developed by
                         <span className="ml-1 font-semibold text-slate-400">FS Technologies</span>
