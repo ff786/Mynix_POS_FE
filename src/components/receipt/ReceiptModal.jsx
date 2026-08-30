@@ -130,6 +130,7 @@ function ReceiptModal({open, onOpenChange, sale,}) {
                     line-height: 1 !important;
                     font-weight: 700 !important;
                     letter-spacing: 2.2px !important;
+                    margin-top: 10px !important;
                 }
 
                 .thermal-tagline {
