@@ -18,7 +18,7 @@ function ReceiptPrint({ sale }) {
         <div id="mynix-thermal-receipt" className="w-full bg-white text-black">
             <div className="thermal-header">
                 <div className="thermal-brand">
-                    MYNIX PVT (LTD)
+                    MYNIX (pvt) Ltd
                 </div>
 
                 <div className="thermal-tagline">

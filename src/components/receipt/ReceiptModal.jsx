@@ -128,7 +128,7 @@ function ReceiptModal({open, onOpenChange, sale,}) {
                     font-family: Arial, Helvetica, sans-serif !important;
                     font-size: 24px !important;
                     line-height: 1 !important;
-                    font-weight: 900 !important;
+                    font-weight: 700 !important;
                     letter-spacing: 2.2px !important;
                 }
 
