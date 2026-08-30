@@ -5,59 +5,13 @@ import {
 
 import Receipt from "./Receipt";
 import ThermalReceipt from "./ReceiptPrint";
-import { useEffect, useState } from "react";
-import { getUsers } from "@/services/userApi";
 
 function ReceiptModal({open, onOpenChange, sale,}) {
 
-    const [cashierName, setCashierName] = useState("");
-
-    useEffect(() => {
-        let mounted = true;
-
-        async function loadCashier() {
-            try {
-                const username = localStorage.getItem("username");
-
-                if (!username) {
-                    return;
-                }
-
-                const users = await getUsers();
-
-                const currentUser = users.find(
-                    (user) =>
-                        user.username?.toLowerCase() ===
-                        username.toLowerCase()
-                );
-
-                if (mounted && currentUser) {
-                    setCashierName(
-                        currentUser.fullName ||
-                        currentUser.username ||
-                        username
-                    );
-                }
-            } catch (error) {
-                console.error(
-                    "Failed to load cashier details:",
-                    error
-                );
-
-                if (mounted) {
-                    setCashierName(
-                        localStorage.getItem("username") || ""
-                    );
-                }
-            }
-        }
-
-        loadCashier();
-
-        return () => {
-            mounted = false;
-        };
-    }, []);
+    const cashierName =
+        localStorage.getItem("fullName") ||
+        localStorage.getItem("username") ||
+        "";
 
     if (!sale) {
         return null;
