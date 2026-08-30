@@ -69,7 +69,7 @@ function ReceiptModal({open, onOpenChange, sale,}) {
         const thermalStyles = `
             <style>
                 @page {
-                    size: 79mm auto;
+                    size: 79mm auto !important;
                     margin: 0;
                 }
 
