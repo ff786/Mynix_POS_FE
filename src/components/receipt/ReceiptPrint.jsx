@@ -43,7 +43,7 @@ function ReceiptPrint({ sale }) {
                     The Signature of Perfection
                 </div>
 
-                <div className="thermal-tagline">
+                <div className="thermal-tagline-address">
                     No. 42/3/1/1, Ash Sheikh Fassy Mawatha,
                     China Fort, Beruwala
                 </div>
@@ -83,61 +83,48 @@ function ReceiptPrint({ sale }) {
                 </div>
             </div>
 
-            {(hasCustomer || hasCashier) && (
+            {(sale.customerId || sale.cashierName) && (
                 <>
                     <ThermalDivider />
 
                     <div className="thermal-party-row">
+
+                        {/* CUSTOMER */}
                         <div className="thermal-party-column">
                             <div className="thermal-party-title">
                                 CUSTOMER
                             </div>
 
-                            {hasCustomer ? (
-                                <>
-                                    <div className="thermal-party-name">
-                                        {truncateText(
-                                            sale.customerName ||
-                                            "Customer",
-                                            24
-                                        )}
-                                    </div>
+                            <div className="thermal-party-name">
+                                {safeText(
+                                    sale.customerName,
+                                    "Walk-in Customer"
+                                )}
+                            </div>
 
-                                    {sale.customerContactNumber && (
-                                        <div className="thermal-party-contact">
-                                            {sanitizeSingleLine(
-                                                sale.customerContactNumber
-                                            )}
-                                        </div>
+                            {sale.customerContactNumber && (
+                                <div className="thermal-party-contact">
+                                    {sanitizeSingleLine(
+                                        sale.customerContactNumber
                                     )}
-                                </>
-                            ) : (
-                                <div className="thermal-party-muted">
-                                    WALK-IN CUSTOMER
                                 </div>
                             )}
                         </div>
 
+                        {/* CASHIER */}
                         <div className="thermal-party-column thermal-party-column-right">
                             <div className="thermal-party-title">
                                 CASHIER
                             </div>
 
                             <div className="thermal-party-name thermal-party-name-right">
-                                {truncateText(
-                                    cashierName,
-                                    24
+                                {safeText(
+                                    sale.cashierName,
+                                    "—"
                                 )}
                             </div>
-
-                            {sale.cashierRole && (
-                                <div className="thermal-party-contact thermal-party-contact-right">
-                                    {sanitizeSingleLine(
-                                        sale.cashierRole
-                                    )}
-                                </div>
-                            )}
                         </div>
+
                     </div>
                 </>
             )}

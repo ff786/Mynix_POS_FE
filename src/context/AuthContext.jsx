@@ -11,12 +11,14 @@ export function AuthProvider({ children }) {
 
         const token = localStorage.getItem("token");
         const username = localStorage.getItem("username");
+        const fullName = localStorage.getItem("fullName");
         const role = localStorage.getItem("role");
 
         if (token && username && role) {
 
             setUser({
                 username,
+                fullName: fullName || username,
                 role,
             });
 
@@ -32,8 +34,13 @@ export function AuthProvider({ children }) {
         localStorage.setItem("username", data.username);
         localStorage.setItem("role", data.role);
 
+        if (data.fullName) {
+            localStorage.setItem("fullName", data.fullName);
+        }
+
         setUser({
             username: data.username,
+            fullName: data.fullName || data.username,
             role: data.role,
         });
     }
@@ -42,6 +49,7 @@ export function AuthProvider({ children }) {
 
         localStorage.removeItem("token");
         localStorage.removeItem("username");
+        localStorage.removeItem("fullName");
         localStorage.removeItem("role");
 
         setUser(null);
@@ -63,7 +71,5 @@ export function AuthProvider({ children }) {
 }
 
 export function useAuth() {
-
     return useContext(AuthContext);
-
 }

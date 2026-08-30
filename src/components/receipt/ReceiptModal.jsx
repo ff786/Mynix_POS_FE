@@ -5,8 +5,59 @@ import {
 
 import Receipt from "./Receipt";
 import ThermalReceipt from "./ReceiptPrint";
+import { useEffect, useState } from "react";
+import { getUsers } from "@/services/userApi";
 
 function ReceiptModal({open, onOpenChange, sale,}) {
+
+    const [cashierName, setCashierName] = useState("");
+
+    useEffect(() => {
+        let mounted = true;
+
+        async function loadCashier() {
+            try {
+                const username = localStorage.getItem("username");
+
+                if (!username) {
+                    return;
+                }
+
+                const users = await getUsers();
+
+                const currentUser = users.find(
+                    (user) =>
+                        user.username?.toLowerCase() ===
+                        username.toLowerCase()
+                );
+
+                if (mounted && currentUser) {
+                    setCashierName(
+                        currentUser.fullName ||
+                        currentUser.username ||
+                        username
+                    );
+                }
+            } catch (error) {
+                console.error(
+                    "Failed to load cashier details:",
+                    error
+                );
+
+                if (mounted) {
+                    setCashierName(
+                        localStorage.getItem("username") || ""
+                    );
+                }
+            }
+        }
+
+        loadCashier();
+
+        return () => {
+            mounted = false;
+        };
+    }, []);
 
     if (!sale) {
         return null;
@@ -125,7 +176,7 @@ function ReceiptModal({open, onOpenChange, sale,}) {
                 }
 
                 .thermal-brand {
-                    font-family: Arial, Helvetica, sans-serif !important;
+                    font-family: "Times New Roman", sans-serif !important;
                     font-size: 24px !important;
                     line-height: 1 !important;
                     font-weight: 500 !important;
@@ -134,6 +185,14 @@ function ReceiptModal({open, onOpenChange, sale,}) {
                 }
 
                 .thermal-tagline {
+                    margin-top: 1.2mm !important;
+                    font-family: "Courier New",serif !important;
+                    font-size: 9.5px !important;
+                    line-height: 1.4 !important;
+                    font-weight: 600 !important;
+                    letter-spacing: 0.65px !important;
+                }
+                .thermal-tagline-address {
                     margin-top: 1.2mm !important;
                     font-size: 9.5px !important;
                     line-height: 1.4 !important;
@@ -529,7 +588,12 @@ function ReceiptModal({open, onOpenChange, sale,}) {
                         id="receipt-print-area"
                         className="mx-auto w-full max-w-[480px] overflow-visible rounded-2xl bg-white shadow-sm sm:rounded-xl"
                     >
-                        <Receipt sale={sale} />
+                        <Receipt
+                            sale={{
+                                ...sale,
+                                cashierName,
+                            }}
+                        />
                     </div>
 
                     <div
@@ -537,7 +601,12 @@ function ReceiptModal({open, onOpenChange, sale,}) {
                         aria-hidden="true"
                         className="fixed left-[-100000px] top-0 w-[79mm] overflow-hidden bg-white"
                     >
-                        <ThermalReceipt sale={sale} />
+                        <ThermalReceipt
+                            sale={{
+                                ...sale,
+                                cashierName,
+                            }}
+                        />
                     </div>
                 </div>
 
