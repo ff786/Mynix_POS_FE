@@ -7,12 +7,30 @@ function ReceiptPrint({ sale }) {
     const paymentMethod = sale.paymentMethod || "";
     const isCredit = paymentMethod === "CREDIT";
     const isCheque = paymentMethod === "CHEQUE";
-    const isFullyPaid = ["CASH", "CARD", "BANK_DEPOSIT"].includes(paymentMethod);
+
+    const isFullyPaid = [
+        "CASH",
+        "CARD",
+        "BANK_DEPOSIT",
+    ].includes(paymentMethod);
+
     const outstanding = toSafeNumber(sale.customerOutstanding);
     const subtotal = toSafeNumber(sale.subtotal);
     const discount = toSafeNumber(sale.discount);
     const deliveryFee = toSafeNumber(sale.deliveryFee);
     const grandTotal = toSafeNumber(sale.grandTotal);
+
+    const cashierName =
+        sale.cashierName ??
+        sale.cashierUsername ??
+        "System";
+
+    const hasCustomer = Boolean(sale.customerId);
+
+    const hasCashier = Boolean(
+        cashierName &&
+        String(cashierName).trim()
+    );
 
     return (
         <div id="mynix-thermal-receipt" className="w-full bg-white text-black">
@@ -65,24 +83,61 @@ function ReceiptPrint({ sale }) {
                 </div>
             </div>
 
-            {sale.customerId && (
+            {(hasCustomer || hasCashier) && (
                 <>
                     <ThermalDivider />
 
-                    <div className="thermal-customer">
-                        <div className="thermal-customer-title">
-                            CUSTOMER
-                        </div>
-
-                        <div className="thermal-customer-name">
-                            {safeText(sale.customerName, "Customer")}
-                        </div>
-
-                        {sale.customerContactNumber && (
-                            <div className="thermal-customer-contact">
-                                {sanitizeSingleLine(sale.customerContactNumber)}
+                    <div className="thermal-party-row">
+                        <div className="thermal-party-column">
+                            <div className="thermal-party-title">
+                                CUSTOMER
                             </div>
-                        )}
+
+                            {hasCustomer ? (
+                                <>
+                                    <div className="thermal-party-name">
+                                        {truncateText(
+                                            sale.customerName ||
+                                            "Customer",
+                                            24
+                                        )}
+                                    </div>
+
+                                    {sale.customerContactNumber && (
+                                        <div className="thermal-party-contact">
+                                            {sanitizeSingleLine(
+                                                sale.customerContactNumber
+                                            )}
+                                        </div>
+                                    )}
+                                </>
+                            ) : (
+                                <div className="thermal-party-muted">
+                                    WALK-IN CUSTOMER
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="thermal-party-column thermal-party-column-right">
+                            <div className="thermal-party-title">
+                                CASHIER
+                            </div>
+
+                            <div className="thermal-party-name thermal-party-name-right">
+                                {truncateText(
+                                    cashierName,
+                                    24
+                                )}
+                            </div>
+
+                            {sale.cashierRole && (
+                                <div className="thermal-party-contact thermal-party-contact-right">
+                                    {sanitizeSingleLine(
+                                        sale.cashierRole
+                                    )}
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </>
             )}
@@ -168,7 +223,9 @@ function ReceiptPrint({ sale }) {
                     {isFullyPaid && (
                         <>
                             <ThermalAmountRow
-                                label={formatPaymentMethod(paymentMethod).toUpperCase()}
+                                label={formatPaymentMethod(
+                                    paymentMethod
+                                ).toUpperCase()}
                                 value={grandTotal}
                             />
 

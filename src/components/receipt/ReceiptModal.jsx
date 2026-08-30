@@ -128,7 +128,7 @@ function ReceiptModal({open, onOpenChange, sale,}) {
                     font-family: Arial, Helvetica, sans-serif !important;
                     font-size: 24px !important;
                     line-height: 1 !important;
-                    font-weight: 700 !important;
+                    font-weight: 500 !important;
                     letter-spacing: 2.2px !important;
                     margin-top: 10px !important;
                 }
@@ -136,16 +136,16 @@ function ReceiptModal({open, onOpenChange, sale,}) {
                 .thermal-tagline {
                     margin-top: 1.2mm !important;
                     font-size: 9.5px !important;
-                    line-height: 1.25 !important;
-                    font-weight: 700 !important;
+                    line-height: 1.4 !important;
+                    font-weight: 600 !important;
                     letter-spacing: 0.65px !important;
                 }
 
                 .thermal-contact {
                     margin-top: 0.9mm !important;
                     font-size: 9px !important;
-                    line-height: 1.25 !important;
-                    font-weight: 700 !important;
+                    line-height: 1.4 !important;
+                    font-weight: 600 !important;
                 }
 
                 .thermal-divider {
@@ -199,7 +199,7 @@ function ReceiptModal({open, onOpenChange, sale,}) {
                 .thermal-customer-title {
                     margin-bottom: 0.6mm !important;
                     font-size: 8.5px !important;
-                    font-weight: 900 !important;
+                    font-weight: 600 !important;
                     letter-spacing: 0.8px !important;
                 }
 
@@ -211,6 +211,75 @@ function ReceiptModal({open, onOpenChange, sale,}) {
                     margin-top: 0.4mm !important;
                     font-size: 9px !important;
                     font-weight: 700 !important;
+                }
+
+                .thermal-party-row {
+                    width: 100% !important;
+                    display: grid !important;
+                    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+                    column-gap: 5mm !important;
+                    align-items: start !important;
+                    min-width: 0 !important;
+                }
+
+                .thermal-party-column {
+                    width: 100% !important;
+                    min-width: 0 !important;
+                    max-width: 100% !important;
+                    overflow: hidden !important;
+                    font-size: 9px !important;
+                    line-height: 1.4 !important;
+                }
+
+                .thermal-party-column-right {
+                    text-align: right !important;
+                }
+
+                .thermal-party-title {
+                    margin-bottom: 0.7mm !important;
+                    font-size: 8px !important;
+                    line-height: 1.2 !important;
+                    font-weight: 600 !important;
+                    letter-spacing: 0.8px !important;
+                }
+
+                .thermal-party-name {
+                    display: block !important;
+                    width: 100% !important;
+                    max-width: 100% !important;
+                    overflow: hidden !important;
+                    text-overflow: ellipsis !important;
+                    white-space: nowrap !important;
+                    font-size: 9.5px !important;
+                    font-weight: 600 !important;
+                    line-height: 1.35 !important;
+                }
+
+                .thermal-party-name-right {
+                    text-align: right !important;
+                }
+
+                .thermal-party-contact {
+                    display: block !important;
+                    width: 100% !important;
+                    max-width: 100% !important;
+                    margin-top: 0.5mm !important;
+                    overflow: hidden !important;
+                    text-overflow: ellipsis !important;
+                    white-space: nowrap !important;
+                    font-size: 8.5px !important;
+                    font-weight: 700 !important;
+                    line-height: 1.3 !important;
+                }
+
+                .thermal-party-contact-right {
+                    text-align: right !important;
+                }
+
+                .thermal-party-muted {
+                    font-size: 8.5px !important;
+                    font-weight: 700 !important;
+                    line-height: 1.3 !important;
                 }
 
                 .thermal-item-header {
