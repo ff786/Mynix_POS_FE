@@ -190,7 +190,6 @@ function ReceiptPrint({ sale }) {
                         negative
                     />
                 )}
-
                 {deliveryFee > 0 && (
                     <ThermalAmountRow
                         label="DELIVERY FEE"
