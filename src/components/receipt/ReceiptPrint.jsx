@@ -274,7 +274,11 @@ function ReceiptPrint({ sale }) {
                 </div>
 
                 <div className="thermal-footer-generated">
-                    COMPUTER GENERATED RECEIPT
+                    <p>© 2026 MYNIX (PVT) LTD</p>
+                    <p>
+                        Crafted &amp; developed by{" "}
+                        <span>FS Technologies</span>
+                    </p>
                 </div>
             </div>
         </div>
