@@ -4,14 +4,24 @@ import {
     CreditCard,
     Banknote,
     WalletCards,
+    Pencil,
+    Trash2,
 } from "lucide-react";
 
-function SalesTable({ sales, onView }) {
+function SalesTable({
+                        sales,
+                        onView,
+                        onEdit,
+                        onDelete,
+                    }) {
     if (sales.length === 0) {
         return (
             <div className="rounded-2xl border border-slate-200 bg-white px-5 py-14 text-center shadow-sm sm:py-20">
                 <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-100">
-                    <ReceiptText size={28} className="text-slate-400" />
+                    <ReceiptText
+                        size={28}
+                        className="text-slate-400"
+                    />
                 </div>
 
                 <h3 className="mt-5 text-base font-semibold text-slate-800 sm:text-lg">
@@ -27,9 +37,11 @@ function SalesTable({ sales, onView }) {
 
     return (
         <div>
+            {/* DESKTOP */}
+
             <div className="hidden overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm md:block">
                 <div className="overflow-x-auto">
-                    <table className="w-full min-w-[760px]">
+                    <table className="w-full min-w-[900px]">
                         <thead>
                         <tr className="border-b border-slate-200 bg-slate-50/80">
                             <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
@@ -60,6 +72,8 @@ function SalesTable({ sales, onView }) {
                                 key={sale.invoiceNumber}
                                 sale={sale}
                                 onView={onView}
+                                onEdit={onEdit}
+                                onDelete={onDelete}
                             />
                         ))}
                         </tbody>
@@ -67,12 +81,16 @@ function SalesTable({ sales, onView }) {
                 </div>
             </div>
 
+            {/* MOBILE */}
+
             <div className="space-y-3 md:hidden">
                 {sales.map((sale) => (
                     <MobileSaleCard
                         key={sale.invoiceNumber}
                         sale={sale}
                         onView={onView}
+                        onEdit={onEdit}
+                        onDelete={onDelete}
                     />
                 ))}
             </div>
@@ -80,13 +98,17 @@ function SalesTable({ sales, onView }) {
     );
 }
 
-function DesktopSaleRow({ sale, onView }) {
+function DesktopSaleRow({sale, onView, onEdit, onDelete,}) {
+
     return (
         <tr className="border-b border-slate-100 transition last:border-b-0 hover:bg-slate-50/70">
             <td className="px-6 py-5">
                 <div className="flex items-center gap-3">
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-50">
-                        <ReceiptText size={17} className="text-emerald-600" />
+                        <ReceiptText
+                            size={17}
+                            className="text-emerald-600"
+                        />
                     </div>
 
                     <div className="min-w-0">
@@ -95,7 +117,8 @@ function DesktopSaleRow({ sale, onView }) {
                         </p>
 
                         <p className="mt-1 text-xs text-slate-400">
-                            {sale.customerName || "Walk-in Customer"}
+                            {sale.customerName ||
+                                "Walk-in Customer"}
                         </p>
                     </div>
                 </div>
@@ -107,10 +130,21 @@ function DesktopSaleRow({ sale, onView }) {
                 <p className="mt-1 text-xs text-slate-400">
                     {formatTime(sale.createdAt)}
                 </p>
+
+                {sale.updatedBy && (
+                    <p className="mt-2 text-[11px] text-amber-600">
+                        Edited by{" "}
+                        <span className="font-semibold">
+                {sale.updatedBy}
+            </span>
+                    </p>
+                )}
             </td>
 
             <td className="px-6 py-5">
-                <PaymentBadge method={sale.paymentMethod} />
+                <PaymentBadge
+                    method={sale.paymentMethod}
+                />
             </td>
 
             <td className="px-6 py-5">
@@ -120,21 +154,44 @@ function DesktopSaleRow({ sale, onView }) {
             </td>
 
             <td className="px-6 py-5">
-                <div className="flex justify-end">
-                    <ViewButton onClick={() => onView(sale)} />
+                <div className="flex justify-end gap-2">
+                    <ActionButton
+                        icon={<Eye size={16} />}
+                        label="View"
+                        onClick={() => onView(sale)}
+                        className="bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
+                    />
+
+                    <ActionButton
+                        icon={<Pencil size={16} />}
+                        label="Edit"
+                        onClick={() => onEdit(sale)}
+                        className="bg-blue-50 text-blue-700 hover:bg-blue-100"
+                    />
+
+                    <ActionButton
+                        icon={<Trash2 size={16} />}
+                        label="Delete"
+                        onClick={() => onDelete(sale)}
+                        className="bg-red-50 text-red-700 hover:bg-red-100"
+                    />
                 </div>
             </td>
         </tr>
     );
 }
 
-function MobileSaleCard({ sale, onView }) {
+function MobileSaleCard({sale, onView, onEdit, onDelete,}) {
+
     return (
-        <article className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition active:scale-[0.995]">
+        <article className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
             <div className="flex items-start justify-between gap-3 p-4">
                 <div className="flex min-w-0 items-center gap-3">
                     <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50">
-                        <ReceiptText size={18} className="text-emerald-600" />
+                        <ReceiptText
+                            size={18}
+                            className="text-emerald-600"
+                        />
                     </div>
 
                     <div className="min-w-0">
@@ -143,12 +200,15 @@ function MobileSaleCard({ sale, onView }) {
                         </p>
 
                         <p className="mt-1 truncate text-xs font-medium text-slate-400">
-                            {sale.customerName || "Walk-in Customer"}
+                            {sale.customerName ||
+                                "Walk-in Customer"}
                         </p>
                     </div>
                 </div>
 
-                <PaymentBadge method={sale.paymentMethod} />
+                <PaymentBadge
+                    method={sale.paymentMethod}
+                />
             </div>
 
             <div className="grid grid-cols-2 gap-3 border-y border-slate-100 bg-slate-50/60 px-4 py-3.5">
@@ -165,6 +225,14 @@ function MobileSaleCard({ sale, onView }) {
                         {formatTime(sale.createdAt)}
                     </p>
                 </div>
+                {sale.updatedBy && (
+                    <p className="mt-1 text-[11px] text-amber-600">
+                        Edited by{" "}
+                        <span className="font-semibold">
+                            {sale.updatedBy}
+                        </span>
+                    </p>
+                )}
 
                 <div className="min-w-0 text-right">
                     <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
@@ -177,17 +245,53 @@ function MobileSaleCard({ sale, onView }) {
                 </div>
             </div>
 
-            <div className="p-3">
+            <div className="grid grid-cols-3 gap-2 p-3">
                 <button
                     type="button"
                     onClick={() => onView(sale)}
-                    className="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-emerald-50 text-sm font-bold text-emerald-700 transition hover:bg-emerald-100 active:bg-emerald-200"
+                    className="flex min-h-11 items-center justify-center gap-1.5 rounded-xl bg-emerald-50 text-xs font-bold text-emerald-700 transition hover:bg-emerald-100 active:bg-emerald-200"
                 >
-                    <Eye size={16} />
-                    View Invoice
+                    <Eye size={15} />
+                    View
+                </button>
+
+                <button
+                    type="button"
+                    onClick={() => onEdit(sale)}
+                    className="flex min-h-11 items-center justify-center gap-1.5 rounded-xl bg-blue-50 text-xs font-bold text-blue-700 transition hover:bg-blue-100 active:bg-blue-200"
+                >
+                    <Pencil size={15} />
+                    Edit
+                </button>
+
+                <button
+                    type="button"
+                    onClick={() => onDelete(sale)}
+                    className="flex min-h-11 items-center justify-center gap-1.5 rounded-xl bg-red-50 text-xs font-bold text-red-700 transition hover:bg-red-100 active:bg-red-200"
+                >
+                    <Trash2 size={15} />
+                    Delete
                 </button>
             </div>
         </article>
+    );
+}
+
+function ActionButton({
+                          icon,
+                          label,
+                          onClick,
+                          className,
+                      }) {
+    return (
+        <button
+            type="button"
+            onClick={onClick}
+            className={`inline-flex min-h-10 items-center justify-center gap-1.5 rounded-xl px-3 text-sm font-semibold transition active:scale-[0.98] ${className}`}
+        >
+            {icon}
+            {label}
+        </button>
     );
 }
 
@@ -200,31 +304,24 @@ function PaymentBadge({ method }) {
         Icon = Banknote;
     }
 
-    if (normalized === "CARD" || normalized === "CREDIT_CARD") {
+    if (
+        normalized === "CARD" ||
+        normalized === "CREDIT_CARD"
+    ) {
         Icon = CreditCard;
     }
 
     return (
         <span className="inline-flex max-w-[42vw] shrink-0 items-center gap-1.5 overflow-hidden text-ellipsis whitespace-nowrap rounded-full border border-slate-200 bg-slate-100 px-2.5 py-1.5 text-[10px] font-bold text-slate-600 sm:text-xs">
-            <Icon size={12} className="shrink-0" />
+            <Icon
+                size={12}
+                className="shrink-0"
+            />
 
             <span className="truncate">
                 {formatPaymentMethod(method)}
             </span>
         </span>
-    );
-}
-
-function ViewButton({ onClick }) {
-    return (
-        <button
-            type="button"
-            onClick={onClick}
-            className="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-emerald-50 px-3.5 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-100 active:bg-emerald-200"
-        >
-            <Eye size={16} />
-            View
-        </button>
     );
 }
 
@@ -264,10 +361,13 @@ function formatTime(value) {
 }
 
 function formatAmount(value) {
-    return Number(value || 0).toLocaleString(undefined, {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-    });
+    return Number(value || 0).toLocaleString(
+        undefined,
+        {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+        }
+    );
 }
 
 function formatPaymentMethod(method) {
@@ -279,7 +379,11 @@ function formatPaymentMethod(method) {
         CHEQUE: "Cheque",
     };
 
-    return labels[method] || method || "Payment";
+    return (
+        labels[method] ||
+        method ||
+        "Payment"
+    );
 }
 
 export default SalesTable;
