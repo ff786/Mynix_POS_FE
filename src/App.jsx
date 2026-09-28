@@ -12,6 +12,7 @@ import Products from "./pages/Products";
 import Categories from "./pages/Categories";
 import POS from "./pages/POS";
 import Sales from "./pages/Sales";
+import OnlineOrders from "./pages/OnlineOrders";
 import Staff from "./pages/Staff";
 import Customers from "./pages/Customers";
 import CustomerDetails from "./pages/customers/CustomerDetails";
@@ -62,6 +63,14 @@ export default function App() {
                     <Route
                         path="/sales"
                         element={<Sales />}
+                    />
+                    <Route
+                        path="/online-orders"
+                        element={
+                            <ProtectedRoute roles={["ADMIN", "CASHIER"]}>
+                                <OnlineOrders />
+                            </ProtectedRoute>
+                        }
                     />
                     <Route
                         path="/products"

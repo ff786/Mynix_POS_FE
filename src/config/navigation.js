@@ -6,6 +6,7 @@ import {
     Receipt,
     Users,
     Contact,
+    Globe,
 } from "lucide-react";
 
 export const navigation = [
@@ -47,6 +48,12 @@ export const navigation = [
         path: "/sales",
         icon: Receipt,
         label: "Sales",
+        roles: ["ADMIN", "CASHIER"],
+    },
+    {
+        path: "/online-orders",
+        icon: Globe,
+        label: "Online Orders",
         roles: ["ADMIN", "CASHIER"],
     },
     {
