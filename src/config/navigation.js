@@ -7,6 +7,7 @@ import {
     Users,
     Contact,
     Globe,
+    Mail,
 } from "lucide-react";
 
 export const navigation = [
@@ -61,6 +62,12 @@ export const navigation = [
         icon: Contact,
         label: "Customers",
         roles: ["ADMIN", "CASHIER"],
+    },
+    {
+        path: "/subscribers",
+        icon: Mail,
+        label: "Subscribers",
+        roles: ["ADMIN"],
     },
 
 ];
