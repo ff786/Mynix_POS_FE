@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 import ScanPanel from "@/components/pos/ScanPanel";
 import CartTable from "@/components/pos/CartTable";
 import CartSummary from "@/components/pos/CartSummary";
 import PaymentPanel from "@/components/pos/PaymentPanel";
 import CustomerSelector from "@/components/pos/CustomerSelector";
+import DeliveryPanel from "@/components/pos/DeliveryPanel";
+import { EMPTY_DELIVERY } from "@/constants/delivery";
 import ReceiptModal from "@/components/receipt/ReceiptModal";
 
 import { completeSale } from "@/services/posApi";
@@ -36,6 +38,25 @@ function POS() {
 
     const [customerError, setCustomerError] =
         useState(false);
+
+    /* "Deliver this order" (phone / WhatsApp orders) */
+    const [delivery, setDelivery] =
+        useState(EMPTY_DELIVERY);
+
+    const DELIVERY_PAYMENTS = ["CREDIT", "BANK_DEPOSIT"];
+
+    const handleDeliveryChange = useCallback(
+        (update) => setDelivery(update),
+        []
+    );
+
+    const toggleDelivery = (enabled) => {
+        setDelivery((d) => ({ ...d, enabled }));
+        if (enabled && !DELIVERY_PAYMENTS.includes(paymentMethod)) {
+            // Cash on delivery is recorded as a credit sale.
+            setPaymentMethod("CREDIT");
+        }
+    };
 
 
     const increaseQuantity = (barcode) => {
@@ -124,6 +145,19 @@ function POS() {
 
         setCustomerError(false);
 
+        if (delivery.enabled) {
+            if (!DELIVERY_PAYMENTS.includes(paymentMethod)) {
+                toast.error("Delivery orders are paid by Credit (cash on delivery) or Bank Deposit.");
+                return;
+            }
+            const a = delivery.address;
+            if (delivery.savedAddressId === null &&
+                (!a.addressLine1.trim() || !a.city.trim() || !a.district)) {
+                toast.error("Enter the delivery address, city and district.");
+                return;
+            }
+        }
+
 
         try {
 
@@ -146,6 +180,16 @@ function POS() {
                     barcode: item.barcode,
                     quantity: item.quantity,
                 })),
+
+                delivery: delivery.enabled
+                    ? {
+                        channel: delivery.channel,
+                        savedAddressId: delivery.savedAddressId,
+                        ...(delivery.savedAddressId === null ? delivery.address : {}),
+                        saveAddress: delivery.saveAddress,
+                        notes: delivery.notes,
+                    }
+                    : undefined,
             };
 
 
@@ -205,8 +249,12 @@ function POS() {
 
 
             toast.success(
-                "Sale completed successfully."
+                delivery.enabled
+                    ? "Delivery order created — see Online Orders."
+                    : "Sale completed successfully."
             );
+
+            setDelivery(EMPTY_DELIVERY);
 
 
             setCart([]);
@@ -301,6 +349,8 @@ function POS() {
                             null
                         );
 
+                        setDelivery(EMPTY_DELIVERY);
+
                         setCustomerError(
                             false
                         );
@@ -309,6 +359,14 @@ function POS() {
                     showError={
                         customerError
                     }
+                />
+
+
+                <DeliveryPanel
+                    customer={selectedCustomer}
+                    delivery={delivery}
+                    onChange={handleDeliveryChange}
+                    onToggle={toggleDelivery}
                 />
 
 
@@ -363,6 +421,11 @@ function POS() {
                     }
                     onCompleteSale={
                         handleCompleteSale
+                    }
+                    allowedMethods={
+                        delivery.enabled
+                            ? DELIVERY_PAYMENTS
+                            : null
                     }
                     loading={
                         processing

@@ -6,6 +6,7 @@ import { MessageSquare } from "lucide-react";
 import CustomerHeader from "@/components/customers/details/CustomerHeader";
 import CustomerFinancialSummary from "@/components/customers/details/CustomerFinancialSummary";
 import CustomerLedger from "@/components/customers/details/CustomerLedger";
+import CustomerAddresses from "@/components/customers/details/CustomerAddresses";
 import CustomerModal from "@/components/customers/CustomerModal";
 import SmsModal from "@/components/notifications/SmsModal";
 
@@ -110,6 +111,8 @@ function CustomerDetails() {
             />
 
             {/* Customer ledger */}
+            <CustomerAddresses customerId={customer.id} />
+
             <CustomerLedger
                 customerId={customer.id}
                 customer={customer}

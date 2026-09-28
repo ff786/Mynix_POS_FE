@@ -45,6 +45,14 @@ const STATUS_STYLES = {
     CANCELLED: "bg-slate-100 text-slate-500 ring-slate-200",
 };
 
+const CHANNEL_LABELS = { WEBSITE: "Website", PHONE: "Phone", WHATSAPP: "WhatsApp" };
+
+const PAYMENT_LABELS = {
+    CASH_ON_DELIVERY: "Cash on delivery",
+    CARD: "Paid by card",
+    BANK_TRANSFER: "Paid by bank transfer",
+};
+
 const STATUS_LABELS = {
     PLACED: "New",
     PACKED: "Packed",
@@ -126,9 +134,9 @@ function printPackingSlip(order) {
     });
     add(
         "div",
-        order.paymentMethod === "CARD"
-            ? `PAID BY CARD — ${money(order.grandTotal)}`
-            : `COLLECT CASH: ${money(order.grandTotal)}`,
+        order.paymentMethod === "CASH_ON_DELIVERY"
+            ? `COLLECT CASH: ${money(order.grandTotal)}`
+            : `PAID — ${money(order.grandTotal)} (no cash to collect)`,
         "total"
     );
 
@@ -164,7 +172,8 @@ function confirmationFor(action, order) {
     }
     if (action === "cancel") {
         return `Cancel ${order.invoiceNumber}? The sale is removed and the items go back into stock.` +
-            (order.paymentMethod === "CARD" ? " Card payments must be refunded in OnePay." : "");
+            (order.paymentMethod === "CARD" ? " Card payments must be refunded in OnePay." : "") +
+            (order.paymentMethod === "BANK_TRANSFER" ? " Refund the bank transfer to the customer." : "");
     }
     return null;
 }
@@ -180,7 +189,7 @@ function OrderCard({ order, busy, onAction }) {
                         {order.invoiceNumber}
                     </p>
                     <p className="mt-0.5 text-xs text-slate-400">
-                        {dateTime(order.placedAt)}
+                        {dateTime(order.placedAt)} · {CHANNEL_LABELS[order.channel] ?? "Website"}
                     </p>
                 </div>
                 <span
@@ -246,9 +255,7 @@ function OrderCard({ order, busy, onAction }) {
 
             <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3 text-sm">
                 <span className="text-slate-500">
-                    {order.paymentMethod === "CARD"
-                        ? "Paid by card"
-                        : "Cash on delivery"}
+                    {PAYMENT_LABELS[order.paymentMethod] ?? order.paymentMethod}
                 </span>
                 <span className="font-bold tabular-nums text-slate-900">
                     {order.status === "CANCELLED" ? "—" : money(order.grandTotal)}

@@ -41,6 +41,7 @@ function PaymentPanel({
                           setPaymentMethod,
                           onCompleteSale,
                           loading,
+                          allowedMethods = null,
                       }) {
     const disabled = cart.length === 0 || loading;
 
@@ -63,12 +64,15 @@ function PaymentPanel({
                     const Icon = method.icon;
                     const selected =
                         paymentMethod === method.value;
+                    const notAllowed =
+                        allowedMethods !== null &&
+                        !allowedMethods.includes(method.value);
 
                     return (
                         <button
                             key={method.value}
                             type="button"
-                            disabled={loading}
+                            disabled={loading || notAllowed}
                             onClick={() =>
                                 setPaymentMethod(method.value)
                             }
@@ -76,6 +80,7 @@ function PaymentPanel({
                                 relative flex min-h-[72px] items-center gap-3
                                 rounded-xl border px-3 text-left transition-all
                                 active:scale-[0.98] sm:min-h-[58px] sm:px-4
+                                disabled:cursor-not-allowed disabled:opacity-40
                                 ${
                                 selected
                                     ? "border-emerald-500 bg-emerald-50 text-emerald-700 shadow-sm"
@@ -117,6 +122,13 @@ function PaymentPanel({
                     );
                 })}
             </div>
+
+            {allowedMethods !== null && (
+                <p className="mt-3 text-xs text-slate-500">
+                    Delivery orders: <span className="font-semibold">Credit</span> for cash on delivery,
+                    or <span className="font-semibold">Bank Deposit</span> once the transfer has arrived.
+                </p>
+            )}
 
             {/* Selected Payment */}
             <div className="mt-4 rounded-xl bg-slate-50 px-3 py-2.5 text-xs text-slate-500">
