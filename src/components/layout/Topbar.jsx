@@ -129,7 +129,7 @@ function Topbar({ onMenuClick }) {
                     {/* Page indicator */}
 
                     <div className="hidden h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-50 sm:flex">
-                        <span className="h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_0_5px_rgba(16,185,129,0.10)]" />
+                        <span className="h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_0_5px_rgba(53,76,117,0.10)]" />
                     </div>
 
                     {/* Page information */}

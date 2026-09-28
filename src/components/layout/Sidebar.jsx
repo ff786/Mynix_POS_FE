@@ -74,11 +74,12 @@ function Sidebar({
                     overflow-hidden
 
                     border-r
-                    border-slate-200/80
+                    border-white/5
 
-                    bg-white
+                    bg-[#050505]
+                    text-white
 
-                    shadow-[12px_0_40px_rgba(15,23,42,0.06)]
+                    shadow-[12px_0_40px_rgba(0,0,0,0.25)]
 
                     transition-all
                     duration-300
@@ -117,7 +118,7 @@ function Sidebar({
                         shrink-0
                         items-center
                         border-b
-                        border-slate-100
+                        border-white/10
                         ${collapsed
                         ? "justify-center px-3"
                         : "justify-between px-5"
@@ -139,8 +140,7 @@ function Sidebar({
                             rounded-xl
                             outline-none
                             focus-visible:ring-2
-                            focus-visible:ring-emerald-500
-                            focus-visible:ring-offset-2
+                            focus-visible:ring-white/40
                         "
                     >
 
@@ -154,11 +154,10 @@ function Sidebar({
                             items-center
                             justify-center
                             rounded-xl
-                            bg-emerald-600
+                            bg-white
                             text-sm
-                            font-black
-                            text-white
-                            shadow-[0_4px_14px_rgba(5,150,105,0.22)]
+                            font-bold
+                            text-[#050505]
                         ">
                             M
                         </div>
@@ -180,10 +179,11 @@ function Sidebar({
                         >
 
                             <h1 className="
-                                text-lg
-                                font-black
-                                tracking-tight
-                                text-slate-900
+                                text-[15px]
+                                font-semibold
+                                uppercase
+                                tracking-[0.42em]
+                                text-white
                             ">
                                 MYNIX
                             </h1>
@@ -194,7 +194,7 @@ function Sidebar({
                                 font-semibold
                                 uppercase
                                 tracking-[0.25em]
-                                text-slate-400
+                                text-white/40
                             ">
                                 POS SYSTEM
                             </p>
@@ -217,11 +217,11 @@ function Sidebar({
                             items-center
                             justify-center
                             rounded-xl
-                            text-slate-400
+                            text-white/50
                             transition
 
-                            hover:bg-slate-100
-                            hover:text-slate-700
+                            hover:bg-white/10
+                            hover:text-white
 
                             active:scale-95
 
@@ -253,14 +253,14 @@ function Sidebar({
                             justify-center
                             rounded-full
                             border
-                            border-slate-200
-                            bg-white
-                            text-slate-400
+                            border-white/15
+                            bg-[#0b0b0c]
+                            text-white/50
                             shadow-sm
                             transition
 
-                            hover:border-emerald-200
-                            hover:text-emerald-600
+                            hover:border-white/40
+                            hover:text-white
 
                             lg:flex
                         "
@@ -314,7 +314,7 @@ function Sidebar({
                             uppercase
                             leading-4
                             tracking-[0.18em]
-                            text-slate-400
+                            text-white/35
                         ">
                             Workspace
                         </span>
@@ -349,8 +349,8 @@ function Sidebar({
                 <div className="
                     shrink-0
                     border-t
-                    border-slate-100
-                    bg-white
+                    border-white/10
+                    bg-[#050505]
                     p-3
                 ">
 
@@ -361,8 +361,8 @@ function Sidebar({
                             mb-2
                             rounded-2xl
                             border
-                            border-slate-100
-                            bg-slate-50
+                            border-white/10
+                            bg-white/[0.04]
                             transition-all
                             duration-300
 
@@ -395,10 +395,10 @@ function Sidebar({
                                 items-center
                                 justify-center
                                 rounded-xl
-                                bg-emerald-100
+                                bg-white
                                 text-sm
                                 font-bold
-                                text-emerald-700
+                                text-[#050505]
                             ">
                                 {user?.username
                                         ?.charAt(0)
@@ -427,7 +427,7 @@ function Sidebar({
                                     truncate
                                     text-sm
                                     font-semibold
-                                    text-slate-800
+                                    text-white/90
                                 ">
                                     {user?.username ||
                                         "User"}
@@ -437,7 +437,7 @@ function Sidebar({
                                     mt-0.5
                                     text-[11px]
                                     font-medium
-                                    text-slate-400
+                                    text-white/40
                                 ">
                                     {user?.role || ""}
                                 </p>

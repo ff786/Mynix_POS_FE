@@ -60,7 +60,7 @@ function Login() {
                     <div className="relative z-10 flex min-h-full w-full flex-col justify-between p-10 xl:p-14">
                         <div>
                             <div className="inline-flex items-center gap-3">
-                                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500 text-white shadow-[0_12px_35px_rgba(16,185,129,0.28)]">
+                                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500 text-white shadow-[0_12px_35px_rgba(53,76,117,0.28)]">
                                     <Gem size={24} strokeWidth={2.3} />
                                 </div>
 
@@ -107,7 +107,7 @@ function Login() {
                 <section className="flex min-h-[100dvh] w-full flex-1 items-center justify-center bg-slate-50 px-4 py-8 sm:px-6 lg:w-[48%] lg:px-10 xl:w-[44%]">
                     <div className="w-full max-w-md">
                         <div className="mb-8 flex flex-col items-center text-center lg:hidden">
-                            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-600 text-white shadow-[0_10px_30px_rgba(5,150,105,0.22)]">
+                            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-600 text-white shadow-[0_10px_30px_rgba(53,76,117,0.22)]">
                                 <Gem size={26} strokeWidth={2.2} />
                             </div>
 

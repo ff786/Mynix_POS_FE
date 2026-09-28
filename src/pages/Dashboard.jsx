@@ -170,7 +170,7 @@ function Dashboard() {
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
                     <StatCard title="Today's Sales" value={`Rs. ${formatCurrency(dashboard.salesToday)}`} icon={CircleDollarSign} color="bg-emerald-500" onClick={openTodaySales} />
                     <StatCard title="Orders Today" value={formatNumber(dashboard.ordersToday)} icon={ShoppingCart} color="bg-blue-500" onClick={openTodaySales} />
-                    <StatCard title="Total Products" value={formatNumber(dashboard.totalProducts)} icon={Package} color="bg-orange-500" onClick={() => navigate("/products")} />
+                    <StatCard title="Total Products" value={formatNumber(dashboard.totalProducts)} icon={Package} color="bg-slate-900" onClick={() => navigate("/products")} />
                     <StatCard title="Low Stock" value={formatNumber(dashboard.lowStockProducts)} icon={TriangleAlert} color="bg-red-500" onClick={openLowStock} />
                 </div>
             </section>
@@ -250,15 +250,15 @@ function Dashboard() {
                             <h2 className="mt-1 text-lg font-bold text-slate-900">Stock health</h2>
                         </div>
 
-                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-50">
-                            <Package size={18} className="text-orange-500" />
+                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100">
+                            <Package size={18} className="text-slate-900" />
                         </div>
                     </div>
 
                     <div className="mt-7 flex items-center justify-center">
                         <div
                             className="relative flex h-36 w-36 items-center justify-center rounded-full"
-                            style={{ background: `conic-gradient(#10b981 ${inventoryHealth}%, #f1f5f9 ${inventoryHealth}%)` }}
+                            style={{ background: `conic-gradient(#354c75 ${inventoryHealth}%, #ededf0 ${inventoryHealth}%)` }}
                         >
                             <div className="flex h-28 w-28 flex-col items-center justify-center rounded-full bg-white">
                                 <p className="text-2xl font-black tracking-tight text-slate-900">{inventoryHealth}%</p>

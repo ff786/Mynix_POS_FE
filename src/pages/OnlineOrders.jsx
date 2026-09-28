@@ -39,9 +39,9 @@ const TABS = [
 
 const STATUS_STYLES = {
     PLACED: "bg-amber-50 text-amber-700 ring-amber-200",
-    PACKED: "bg-sky-50 text-sky-700 ring-sky-200",
-    DISPATCHED: "bg-indigo-50 text-indigo-700 ring-indigo-200",
-    DELIVERED: "bg-emerald-50 text-emerald-700 ring-emerald-200",
+    PACKED: "bg-slate-100 text-slate-700 ring-slate-300",
+    DISPATCHED: "bg-emerald-50 text-emerald-800 ring-emerald-200",
+    DELIVERED: "bg-green-50 text-green-700 ring-green-200",
     CANCELLED: "bg-slate-100 text-slate-500 ring-slate-200",
 };
 
