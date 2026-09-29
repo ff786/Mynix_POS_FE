@@ -1,5 +1,6 @@
 function ReceiptItem({ item }) {
     const name =
+        item.fullName ??
         item.name ??
         item.productName ??
         "Unknown Product";

@@ -288,7 +288,9 @@ function ThermalItem({
                          item,
                          index,
                      }) {
+    // Receipts print the full name; the short name is for POS screens.
     const name = sanitizeSingleLine(
+        item?.fullName ??
         item?.name ??
         item?.productName ??
         "Unknown Product"

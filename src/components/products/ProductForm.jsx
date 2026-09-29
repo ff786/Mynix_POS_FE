@@ -13,6 +13,21 @@ import {
     toast,
 } from "sonner";
 
+import { Package } from "lucide-react";
+
+import FormField from "./FormField";
+import FormSection from "./FormSection";
+import ProductSeoFields from "./ProductSeoFields";
+import ProductWebsiteFields from "./ProductWebsiteFields";
+import {
+    EMPTY_PRODUCT_FORM,
+    inputClasses,
+} from "../../constants/productForm";
+import {
+    isValidSlug,
+    slugify,
+} from "../../utils/slug";
+
 
 function ProductForm({
                          product,
@@ -23,74 +38,34 @@ function ProductForm({
     const [categories, setCategories] = useState([]);
     const [saving, setSaving] = useState(false);
 
-    const [form, setForm] = useState({
-        name: "",
-        categoryId: "",
-        buyingPrice: "",
-        sellingPrice: "",
-        stockQuantity: "",
-        minimumStock: "",
-        imageUrl: "",
-    });
+    // ProductModal remounts this form per product, so the initial state is enough.
+    const [form, setForm] = useState(() => toForm(product));
+
+    // New products take their page address from the full name until staff edit it.
+    const [slugTouched, setSlugTouched] = useState(false);
+
+    const isNew = !product;
+    const slugIsAuto = isNew && !slugTouched;
+    const slug = slugIsAuto
+        ? slugify(form.fullName || form.name)
+        : form.slug;
 
 
     useEffect(() => {
 
-        if (product) {
+        getCategories()
+            .then(setCategories)
+            .catch(error => {
 
-            setForm({
-                name: product.name ?? "",
-                categoryId: product.categoryId ?? "",
-                buyingPrice: product.buyingPrice ?? "",
-                sellingPrice: product.sellingPrice ?? "",
-                stockQuantity: product.stockQuantity ?? "",
-                minimumStock: product.minimumStock ?? "",
-                imageUrl: product.imageUrl ?? "",
+                console.error(error);
+
+                toast.error(
+                    "Failed to load categories."
+                );
+
             });
-
-        } else {
-
-            setForm({
-                name: "",
-                categoryId: "",
-                buyingPrice: "",
-                sellingPrice: "",
-                stockQuantity: "",
-                minimumStock: "",
-                imageUrl: "",
-            });
-
-        }
-
-    }, [product]);
-
-
-    useEffect(() => {
-
-        loadCategories();
 
     }, []);
-
-
-    async function loadCategories() {
-
-        try {
-
-            const data = await getCategories();
-
-            setCategories(data);
-
-        } catch (error) {
-
-            console.error(error);
-
-            toast.error(
-                "Failed to load categories."
-            );
-
-        }
-
-    }
 
 
     function handleChange(e) {
@@ -108,12 +83,48 @@ function ProductForm({
     }
 
 
+    function handleSlugChange(value) {
+
+        setSlugTouched(true);
+
+        setForm(previous => ({
+            ...previous,
+            slug: value
+                .toLowerCase()
+                .replace(/\s+/g, "-"),
+        }));
+
+    }
+
+
+    function handleSlugReset() {
+
+        setSlugTouched(false);
+
+        setForm(previous => ({
+            ...previous,
+            slug: slugify(previous.fullName || previous.name),
+        }));
+
+    }
+
+
     async function handleSubmit() {
 
         if (!form.name.trim()) {
 
             toast.error(
-                "Product name is required."
+                "Short name is required."
+            );
+
+            return;
+        }
+
+
+        if (!slugIsAuto && !isValidSlug(slug)) {
+
+            toast.error(
+                "Page address can only use lowercase letters, numbers and single hyphens."
             );
 
             return;
@@ -221,6 +232,31 @@ function ProductForm({
                 imageUrl:
                     form.imageUrl.trim() || null,
 
+                fullName:
+                    form.fullName.trim() || null,
+
+                description:
+                    form.description.trim() || null,
+
+                showOnWebsite:
+                    form.showOnWebsite,
+
+                // Blank lets the server choose a free address from the full name.
+                slug:
+                    slugIsAuto ? null : slug,
+
+                seoTitle:
+                    form.seoTitle.trim() || null,
+
+                seoDescription:
+                    form.seoDescription.trim() || null,
+
+                seoKeywords:
+                    form.seoKeywords.trim() || null,
+
+                imageAlt:
+                    form.imageAlt.trim() || null,
+
             };
 
 
@@ -272,6 +308,12 @@ function ProductForm({
 
         <div className="space-y-6">
 
+            <FormSection
+                icon={Package}
+                title="Product Details"
+                description="Names, prices and stock."
+            >
+
             <div className="
                 grid
                 grid-cols-1
@@ -280,17 +322,41 @@ function ProductForm({
             ">
 
 
-                {/* Product Name */}
+                {/* Short Name */}
                 <FormField
-                    label="Product Name"
+                    label="Short Name (POS)"
+                    htmlFor="product-name"
                     required
+                    hint="Shown on POS screens and labels."
                 >
 
                     <input
+                        id="product-name"
                         name="name"
                         value={form.name}
                         onChange={handleChange}
-                        placeholder="e.g. Digital Pocket Scale"
+                        maxLength={150}
+                        placeholder="e.g. Pocket Scale 200g"
+                        className={inputClasses}
+                    />
+
+                </FormField>
+
+
+                {/* Full Name */}
+                <FormField
+                    label="Full Name"
+                    htmlFor="product-full-name"
+                    hint="Shown on the website and printed on invoices. Blank uses the short name."
+                >
+
+                    <input
+                        id="product-full-name"
+                        name="fullName"
+                        value={form.fullName}
+                        onChange={handleChange}
+                        maxLength={255}
+                        placeholder="e.g. MYNIX Digital Pocket Scale 200g × 0.01g"
                         className={inputClasses}
                     />
 
@@ -431,35 +497,32 @@ function ProductForm({
                 </FormField>
 
 
-                {/* Image URL */}
-                <div className="sm:col-span-2">
-
-                    <FormField
-                        label="Product Image URL"
-                    >
-
-                        <input
-                            name="imageUrl"
-                            type="url"
-                            value={form.imageUrl}
-                            onChange={handleChange}
-                            placeholder="https://example.com/product-image.jpg"
-                            className={inputClasses}
-                        />
-
-                    </FormField>
-
-                    <p className="
-                        text-xs
-                        text-slate-400
-                        mt-2
-                    ">
-                        Optional. Paste a publicly accessible image URL.
-                    </p>
-
-                </div>
-
             </div>
+
+            </FormSection>
+
+
+            <ProductWebsiteFields
+                form={form}
+                onChange={handleChange}
+                onToggleWebsite={(showOnWebsite) =>
+                    setForm(previous => ({
+                        ...previous,
+                        showOnWebsite,
+                    }))
+                }
+            />
+
+
+            <ProductSeoFields
+                form={form}
+                slug={slug}
+                slugIsAuto={slugIsAuto}
+                isNew={isNew}
+                onChange={handleChange}
+                onSlugChange={handleSlugChange}
+                onSlugReset={handleSlugReset}
+            />
 
 
             {/* Actions */}
@@ -528,58 +591,30 @@ function ProductForm({
 }
 
 
-function FormField({
-                       label,
-                       required,
-                       children,
-                   }) {
+function toForm(product) {
 
-    return (
+    if (!product) {
+        return EMPTY_PRODUCT_FORM;
+    }
 
-        <div>
-
-            <label className="
-                block
-                mb-2
-                text-sm
-                font-semibold
-                text-slate-700
-            ">
-
-                {label}
-
-                {required && (
-                    <span className="text-red-500 ml-1">
-                        *
-                    </span>
-                )}
-
-            </label>
-
-            {children}
-
-        </div>
-    );
+    return {
+        name: product.name ?? "",
+        fullName: product.fullName ?? product.name ?? "",
+        categoryId: product.categoryId ?? "",
+        buyingPrice: product.buyingPrice ?? "",
+        sellingPrice: product.sellingPrice ?? "",
+        stockQuantity: product.stockQuantity ?? "",
+        minimumStock: product.minimumStock ?? "",
+        imageUrl: product.imageUrl ?? "",
+        imageAlt: product.imageAlt ?? "",
+        description: product.description ?? "",
+        showOnWebsite: product.showOnWebsite ?? true,
+        slug: product.slug ?? "",
+        seoTitle: product.seoTitle ?? "",
+        seoDescription: product.seoDescription ?? "",
+        seoKeywords: product.seoKeywords ?? "",
+    };
 }
-
-
-const inputClasses = `
-    w-full
-    h-11
-    border
-    border-slate-200
-    rounded-xl
-    px-3.5
-    text-sm
-    bg-white
-    text-slate-900
-    outline-none
-    shadow-sm
-    transition
-    focus:border-emerald-500
-    focus:ring-4
-    focus:ring-emerald-500/10
-`;
 
 
 export default ProductForm;

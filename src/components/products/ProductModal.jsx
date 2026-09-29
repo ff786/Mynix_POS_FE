@@ -20,6 +20,7 @@ function ProductModal({open, onOpenChange, product, onSuccess,}) {
             <DialogContent className="
                 w-[calc(100%-1rem)]
                 max-w-6xl
+                sm:max-w-4xl
                 max-h-[96vh]
                 overflow-y-auto
                 rounded-2xl
@@ -45,6 +46,7 @@ function ProductModal({open, onOpenChange, product, onSuccess,}) {
 
 
                 <ProductForm
+                    key={product?.id ?? "new"}
                     product={product}
                     onSuccess={onSuccess}
                     onClose={() =>

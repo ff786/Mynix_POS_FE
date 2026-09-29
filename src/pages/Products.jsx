@@ -26,6 +26,7 @@ function Products() {
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
     const [categoryFilter, setCategoryFilter] = useState("ALL");
+    const [websiteFilter, setWebsiteFilter] = useState("ALL");
     const [selectedProducts, setSelectedProducts] = useState([]);
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState(null);
@@ -67,8 +68,8 @@ function Products() {
         return products.filter(product => {
 
             const name =
-                product.name
-                    ?.toLowerCase() || "";
+                `${product.name ?? ""} ${product.fullName ?? ""}`
+                    .toLowerCase();
             const barcode =
                 product.barcode
                     ?.toLowerCase() || "";
@@ -105,10 +106,17 @@ function Products() {
                 stockFilter !== "low" ||
                 stock <= minimumStock;
 
+            /* WEBSITE */
+            const matchesWebsite =
+                websiteFilter === "ALL" ||
+                (websiteFilter === "SHOWN") ===
+                (product.showOnWebsite !== false);
+
             return (
                 matchesSearch &&
                 matchesCategory &&
-                matchesStock
+                matchesStock &&
+                matchesWebsite
             );
 
         });
@@ -118,6 +126,7 @@ function Products() {
         search,
         categoryFilter,
         stockFilter,
+        websiteFilter,
     ]);
 
     function toggleProductSelection(product) {
@@ -257,7 +266,7 @@ function Products() {
                     <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100">
                         <SlidersHorizontal size={16} className="text-slate-500" />
                     </div>
-                    <span className="font-medium">Category</span>
+                    <span className="font-medium">Filters</span>
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2">
@@ -275,10 +284,24 @@ function Products() {
                         ))}
                     </select>
 
-                    {categoryFilter !== "ALL" && (
+                    <select
+                        value={websiteFilter}
+                        onChange={(e) => setWebsiteFilter(e.target.value)}
+                        aria-label="Website visibility"
+                        className="h-9 min-w-[180px] rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 outline-none shadow-sm transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10"
+                    >
+                        <option value="ALL">Website: All</option>
+                        <option value="SHOWN">Shown on website</option>
+                        <option value="HIDDEN">Hidden from website</option>
+                    </select>
+
+                    {(categoryFilter !== "ALL" || websiteFilter !== "ALL") && (
                         <button
                             type="button"
-                            onClick={() => setCategoryFilter("ALL")}
+                            onClick={() => {
+                                setCategoryFilter("ALL");
+                                setWebsiteFilter("ALL");
+                            }}
                             className="inline-flex h-9 items-center gap-1 rounded-lg px-3 text-sm font-medium text-slate-500 transition hover:bg-slate-100 hover:text-slate-900"
                         >
                             Clear

@@ -4,6 +4,7 @@ import {
     Trash2,
     Package,
     ChevronRight,
+    EyeOff,
 } from "lucide-react";
 
 function ProductRow({
@@ -77,6 +78,8 @@ function ProductRow({
                                         {product.name}
                                     </h3>
 
+                                    <FullName product={product} />
+
                                     <p className="mt-1 font-mono text-xs text-slate-400">
                                         {product.barcode}
                                     </p>
@@ -91,6 +94,8 @@ function ProductRow({
                                 <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-600">
                                     {product.category || "Uncategorized"}
                                 </span>
+
+                                <HiddenBadge product={product} />
                             </div>
                         </div>
                     </div>
@@ -189,6 +194,10 @@ function ProductRow({
                         <p className="max-w-[220px] truncate font-semibold text-slate-900">
                             {product.name}
                         </p>
+
+                        <FullName product={product} className="max-w-[220px]" />
+
+                        <HiddenBadge product={product} className="mt-1" />
                     </div>
                 </div>
             </td>
@@ -299,6 +308,31 @@ function ActionButton({
             {label}
             <ChevronRight size={13} className="text-slate-300" />
         </button>
+    );
+}
+
+/** The website/invoice name, when it differs from the short POS name. */
+function FullName({ product, className = "" }) {
+    if (!product.fullName || product.fullName === product.name) return null;
+
+    return (
+        <p
+            title={product.fullName}
+            className={`mt-0.5 truncate text-xs text-slate-500 ${className}`}
+        >
+            {product.fullName}
+        </p>
+    );
+}
+
+function HiddenBadge({ product, className = "" }) {
+    if (product.showOnWebsite !== false) return null;
+
+    return (
+        <span className={`inline-flex w-fit items-center gap-1 rounded-full border border-amber-100 bg-amber-50 px-2 py-0.5 text-[11px] font-semibold text-amber-700 ${className}`}>
+            <EyeOff size={12} />
+            Hidden from website
+        </span>
     );
 }
 
