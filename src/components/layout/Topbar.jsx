@@ -3,6 +3,7 @@ import {
     Bell,
     Menu,
     ChevronDown,
+    KeyRound,
     LogOut,
     User,
 } from "lucide-react";
@@ -239,6 +240,20 @@ function Topbar({ onMenuClick }) {
                                 >
                                     <User size={17} />
                                     My Profile
+                                </button>
+
+                                {/* Change password (SMS code to the shop phone) */}
+
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setProfileOpen(false);
+                                        navigate("/change-password");
+                                    }}
+                                    className="flex min-h-11 w-full items-center gap-3 rounded-xl px-3 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
+                                >
+                                    <KeyRound size={17} />
+                                    Change password
                                 </button>
 
                                 {/* Logout */}

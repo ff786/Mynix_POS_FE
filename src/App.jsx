@@ -21,6 +21,7 @@ import PublicInvoice from "@/pages/invoice/PublicInvoice";
 
 
 import ProtectedRoute from "./components/auth/ProtectedRoute";
+import ChangePassword from "./pages/ChangePassword";
 import SessionExpiredModal from "@/components/auth/SessionExpiredModal.jsx";
 
 export default function App() {
@@ -35,6 +36,15 @@ export default function App() {
                 <Route
                     path="/invoice/:token"
                     element={<PublicInvoice />}
+                />
+                <Route
+                    path="/change-password"
+                    element={
+                        <ProtectedRoute
+                            roles={["ADMIN", "CASHIER"]}>
+                            <ChangePassword />
+                        </ProtectedRoute>
+                    }
                 />
                 <Route
                     element={

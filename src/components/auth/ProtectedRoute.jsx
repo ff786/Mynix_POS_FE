@@ -1,4 +1,4 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 
 function ProtectedRoute({children, roles = [],}) {
@@ -7,6 +7,8 @@ function ProtectedRoute({children, roles = [],}) {
         user,
         loading,
     } = useAuth();
+
+    const location = useLocation();
 
     if (loading) {
 
@@ -23,6 +25,21 @@ function ProtectedRoute({children, roles = [],}) {
         return (
             <Navigate
                 to="/login"
+                replace
+            />
+        );
+
+    }
+
+    // After an emergency reset, a new password comes first.
+    if (
+        user.mustChangePassword &&
+        location.pathname !== "/change-password"
+    ) {
+
+        return (
+            <Navigate
+                to="/change-password"
                 replace
             />
         );

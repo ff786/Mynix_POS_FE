@@ -38,7 +38,10 @@ function Login() {
 
             login(data);
 
-            navigate("/dashboard", { replace: true });
+            navigate(
+                data.mustChangePassword ? "/change-password" : "/dashboard",
+                { replace: true }
+            );
         } catch (requestError) {
             console.error("Login failed:", requestError);
 

@@ -12,12 +12,14 @@ export function AuthProvider({ children }) {
         const token = localStorage.getItem("token");
         const username = localStorage.getItem("username");
         const role = localStorage.getItem("role");
+        const mustChangePassword = localStorage.getItem("mustChangePassword") === "true";
 
         if (token && username && role) {
 
             setUser({
                 username,
                 role,
+                mustChangePassword,
             });
 
         }
@@ -31,11 +33,21 @@ export function AuthProvider({ children }) {
         localStorage.setItem("token", data.token);
         localStorage.setItem("username", data.username);
         localStorage.setItem("role", data.role);
+        localStorage.setItem("mustChangePassword", String(Boolean(data.mustChangePassword)));
 
         setUser({
             username: data.username,
             role: data.role,
+            mustChangePassword: Boolean(data.mustChangePassword),
         });
+    }
+
+    /** After a successful password change, the POS opens up again. */
+    function passwordChanged() {
+
+        localStorage.setItem("mustChangePassword", "false");
+
+        setUser(previous => previous && { ...previous, mustChangePassword: false });
     }
 
     function logout() {
@@ -43,6 +55,7 @@ export function AuthProvider({ children }) {
         localStorage.removeItem("token");
         localStorage.removeItem("username");
         localStorage.removeItem("role");
+        localStorage.removeItem("mustChangePassword");
 
         setUser(null);
     }
@@ -54,6 +67,7 @@ export function AuthProvider({ children }) {
                 loading,
                 login,
                 logout,
+                passwordChanged,
                 isAuthenticated: !!user,
             }}
         >

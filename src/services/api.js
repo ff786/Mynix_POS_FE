@@ -91,6 +91,22 @@ api.interceptors.response.use(
         }
 
 
+        /*
+         * Signed in with a temporary password: the server only allows
+         * choosing a new one.
+         */
+        if (
+            status === 403 &&
+            error.response?.data?.code === "PASSWORD_CHANGE_REQUIRED" &&
+            window.location.pathname !== "/change-password"
+        ) {
+
+            localStorage.setItem("mustChangePassword", "true");
+
+            window.location.assign("/change-password");
+        }
+
+
         return Promise.reject(error);
     }
 );
