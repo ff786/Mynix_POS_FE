@@ -23,6 +23,8 @@ export const EMPTY_PRODUCT_FORM = {
     seoTitle: "",
     seoDescription: "",
     seoKeywords: "",
+    variantGroupId: "",
+    variantLabel: "",
 };
 
 export const inputClasses = `

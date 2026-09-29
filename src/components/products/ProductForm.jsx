@@ -18,6 +18,8 @@ import { Package } from "lucide-react";
 import FormField from "./FormField";
 import FormSection from "./FormSection";
 import ProductSeoFields from "./ProductSeoFields";
+import ProductMediaFields from "./ProductMediaFields";
+import ProductVariantFields from "./ProductVariantFields";
 import ProductWebsiteFields from "./ProductWebsiteFields";
 import {
     EMPTY_PRODUCT_FORM,
@@ -27,6 +29,10 @@ import {
     isValidSlug,
     slugify,
 } from "../../utils/slug";
+import {
+    toMediaItems,
+    toMediaPayload,
+} from "../../utils/media";
 
 
 function ProductForm({
@@ -40,6 +46,10 @@ function ProductForm({
 
     // ProductModal remounts this form per product, so the initial state is enough.
     const [form, setForm] = useState(() => toForm(product));
+
+    // Photos and videos; uploads update their own entry as they finish.
+    const [media, setMedia] = useState(() => toMediaItems(product?.media));
+    const uploading = media.some(m => m.uploading);
 
     // New products take their page address from the full name until staff edit it.
     const [slugTouched, setSlugTouched] = useState(false);
@@ -115,6 +125,36 @@ function ProductForm({
 
             toast.error(
                 "Short name is required."
+            );
+
+            return;
+        }
+
+
+        if (uploading) {
+
+            toast.error(
+                "Please wait for the uploads to finish."
+            );
+
+            return;
+        }
+
+
+        if (media.some(m => m.error)) {
+
+            toast.error(
+                "Remove the photos or videos that failed to upload, then save."
+            );
+
+            return;
+        }
+
+
+        if (form.variantGroupId && !form.variantLabel.trim()) {
+
+            toast.error(
+                "Enter this product's option in the variant group, e.g. Black."
             );
 
             return;
@@ -256,6 +296,15 @@ function ProductForm({
 
                 imageAlt:
                     form.imageAlt.trim() || null,
+
+                media:
+                    toMediaPayload(media),
+
+                variantGroupId:
+                    form.variantGroupId ? Number(form.variantGroupId) : null,
+
+                variantLabel:
+                    form.variantGroupId ? form.variantLabel.trim() : null,
 
             };
 
@@ -502,6 +551,25 @@ function ProductForm({
             </FormSection>
 
 
+            <ProductMediaFields
+                media={media}
+                onChange={setMedia}
+            />
+
+
+            <ProductVariantFields
+                productId={product?.id}
+                form={form}
+                onChange={handleChange}
+                onGroupChange={(variantGroupId) =>
+                    setForm(previous => ({
+                        ...previous,
+                        variantGroupId,
+                    }))
+                }
+            />
+
+
             <ProductWebsiteFields
                 form={form}
                 onChange={handleChange}
@@ -562,7 +630,7 @@ function ProductForm({
                 <button
                     type="button"
                     onClick={handleSubmit}
-                    disabled={saving}
+                    disabled={saving || uploading}
                     className="
                         w-full
                         sm:w-auto
@@ -578,6 +646,8 @@ function ProductForm({
                 >
                     {saving
                         ? "Saving..."
+                        : uploading
+                            ? "Uploading..."
                         : product
                             ? "Update Product"
                             : "Save Product"
@@ -607,6 +677,8 @@ function toForm(product) {
         minimumStock: product.minimumStock ?? "",
         imageUrl: product.imageUrl ?? "",
         imageAlt: product.imageAlt ?? "",
+        variantGroupId: product.variantGroupId ? String(product.variantGroupId) : "",
+        variantLabel: product.variantLabel ?? "",
         description: product.description ?? "",
         showOnWebsite: product.showOnWebsite ?? true,
         slug: product.slug ?? "",

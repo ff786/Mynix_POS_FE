@@ -5,6 +5,7 @@ import {
     Package,
     ChevronRight,
     EyeOff,
+    Layers,
 } from "lucide-react";
 
 function ProductRow({
@@ -94,6 +95,8 @@ function ProductRow({
                                 <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-600">
                                     {product.category || "Uncategorized"}
                                 </span>
+
+                                <VariantBadge product={product} />
 
                                 <HiddenBadge product={product} />
                             </div>
@@ -196,6 +199,8 @@ function ProductRow({
                         </p>
 
                         <FullName product={product} className="max-w-[220px]" />
+
+                        <VariantBadge product={product} className="mt-1" />
 
                         <HiddenBadge product={product} className="mt-1" />
                     </div>
@@ -322,6 +327,21 @@ function FullName({ product, className = "" }) {
         >
             {product.fullName}
         </p>
+    );
+}
+
+/** "Gem Box 2x2 · Black" for options of a variable product. */
+function VariantBadge({ product, className = "" }) {
+    if (!product.variantGroupId) return null;
+
+    return (
+        <span
+            title={`${product.variantGroupName} (${product.variantOptionName})`}
+            className={`inline-flex w-fit max-w-[220px] items-center gap-1 truncate rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-[11px] font-semibold text-slate-600 ${className}`}
+        >
+            <Layers size={12} className="shrink-0" />
+            <span className="truncate">{product.variantGroupName} · {product.variantLabel}</span>
+        </span>
     );
 }
 

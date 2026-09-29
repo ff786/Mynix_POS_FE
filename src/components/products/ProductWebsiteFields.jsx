@@ -17,7 +17,7 @@ function ProductWebsiteFields({
         <FormSection
             icon={Globe}
             title="Website"
-            description="What customers see on the product page at mynix.lk."
+            description="Whether it's listed at mynix.lk, and its product page description."
             action={
                 <WebsiteSwitch
                     checked={form.showOnWebsite}
@@ -60,47 +60,6 @@ function ProductWebsiteFields({
 
                 </FormField>
 
-
-                <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-
-                    <FormField
-                        label="Product Image URL"
-                        htmlFor="product-image"
-                        hint="Optional. Paste a publicly accessible https image link."
-                    >
-
-                        <input
-                            id="product-image"
-                            name="imageUrl"
-                            type="url"
-                            value={form.imageUrl}
-                            onChange={onChange}
-                            placeholder="https://example.com/product-image.jpg"
-                            className={inputClasses}
-                        />
-
-                    </FormField>
-
-
-                    <FormField
-                        label="Image Description (Alt Text)"
-                        htmlFor="product-image-alt"
-                        hint="Describe the photo for Google Images and screen readers. Blank uses the full name."
-                    >
-
-                        <input
-                            id="product-image-alt"
-                            name="imageAlt"
-                            value={form.imageAlt}
-                            onChange={onChange}
-                            maxLength={160}
-                            placeholder="e.g. MYNIX 10x triplet loupe with chrome housing"
-                            className={inputClasses}
-                        />
-
-                    </FormField>
-
-                </div>
 
             </div>
 
