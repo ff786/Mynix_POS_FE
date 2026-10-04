@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Layers, Plus } from "lucide-react";
+import { Layers, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 import FormField from "./FormField";
@@ -7,6 +7,7 @@ import FormSection from "./FormSection";
 import { inputClasses } from "../../constants/productForm";
 import {
     createVariantGroup,
+    deleteVariantGroup,
     getVariantGroups,
 } from "../../services/variantGroupApi";
 
@@ -30,6 +31,7 @@ function ProductVariantFields({
     const [groups, setGroups] = useState([]);
     const [creating, setCreating] = useState(false);
     const [saving, setSaving] = useState(false);
+    const [deleting, setDeleting] = useState(false);
     const [draft, setDraft] = useState({ name: "", optionName: "Colour" });
 
     useEffect(() => {
@@ -94,6 +96,50 @@ function ProductVariantFields({
         } finally {
 
             setSaving(false);
+
+        }
+
+    }
+
+
+    async function handleDelete() {
+
+        const count = group.products.length;
+
+        const confirmed = window.confirm(
+            `Delete the group "${group.name}"?`
+            + (count
+                ? ` Its ${count} product${count === 1 ? "" : "s"} will stay in the POS and go back to automatic grouping.`
+                : "")
+        );
+
+        if (!confirmed) return;
+
+        try {
+
+            setDeleting(true);
+
+            await deleteVariantGroup(group.id);
+
+            setGroups(previous => previous.filter(g => g.id !== group.id));
+            onGroupChange("");
+
+            toast.success(
+                `Group "${group.name}" deleted.`
+            );
+
+        } catch (error) {
+
+            console.error(error);
+
+            toast.error(
+                error.response?.data?.message ??
+                "Failed to delete the group."
+            );
+
+        } finally {
+
+            setDeleting(false);
 
         }
 
@@ -268,6 +314,16 @@ function ProductVariantFields({
                             {p.variantLabel}
                         </span>
                     ))}
+
+                    <button
+                        type="button"
+                        onClick={handleDelete}
+                        disabled={deleting}
+                        className="ml-auto inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-sm font-medium text-red-600 hover:bg-red-50 disabled:opacity-50"
+                    >
+                        <Trash2 size={14} />
+                        {deleting ? "Deleting..." : "Delete group"}
+                    </button>
 
                 </div>
             )}
