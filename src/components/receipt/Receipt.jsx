@@ -283,6 +283,7 @@ function formatPaymentMethod(method) {
     const labels = {
         CASH: "Cash",
         CARD: "Card",
+        ONLINE: "Online (OnePay)",
         BANK_DEPOSIT: "Bank Deposit",
         CREDIT: "Credit",
         CHEQUE: "Cheque",

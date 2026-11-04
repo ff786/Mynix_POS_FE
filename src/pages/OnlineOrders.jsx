@@ -11,6 +11,7 @@ import {
     Phone,
     Printer,
     RefreshCw,
+    ShieldAlert,
     Search,
     StickyNote,
     X,
@@ -20,6 +21,8 @@ import { toast } from "sonner";
 
 import {
     getOnlineOrders,
+    getPaymentAlerts,
+    markPaymentAlertHandled,
     updateOnlineOrder,
 } from "../services/onlineOrderApi";
 
@@ -49,7 +52,7 @@ const CHANNEL_LABELS = { WEBSITE: "Website", PHONE: "Phone", WHATSAPP: "WhatsApp
 
 const PAYMENT_LABELS = {
     CASH_ON_DELIVERY: "Cash on delivery",
-    CARD: "Paid by card",
+    ONLINE: "Paid online",
     BANK_TRANSFER: "Paid by bank transfer",
 };
 
@@ -172,7 +175,7 @@ function confirmationFor(action, order) {
     }
     if (action === "cancel") {
         return `Cancel ${order.invoiceNumber}? The sale is removed and the items go back into stock.` +
-            (order.paymentMethod === "CARD" ? " Card payments must be refunded in OnePay." : "") +
+            (order.paymentMethod === "ONLINE" ? " Online payments must be refunded in OnePay." : "") +
             (order.paymentMethod === "BANK_TRANSFER" ? " Refund the bank transfer to the customer." : "");
     }
     return null;
@@ -333,8 +336,64 @@ function ConfirmModal({ message, busy, onConfirm, onClose }) {
     );
 }
 
+/*
+ * Red banner: a customer paid online but their order could not be placed
+ * (for example the item sold out). The money is taken, so staff must contact
+ * them to fix the order or refund it in OnePay, then mark the alert handled.
+ */
+function PaymentAlerts({ alerts, onHandled }) {
+    if (alerts.length === 0) return null;
+
+    return (
+        <section
+            role="alert"
+            className="rounded-2xl border border-red-300 bg-red-50 p-4 shadow-sm sm:p-5"
+        >
+            <div className="flex items-center gap-2 text-red-800">
+                <ShieldAlert size={20} />
+                <h2 className="text-base font-bold">
+                    {alerts.length === 1
+                        ? "A customer paid online but their order was NOT placed"
+                        : `${alerts.length} customers paid online but their orders were NOT placed`}
+                </h2>
+            </div>
+            <p className="mt-1 text-sm text-red-700">
+                Contact each customer: place the order for them, or refund the payment in the OnePay portal.
+                Then mark it handled.
+            </p>
+            <ul className="mt-3 space-y-2">
+                {alerts.map((alert) => (
+                    <li
+                        key={alert.id}
+                        className="flex flex-col gap-2 rounded-xl border border-red-200 bg-white p-3 sm:flex-row sm:items-center sm:justify-between"
+                    >
+                        <div className="text-sm text-slate-800">
+                            <p className="font-semibold">
+                                {alert.customerName} · {alert.customerPhone}
+                                <span className="ml-2 font-bold text-red-700">{money(alert.amount)}</span>
+                            </p>
+                            <p className="text-xs text-slate-500">
+                                OnePay transaction <span className="font-mono">{alert.transactionId}</span>
+                                {alert.reason ? ` · ${alert.reason}` : ""}
+                            </p>
+                        </div>
+                        <button
+                            type="button"
+                            onClick={() => onHandled(alert)}
+                            className="shrink-0 rounded-xl bg-red-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-800"
+                        >
+                            Mark handled
+                        </button>
+                    </li>
+                ))}
+            </ul>
+        </section>
+    );
+}
+
 function OnlineOrders() {
     const [orders, setOrders] = useState([]);
+    const [alerts, setAlerts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
     const [tab, setTab] = useState("PLACED");
@@ -362,9 +421,18 @@ function OnlineOrders() {
                 .catch(() => active && toast.error("Couldn't load online orders."))
                 .finally(() => active && setLoading(false));
 
+        const fetchAlerts = () =>
+            getPaymentAlerts()
+                .then((data) => active && setAlerts(data))
+                .catch(() => undefined); // the banner is an extra; the orders list reports errors itself
+
         fetchOrders();
-        // New website orders show up without reloading the page.
-        const timer = setInterval(fetchOrders, 60_000);
+        fetchAlerts();
+        // New website orders and payment alerts show up without reloading the page.
+        const timer = setInterval(() => {
+            fetchOrders();
+            fetchAlerts();
+        }, 60_000);
         return () => {
             active = false;
             clearInterval(timer);
@@ -407,6 +475,16 @@ function OnlineOrders() {
         }
     };
 
+    const handleAlert = async (alert) => {
+        try {
+            await markPaymentAlertHandled(alert.id);
+            setAlerts((current) => current.filter((item) => item.id !== alert.id));
+            toast.success("Marked as handled.");
+        } catch {
+            toast.error("Couldn't update the alert. Try again.");
+        }
+    };
+
     const onAction = (order, action) => {
         if (confirmationFor(action, order)) setPending({ order, action });
         else run(order, action);
@@ -414,6 +492,7 @@ function OnlineOrders() {
 
     return (
         <div className="mx-auto w-full max-w-[1600px] space-y-5">
+            <PaymentAlerts alerts={alerts} onHandled={handleAlert} />
             <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5 lg:p-6">
                 <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                     <div className="flex min-w-0 items-center gap-3">

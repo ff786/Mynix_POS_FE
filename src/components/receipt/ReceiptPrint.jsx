@@ -11,6 +11,7 @@ function ReceiptPrint({ sale }) {
     const isFullyPaid = [
         "CASH",
         "CARD",
+        "ONLINE",
         "BANK_DEPOSIT",
     ].includes(paymentMethod);
 
@@ -441,6 +442,7 @@ function formatPaymentMethod(method) {
     const labels = {
         CASH: "Cash",
         CARD: "Card",
+        ONLINE: "Online (OnePay)",
         BANK_DEPOSIT: "Bank Deposit",
         CREDIT: "Credit",
         CHEQUE: "Cheque",

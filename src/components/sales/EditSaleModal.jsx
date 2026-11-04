@@ -561,7 +561,7 @@ function EditSaleModal({open, sale, onClose, onSave,}) {
                                     name="paymentMethod"
                                     value={form.paymentMethod}
                                     onChange={handleChange}
-                                    disabled={saving}
+                                    disabled={saving || form.paymentMethod === "ONLINE"}
                                     className="h-12 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-medium text-slate-900 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 sm:h-11"
                                 >
                                     <option value="CASH">
@@ -579,6 +579,12 @@ function EditSaleModal({open, sale, onClose, onSave,}) {
                                     <option value="CHEQUE">
                                         Cheque
                                     </option>
+                                    {/* Website payments: shown for those sales, never selectable otherwise. */}
+                                    {form.paymentMethod === "ONLINE" && (
+                                        <option value="ONLINE">
+                                            Online (OnePay)
+                                        </option>
+                                    )}
                                 </select>
                             </div>
 

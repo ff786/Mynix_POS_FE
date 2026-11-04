@@ -3,6 +3,7 @@ import {
     ReceiptText,
     CreditCard,
     Banknote,
+    Globe,
     WalletCards,
     Pencil,
     Trash2,
@@ -311,6 +312,10 @@ function PaymentBadge({ method }) {
         Icon = CreditCard;
     }
 
+    if (normalized === "ONLINE") {
+        Icon = Globe;
+    }
+
     return (
         <span className="inline-flex max-w-[42vw] shrink-0 items-center gap-1.5 overflow-hidden text-ellipsis whitespace-nowrap rounded-full border border-slate-200 bg-slate-100 px-2.5 py-1.5 text-[10px] font-bold text-slate-600 sm:text-xs">
             <Icon
@@ -374,6 +379,7 @@ function formatPaymentMethod(method) {
     const labels = {
         CASH: "Cash",
         CARD: "Card",
+        ONLINE: "Online (OnePay)",
         BANK_DEPOSIT: "Bank Deposit",
         CREDIT: "Credit",
         CHEQUE: "Cheque",
