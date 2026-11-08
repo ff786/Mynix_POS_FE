@@ -277,7 +277,7 @@ function ReceiptPrint({ sale }) {
                     <p>© 2026 MYNIX (PVT) LTD</p>
                     <p>
                         Crafted &amp; developed by{" "}
-                        <span>FS Technologies</span>
+                        <span>UrbanLabs Technologies</span>
                     </p>
                 </div>
             </div>
