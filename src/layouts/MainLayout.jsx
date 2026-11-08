@@ -3,6 +3,7 @@ import { Outlet, useLocation } from "react-router-dom";
 
 import Sidebar from "../components/layout/Sidebar";
 import Topbar from "../components/layout/Topbar";
+import SmsStatusBanner from "../components/notifications/SmsStatusBanner";
 
 function MainLayout() {
     const location = useLocation();
@@ -61,6 +62,7 @@ function MainLayout() {
                 <main className="min-h-0 min-w-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-contain bg-slate-50 p-3 sm:p-4 md:p-5 lg:p-6 xl:p-8">
                     <div className="mx-auto flex min-h-full w-full max-w-[1800px] flex-col">
                         <div className="min-w-0 flex-1">
+                            <SmsStatusBanner />
                             <Outlet />
                         </div>
 
