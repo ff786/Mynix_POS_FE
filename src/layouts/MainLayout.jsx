@@ -72,7 +72,7 @@ function MainLayout() {
                                 <span className="mx-1.5 text-slate-300">·</span>
                                 Crafted &amp; developed by
                                 <span className="ml-1 font-semibold text-slate-500">
-                                    FS Technologies
+                                    UrbanLabs Technologies
                                 </span>
                             </p>
                         </footer>
